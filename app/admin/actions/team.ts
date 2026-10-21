@@ -24,7 +24,7 @@ const schema = z.object({
   id: z.string().optional().transform((v) => (v ? v : null)),
   full_name: z.string().trim().min(2, "Indiquez le nom complet.").max(120),
   slug: z.string().trim().max(100).optional(),
-  group_key: z.enum(["partner", "lawyer", "paralegal", "administration"]),
+  group_key: z.enum(["partner", "senior_associate", "lawyer", "paralegal", "administration"]),
   status: z.enum(["published", "hidden", "inactive"]),
   featured: z.string().optional().transform((v) => v === "on"),
   email: z

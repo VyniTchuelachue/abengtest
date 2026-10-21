@@ -26,7 +26,12 @@ export type Member = {
   updatedAt: string;
 };
 
-export const groupOrder: TeamGroup[] = ["partner", "lawyer", "paralegal", "administration"];
+export const groupOrder: TeamGroup[] = ["partner", "senior_associate", "lawyer", "paralegal", "administration"];
+
+/** Partner, senior associates and associates: the people shown as lawyers. */
+export function isLawyerGroup(group: TeamGroup): boolean {
+  return group === "partner" || group === "senior_associate" || group === "lawyer";
+}
 
 function toMember(row: TeamMemberRecord, locale: Locale): Member {
   const l = <K extends string>(key: K) => row[`${key}_${locale}` as keyof TeamMemberRecord];
@@ -126,7 +131,7 @@ export async function getPracticeArea(slug: string, locale: Locale): Promise<Pra
 export async function getAreaMembers(areaId: string, locale: Locale): Promise<Member[]> {
   const [links, team] = await Promise.all([fetchLinks(), getTeam(locale)]);
   const ids = new Set(links.filter((l) => l.practice_area_id === areaId).map((l) => l.member_id));
-  return team.filter((m) => ids.has(m.id) && (m.group === "partner" || m.group === "lawyer"));
+  return team.filter((m) => ids.has(m.id) && isLawyerGroup(m.group));
 }
 
 export async function getMemberAreas(memberId: string, locale: Locale): Promise<PracticeArea[]> {

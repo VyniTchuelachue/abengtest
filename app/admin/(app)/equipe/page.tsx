@@ -9,7 +9,7 @@ import { moveMember, setMemberStatus } from "../../actions/team";
 
 export const metadata: Metadata = { title: "Équipe" };
 
-const order = ["partner", "lawyer", "paralegal", "administration"] as const;
+const order = ["partner", "senior_associate", "lawyer", "paralegal", "administration"] as const;
 
 export default async function TeamAdminPage({ searchParams }: { searchParams: Promise<{ ok?: string }> }) {
   const { supabase } = await requireStaff();

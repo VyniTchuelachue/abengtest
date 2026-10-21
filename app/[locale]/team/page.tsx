@@ -69,7 +69,7 @@ export default async function TeamPage({ params }: Props) {
           const members = team.filter((m) => m.group === group);
           if (members.length === 0) return null;
           return (
-            <section key={group} aria-labelledby={`group-${group}`} className={group === "lawyer" ? "bg-stone" : ""}>
+            <section key={group} aria-labelledby={`group-${group}`} className={group === "senior_associate" || group === "paralegal" ? "bg-stone" : ""}>
               <div className="shell py-20 md:py-28">
                 <div className="flex items-baseline justify-between gap-6 border-b border-ink pb-4">
                   <h2 id={`group-${group}`} className="heading text-[clamp(1.875rem,1.4rem+1.6vw,2.75rem)]">

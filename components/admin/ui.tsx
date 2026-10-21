@@ -59,7 +59,8 @@ export const articleStatus = {
 
 export const groupLabels = {
   partner: "Associé gérant",
-  lawyer: "Avocats",
+  senior_associate: "Associés seniors",
+  lawyer: "Associés",
   paralegal: "Juristes",
   administration: "Équipe administrative",
 } as const;

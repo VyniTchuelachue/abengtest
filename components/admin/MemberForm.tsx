@@ -12,7 +12,7 @@ export type MemberFormValues = {
   id: string | null;
   slug: string;
   full_name: string;
-  group_key: "partner" | "lawyer" | "paralegal" | "administration";
+  group_key: "partner" | "senior_associate" | "lawyer" | "paralegal" | "administration";
   status: "published" | "hidden" | "inactive";
   featured: boolean;
   email: string | null;

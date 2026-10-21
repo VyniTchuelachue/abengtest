@@ -182,7 +182,8 @@ const en = {
     lede: "Led by its founder, Barrister Roland Abeng, the firm brings together lawyers, paralegals and administrative professionals in Douala.",
     groups: {
       partner: "Managing Partner",
-      lawyer: "Lawyers",
+      senior_associate: "Senior Associates",
+      lawyer: "Associates",
       paralegal: "Paralegals",
       administration: "Administrative team",
     },
@@ -435,7 +436,8 @@ const fr: Dictionary = {
     lede: "Sous la direction de son fondateur, Maître Roland Abeng, le cabinet réunit avocats, juristes et professionnels administratifs à Douala.",
     groups: {
       partner: "Associé gérant",
-      lawyer: "Avocats",
+      senior_associate: "Associés seniors",
+      lawyer: "Associés",
       paralegal: "Juristes",
       administration: "Équipe administrative",
     },

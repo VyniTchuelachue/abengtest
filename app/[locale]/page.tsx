@@ -27,7 +27,7 @@ export default async function HomePage({ params }: Props) {
   const [team, areas, articles] = await Promise.all([getTeam(locale), getPracticeAreas(locale), getArticles(locale, { limit: 3 })]);
 
   const partner = team.find((m) => m.group === "partner");
-  const lawyers = team.filter((m) => m.group === "lawyer" && m.featured);
+  const lawyers = team.filter((m) => (m.group === "senior_associate" || m.group === "lawyer") && m.featured);
 
   return (
     <>

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumb, ContactBand } from "@/components/site/blocks";
 import { JsonLd } from "@/components/site/JsonLd";
 import { Portrait } from "@/components/site/Portrait";
-import { getMember, getMemberAreas, getTeam } from "@/lib/data";
+import { getMember, getMemberAreas, getTeam, isLawyerGroup } from "@/lib/data";
 import { getDictionary } from "@/lib/dictionaries";
 import { summarize } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
@@ -44,7 +44,7 @@ export default async function MemberPage({ params }: Props) {
   const dict = getDictionary(locale);
   const t = dict.teamPage;
   const areas = await getMemberAreas(member.id, locale);
-  const isLawyer = member.group === "partner" || member.group === "lawyer";
+  const isLawyer = isLawyerGroup(member.group);
 
   const details: { label: string; content: React.ReactNode }[] = [];
   if (member.focusAreas.length)

@@ -7,7 +7,7 @@ type Enums = {
   practice_group: "transactions" | "regulatory" | "disputes" | "sectors";
   profile_status: "published" | "hidden" | "inactive";
   staff_role: "admin" | "editor";
-  team_group: "partner" | "lawyer" | "paralegal" | "administration";
+  team_group: "partner" | "senior_associate" | "lawyer" | "paralegal" | "administration";
 };
 
 type ArticleRow = {
