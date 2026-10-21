@@ -1,0 +1,73 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { ArticleItem, Breadcrumb, ContactBand } from "@/components/site/blocks";
+import { ArticleView } from "@/components/site/ArticleView";
+import { JsonLd } from "@/components/site/JsonLd";
+import { getArticle, getArticles } from "@/lib/data";
+import { getDictionary } from "@/lib/dictionaries";
+import { summarize } from "@/lib/format";
+import { href, isLocale, siteUrl } from "@/lib/routes";
+import { articleSchema, breadcrumbSchema } from "@/lib/structured-data";
+
+type Props = { params: Promise<{ locale: string; slug: string }> };
+
+export async function generateStaticParams() {
+  const articles = await getArticles("en");
+  return articles.map((a) => ({ slug: a.slug }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale, slug } = await params;
+  if (!isLocale(locale)) return {};
+  const article = await getArticle(slug, locale);
+  if (!article) return {};
+  // Untranslated pages point search engines at the language the text is written in.
+  const languages = Object.fromEntries(article.availableIn.map((l) => [l, `${siteUrl}${href(l, "insights", slug)}`]));
+  return {
+    title: article.title,
+    description: article.excerpt ? summarize(article.excerpt) : undefined,
+    alternates: { canonical: `${siteUrl}${href(article.lang, "insights", slug)}`, languages },
+    openGraph: {
+      type: "article",
+      title: article.title,
+      description: article.excerpt || undefined,
+      publishedTime: article.publishedAt,
+      modifiedTime: article.updatedAt,
+      images: article.cover ? [{ url: article.cover, alt: article.coverAlt }] : undefined,
+    },
+  };
+}
+
+export default async function ArticlePage({ params }: Props) {
+  const { locale, slug } = await params;
+  if (!isLocale(locale)) notFound();
+  const article = await getArticle(slug, locale);
+  if (!article) notFound();
+  const dict = getDictionary(locale);
+  const related = (await getArticles(locale, { limit: 4 })).filter((a) => a.id !== article.id).slice(0, 3);
+
+  return (
+    <>
+      <Breadcrumb items={[{ label: dict.common.backToInsights, href: href(locale, "insights") }, { label: article.title }]} />
+      <ArticleView article={article} locale={locale} dict={dict} />
+
+      {related.length > 0 && (
+        <section className="shell pb-24 md:pb-32">
+          <h2 className="heading pb-6 text-[clamp(1.75rem,1.4rem+1.4vw,2.5rem)]">{dict.insightsPage.related}</h2>
+          {related.map((a) => (
+            <ArticleItem key={a.id} article={a} locale={locale} dict={dict} />
+          ))}
+        </section>
+      )}
+
+      <ContactBand locale={locale} dict={dict} />
+      <JsonLd data={articleSchema(article, locale)} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: dict.nav.insights, path: href(locale, "insights") },
+          { name: article.title, path: href(locale, "insights", article.slug) },
+        ])}
+      />
+    </>
+  );
+}
