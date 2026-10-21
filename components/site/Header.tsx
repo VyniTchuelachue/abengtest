@@ -4,14 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { CalendarCheck, MapPin, Menu, Phone, X } from "lucide-react";
 import { href, switchLocalePath, type Locale, type RouteKey } from "@/lib/routes";
 import type { Dictionary } from "@/lib/dictionaries";
 
-type Props = { locale: Locale; nav: Dictionary["nav"]; phones: string[] };
+type Props = { locale: Locale; nav: Dictionary["nav"]; phones: string[]; consult: string; addressShort: string };
 
-const items: Exclude<RouteKey, "home" | "contact">[] = ["firm", "practice", "team", "insights"];
+const items: Exclude<RouteKey, "home">[] = ["firm", "practice", "team", "insights", "contact"];
+const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, "")}`;
 
-export function Header({ locale, nav, phones }: Props) {
+export function Header({ locale, nav, phones, consult, addressShort }: Props) {
   const pathname = usePathname() ?? `/${locale}`;
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
@@ -42,89 +44,111 @@ export function Header({ locale, nav, phones }: Props) {
   const isActive = (key: RouteKey) => pathname.startsWith(href(locale, key));
 
   return (
-    <header className="sticky top-0 z-40 border-b border-rule/80 bg-paper/92 backdrop-blur-md supports-[backdrop-filter]:bg-paper/85">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:bg-ink focus:px-4 focus:py-2 focus:text-paper">
+    <header className="sticky top-0 z-40">
+      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-full focus:bg-gold focus:px-4 focus:py-2 focus:text-ink">
         {nav.skip}
       </a>
-      <div className="shell flex h-[4.5rem] items-center justify-between gap-6 lg:h-20">
-        <Link href={href(locale)} aria-label={nav.home} className="flex items-center gap-3">
-          <Image src="/images/crest.png" alt="" width={44} height={44} priority className="h-10 w-10 lg:h-11 lg:w-11" />
-          <span className="flex flex-col leading-none">
-            <span className="font-serif text-[1.0625rem] tracking-[-0.005em] text-ink lg:text-[1.1875rem]">The Abeng Law Firm</span>
-            <span className="mt-1 text-2xs text-slate">Douala, {locale === "fr" ? "Cameroun" : "Cameroon"}</span>
-          </span>
-        </Link>
 
-        <nav aria-label={nav.primary} className="hidden items-center gap-1 lg:flex">
-          {items.map((key) => (
-            <Link
-              key={key}
-              href={href(locale, key)}
-              aria-current={isActive(key) ? "page" : undefined}
-              className="relative px-3 py-2 text-[0.9375rem] text-ink-soft transition-colors hover:text-ink aria-[current=page]:text-ink after:absolute after:inset-x-3 after:-bottom-[1.3rem] after:h-px after:bg-brass after:opacity-0 aria-[current=page]:after:opacity-100"
-            >
-              {nav[key]}
-            </Link>
-          ))}
-          <span className="mx-3 h-5 w-px bg-rule" aria-hidden />
+      {/* Utility bar */}
+      <div className="hidden bg-night text-[0.8125rem] text-mist md:block">
+        <div className="shell flex h-10 items-center justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <a href={tel(phones[0])} className="flex items-center gap-2 transition-colors hover:text-white">
+              <Phone aria-hidden className="h-3.5 w-3.5 text-gold" />
+              {phones[0]}
+            </a>
+            <span className="flex items-center gap-2">
+              <MapPin aria-hidden className="h-3.5 w-3.5 text-gold" />
+              {addressShort}
+            </span>
+          </div>
           <Link
             href={switchLocalePath(pathname, other)}
             hrefLang={other}
             lang={other}
             aria-label={nav.switchAria}
-            className="px-2 py-2 text-[0.875rem] text-slate transition-colors hover:text-ink"
+            className="font-display font-semibold tracking-wide transition-colors hover:text-white"
           >
-            {other.toUpperCase()}
+            <span className={locale === "fr" ? "text-white" : ""}>FR</span>
+            <span className="mx-1.5 text-white/30">/</span>
+            <span className={locale === "en" ? "text-white" : ""}>EN</span>
           </Link>
-          <Link href={href(locale, "contact")} className="btn btn-quiet ml-3 min-h-10 px-4 py-2 text-[0.875rem]">
-            {nav.contact}
-          </Link>
-        </nav>
-
-        <button
-          ref={menuButton}
-          type="button"
-          className="-mr-2 flex h-11 items-center gap-2 px-2 text-[0.9375rem] text-ink lg:hidden"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? nav.close : nav.menu}
-          <span aria-hidden className="relative block h-3 w-5">
-            <span className={`absolute left-0 h-px w-5 bg-ink transition-transform duration-200 ${open ? "top-1.5 rotate-45" : "top-0"}`} />
-            <span className={`absolute left-0 h-px w-5 bg-ink transition-transform duration-200 ${open ? "top-1.5 -rotate-45" : "top-3"}`} />
-          </span>
-        </button>
+        </div>
       </div>
 
-      <div
-        id="mobile-menu"
-        hidden={!open}
-        className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto border-t border-rule bg-paper lg:hidden"
-      >
-        <nav aria-label={nav.primary} className="shell flex min-h-full flex-col py-8">
+      {/* Main bar */}
+      <div className="border-b border-white/10 bg-charcoal/95 backdrop-blur-md">
+        <div className="shell flex h-[4.5rem] items-center justify-between gap-6 lg:h-20">
+          <Link href={href(locale)} aria-label={nav.home} className="flex items-center gap-3">
+            <Image src="/images/crest.png" alt="" width={48} height={48} priority className="h-11 w-11 lg:h-12 lg:w-12" />
+            <span className="flex flex-col leading-none">
+              <span className="font-display text-[1.0625rem] font-semibold tracking-tight text-white lg:text-[1.1875rem]">The Abeng Law Firm</span>
+              <span className="mt-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-gold">
+                {locale === "fr" ? "Avocats d'affaires" : "Business lawyers"}
+              </span>
+            </span>
+          </Link>
+
+          <nav aria-label={nav.primary} className="hidden items-center gap-1 lg:flex">
+            {items.map((key) => (
+              <Link
+                key={key}
+                href={href(locale, key)}
+                aria-current={isActive(key) ? "page" : undefined}
+                className="relative rounded-full px-3.5 py-2 font-display text-[0.9375rem] font-medium text-white/80 transition-colors hover:text-white aria-[current=page]:text-gold"
+              >
+                {nav[key]}
+              </Link>
+            ))}
+            <Link href={href(locale, "contact")} className="btn btn-gold ml-4 min-h-11 px-5 py-2">
+              <CalendarCheck aria-hidden className="h-4 w-4" />
+              {consult}
+            </Link>
+          </nav>
+
+          <button
+            ref={menuButton}
+            type="button"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-gold text-ink lg:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? nav.close : nav.menu}
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X aria-hidden className="h-5 w-5" /> : <Menu aria-hidden className="h-5 w-5" />}
+          </button>
+        </div>
+      </div>
+
+      <div id="mobile-menu" hidden={!open} className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto bg-charcoal lg:hidden">
+        <nav aria-label={nav.primary} className="shell flex min-h-full flex-col py-6">
           <ul className="flex flex-col">
-            {[...items, "contact" as const].map((key) => (
-              <li key={key} className="border-b border-rule">
+            {items.map((key) => (
+              <li key={key} className="border-b border-white/10">
                 <Link
                   href={href(locale, key)}
                   aria-current={isActive(key) ? "page" : undefined}
-                  className="heading block py-4 text-[2rem] text-ink aria-[current=page]:text-brass"
+                  className="block py-4 font-display text-[1.625rem] font-semibold text-white aria-[current=page]:text-gold"
                 >
                   {nav[key]}
                 </Link>
               </li>
             ))}
           </ul>
-          <div className="mt-auto flex items-end justify-between gap-6 pt-10 text-[0.9375rem]">
-            <div className="flex flex-col gap-1 text-ink-soft">
+          <Link href={href(locale, "contact")} className="btn btn-gold mt-8 w-full">
+            <CalendarCheck aria-hidden className="h-4 w-4" />
+            {consult}
+          </Link>
+          <div className="mt-auto flex items-end justify-between gap-6 pt-10 text-[0.9375rem] text-mist">
+            <div className="flex flex-col gap-2">
               {phones.map((p) => (
-                <a key={p} href={`tel:${p.replace(/[^\d+]/g, "")}`} className="link">
+                <a key={p} href={tel(p)} className="flex items-center gap-2">
+                  <Phone aria-hidden className="h-4 w-4 text-gold" />
                   {p}
                 </a>
               ))}
             </div>
-            <Link href={switchLocalePath(pathname, other)} hrefLang={other} lang={other} className="link text-ink">
+            <Link href={switchLocalePath(pathname, other)} hrefLang={other} lang={other} className="rounded-full border border-white/30 px-4 py-2 font-display font-semibold text-white">
               {nav.switchLabel}
             </Link>
           </div>

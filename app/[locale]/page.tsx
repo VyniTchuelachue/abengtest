@@ -2,13 +2,36 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArticleItem, ContactBand } from "@/components/site/blocks";
-import { Portrait } from "@/components/site/Portrait";
-import { getArticles, getPracticeAreas, getTeam, practiceGroupOrder } from "@/lib/data";
-import { getDictionary } from "@/lib/dictionaries";
+import { ArrowRight, Award, CalendarCheck, CheckCircle2, Globe2, Landmark, Languages, Phone } from "lucide-react";
+import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/blocks";
+import { PracticeIcon, SectorIcon } from "@/components/site/icons";
+import { MemberCard } from "@/components/site/Portrait";
+import { getArticles, getPracticeAreas, getTeam, isLawyerGroup } from "@/lib/data";
+import { chambersProfileUrl, getDictionary, phones } from "@/lib/dictionaries";
+import { telHref } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
 type Props = { params: Promise<{ locale: string }> };
+
+/** Practice areas shown on the home page, in this order. */
+const featuredAreas = [
+  "corporate-commercial-ohada",
+  "banking-finance",
+  "energy-infrastructure",
+  "mergers-acquisitions",
+  "litigation-arbitration",
+  "tax-customs-exchange",
+];
+const checklistAreas = [
+  "corporate-commercial-ohada",
+  "mergers-acquisitions",
+  "banking-finance",
+  "regulatory-public-law",
+  "employment-immigration",
+  "debt-recovery-insolvency",
+];
+/** Indexes into the dictionary's sector list: energy, banking, infrastructure, telecoms. */
+const heroSectors = [0, 3, 5, 4];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -24,182 +47,288 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
+  const t = dict.home;
   const [team, areas, articles] = await Promise.all([getTeam(locale), getPracticeAreas(locale), getArticles(locale, { limit: 3 })]);
 
   const partner = team.find((m) => m.group === "partner");
-  const lawyers = team.filter((m) => (m.group === "senior_associate" || m.group === "lawyer") && m.featured);
+  const lawyers = team.filter((m) => isLawyerGroup(m.group) && (m.group === "partner" || m.featured));
+  const faces = team.filter((m) => m.photo && m.group !== "partner").slice(0, 5);
+  const bySlug = (slug: string) => areas.find((a) => a.slugs.en === slug);
+  const whyIcons = [Landmark, Globe2, Languages];
+  const recognitions = [
+    { name: "Chambers Global", detail: locale === "fr" ? "Classement 2026" : "2026 ranking", href: chambersProfileUrl },
+    { name: "TAGLaw", detail: locale === "fr" ? "Membre de l'alliance" : "Alliance member" },
+    { name: "TRACE", detail: locale === "fr" ? "Réseau anticorruption" : "Anti-bribery network" },
+    { name: "Legal 500 · IFLR1000", detail: locale === "fr" ? "Associé gérant distingué" : "Managing Partner recognised" },
+  ];
 
   return (
     <>
-      {/* Hero: the firm's own people, full width, beneath a plain statement of what it does. */}
-      <section>
-        <div className="shell grid gap-8 pb-10 pt-12 md:grid-cols-12 md:items-end md:pb-14 md:pt-20">
-          <h1 className="display text-[clamp(3rem,1.4rem+5.6vw,6.75rem)] md:col-span-8">
-            {dict.home.heroLines.map((line) => (
-              <span key={line} className="hero-line">
-                {line}
-              </span>
-            ))}
-          </h1>
-          <div className="hero-fade md:col-span-4 md:pb-3">
-            <p className="lede">{dict.home.heroLede}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={href(locale, "contact")} className="btn btn-primary">
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden bg-charcoal text-white">
+        <Image src="/images/team.jpg" alt="" fill priority sizes="100vw" quality={65} className="-z-10 object-cover opacity-20" style={{ objectPosition: "50% 20%" }} />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-charcoal via-charcoal/90 to-charcoal/55" />
+        <div className="shell grid items-center gap-12 pb-32 pt-14 md:pb-40 lg:grid-cols-12 lg:pt-20">
+          <div className="lg:col-span-7">
+            <p className="eyebrow hero-fade">{t.eyebrow}</p>
+            <h1 className="display mt-6 text-[clamp(2.5rem,1.5rem+4.2vw,4.75rem)]">
+              {t.heroLines.map((line) => (
+                <span key={line} className="hero-line">
+                  {line}
+                </span>
+              ))}
+            </h1>
+            <p className="hero-fade mt-6 max-w-xl text-[1.0625rem] leading-relaxed text-white/80">{t.heroLede}</p>
+            <div className="hero-fade mt-9 flex flex-wrap gap-3">
+              <Link href={href(locale, "contact")} className="btn btn-gold">
+                <CalendarCheck aria-hidden className="h-4 w-4" />
                 {dict.common.consult}
               </Link>
-              <Link href={href(locale, "practice")} className="btn btn-quiet">
-                {dict.nav.practice}
+              <a href={telHref(phones[0])} className="btn btn-outline-light">
+                <Phone aria-hidden className="h-4 w-4 text-gold" />
+                {phones[0]}
+              </a>
+            </div>
+            {faces.length > 0 && (
+              <div className="hero-fade mt-10 flex items-center gap-4">
+                <div className="flex -space-x-3">
+                  {faces.map((m) => (
+                    <span key={m.id} className="relative h-11 w-11 overflow-hidden rounded-full ring-2 ring-charcoal">
+                      <Image src={m.photo!} alt="" fill sizes="44px" className="object-cover" style={{ objectPosition: "50% 15%" }} />
+                    </span>
+                  ))}
+                </div>
+                <p className="text-[0.875rem] leading-snug text-white/80">
+                  <span className="font-display text-[1.125rem] font-semibold text-white">{team.length}</span> {t.teamCount}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {partner && (
+            <div className="relative mx-auto w-full max-w-md lg:col-span-5 lg:max-w-none">
+              <div className="hero-photo relative aspect-[5/6]">
+                <div className="absolute inset-0 overflow-hidden rounded-b-[2.5rem]">
+                  <div className="absolute inset-x-[6%] bottom-0 top-[26%] rounded-[2.5rem] bg-gold" />
+                  <Image
+                    src="/images/roland-abeng-cutout.webp"
+                    alt={`${partner.name}, ${partner.title}`}
+                    fill
+                    priority
+                    sizes="(min-width: 1024px) 40vw, 90vw"
+                    className="object-contain object-bottom"
+                  />
+                </div>
+              </div>
+              <div className="hero-stat absolute -left-2 bottom-24 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-ink shadow-[0_20px_40px_-20px_rgb(0_0_0/0.6)] sm:-left-6">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold">
+                  <Landmark aria-hidden className="h-5 w-5" />
+                </span>
+                <span>
+                  <span className="block font-display text-[1.25rem] font-bold leading-none">1998</span>
+                  <span className="text-[0.75rem] text-slate">{t.statFounded}</span>
+                </span>
+              </div>
+              <div className="hero-stat absolute -right-2 top-[38%] sm:top-[22%] flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-ink shadow-[0_20px_40px_-20px_rgb(0_0_0/0.6)] sm:-right-6">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold">
+                  <Award aria-hidden className="h-5 w-5" />
+                </span>
+                <span className="max-w-[9.5rem]">
+                  <span className="block font-display text-[1rem] font-bold leading-tight">Chambers Global</span>
+                  <span className="text-[0.75rem] leading-tight text-slate">{t.statChambers}</span>
+                </span>
+              </div>
+              <div className="absolute inset-x-[12%] -bottom-5 rounded-2xl bg-ink/90 px-5 py-3 text-center backdrop-blur">
+                <p className="font-display font-semibold">{partner.name}</p>
+                <p className="text-[0.8125rem] text-gold">{partner.title}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Sector cards overlapping the hero */}
+      <section aria-label={t.sectorsLabel} className="relative z-10 -mt-20">
+        <ul className="shell grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
+          {heroSectors.map((index, i) => (
+            <li
+              key={index}
+              className={`flex flex-col gap-5 rounded-[1.25rem] p-6 shadow-[0_24px_50px_-30px_rgb(0_0_0/0.45)] ${i % 2 === 0 ? "bg-white" : "bg-gold"}`}
+            >
+              <span className={`flex h-12 w-12 items-center justify-center rounded-full ${i % 2 === 0 ? "bg-gold text-ink" : "bg-white text-ink"}`}>
+                <SectorIcon index={index} className="h-6 w-6" />
+              </span>
+              <span className="font-display text-[1.0625rem] font-semibold leading-snug text-ink">{dict.practicePage.sectors[index]}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* The firm */}
+      <section className="py-24 md:py-32">
+        <div className="shell grid items-center gap-14 lg:grid-cols-12">
+          <div className="relative lg:col-span-6">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem]">
+              <Image src="/images/team.jpg" alt={t.heroCaption} fill sizes="(min-width: 1024px) 45vw, 100vw" quality={75} className="object-cover" style={{ objectPosition: "50% 20%" }} />
+            </div>
+            <div className="absolute -bottom-8 right-6 hidden w-48 overflow-hidden rounded-[1.5rem] border-[6px] border-white shadow-xl sm:block">
+              <div className="relative aspect-[4/3]">
+                <Image src="/images/tag-alliances-meeting.jpg" alt={t.tagCaption} fill sizes="200px" className="object-cover" />
+              </div>
+            </div>
+            <div className="absolute -top-6 left-6 flex h-28 w-28 flex-col items-center justify-center rounded-full bg-gold text-center text-ink shadow-lg">
+              <span className="font-display text-[0.75rem] font-semibold uppercase tracking-[0.16em]">{locale === "fr" ? "Depuis" : "Since"}</span>
+              <span className="font-display text-[1.75rem] font-bold leading-none">1998</span>
+            </div>
+          </div>
+          <div className="lg:col-span-6">
+            <SectionHeading eyebrow={t.firmEyebrow} title={t.introTitle} lede={t.introLede} />
+            <p className="mt-4 text-ink-soft">{t.introBody[0]}</p>
+            <h3 className="mt-8 font-display text-[1rem] font-semibold text-ink">{t.checklistTitle}</h3>
+            <ul className="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+              {checklistAreas.map((slug) => {
+                const a = bySlug(slug);
+                return a ? (
+                  <li key={slug}>
+                    <Link href={href(locale, "practice", a.slug)} className="flex items-start gap-2.5 text-[0.9375rem] text-ink transition-colors hover:text-gold-dark">
+                      <CheckCircle2 aria-hidden className="mt-0.5 h-5 w-5 flex-none text-gold" />
+                      {a.title}
+                    </Link>
+                  </li>
+                ) : null;
+              })}
+            </ul>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link href={href(locale, "firm")} className="btn btn-gold">
+                {t.introLink}
+                <ArrowRight aria-hidden className="h-4 w-4" />
+              </Link>
+              <Link href={href(locale, "contact")} className="btn btn-quiet">
+                {dict.nav.contact}
               </Link>
             </div>
           </div>
         </div>
-        <figure>
-          <div className="hero-photo relative aspect-[3/2] w-full bg-stone md:aspect-auto md:h-[min(58vw,84vh)]">
-            <Image
-              src="/images/team.jpg"
-              alt={dict.home.heroCaption}
-              fill
-              priority
-              quality={80}
-              sizes="100vw"
-              className="object-cover"
-              style={{ objectPosition: "50% 0%" }}
-            />
+      </section>
+
+      {/* Practice areas */}
+      <section className="bg-charcoal py-24 text-white md:py-32">
+        <div className="shell">
+          <SectionHeading eyebrow={t.practiceEyebrow} title={t.practiceHeading} align="center" dark />
+          <ul className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {featuredAreas.map((slug) => {
+              const a = bySlug(slug);
+              if (!a) return null;
+              return (
+                <li key={slug}>
+                  <Link
+                    href={href(locale, "practice", a.slug)}
+                    className="group flex h-full flex-col rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-7 transition-colors hover:border-gold/60 hover:bg-white/[0.08]"
+                  >
+                    <span className="icon-tile">
+                      <PracticeIcon slug={slug} className="h-6 w-6" />
+                    </span>
+                    <h3 className="mt-6 font-display text-[1.25rem] font-semibold leading-snug">{a.title}</h3>
+                    <p className="mt-3 text-[0.9375rem] leading-relaxed text-white/70">{a.summary}</p>
+                    <span className="mt-auto inline-flex items-center gap-2 pt-6 font-display text-[0.9375rem] font-semibold text-gold">
+                      {dict.common.learnMore}
+                      <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="mt-12 text-center">
+            <Link href={href(locale, "practice")} className="btn btn-gold">
+              {dict.common.allPracticeAreas}
+              <ArrowRight aria-hidden className="h-4 w-4" />
+            </Link>
           </div>
-          <figcaption className="shell mt-3 text-2xs text-slate">{dict.home.heroCaption}</figcaption>
-        </figure>
-        <div className="shell mt-10 md:mt-14">
-          <ul className="grid grid-cols-1 border-t border-ink/80 xs:grid-cols-2 lg:grid-cols-4">
-            {dict.credentials.map((c) => (
-              <li key={c.title} className="border-b border-rule py-6 pr-6 lg:border-b-0">
-                <p className="font-serif text-[1.25rem] leading-snug">{c.title}</p>
-                <p className="mt-1.5 text-[0.9375rem] leading-snug text-slate">{c.body}</p>
-              </li>
-            ))}
+        </div>
+      </section>
+
+      {/* Recognition */}
+      <section className="border-b border-rule py-16 md:py-20">
+        <div className="shell">
+          <p className="text-center">
+            <span className="eyebrow">{t.recognitionEyebrow}</span>
+          </p>
+          <ul className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {recognitions.map((r) => {
+              const inner = (
+                <>
+                  <span className="font-display text-[1.25rem] font-bold tracking-tight text-ink">{r.name}</span>
+                  <span className="mt-1 block text-[0.8125rem] text-slate">{r.detail}</span>
+                </>
+              );
+              return (
+                <li key={r.name} className="card flex flex-col items-center justify-center px-4 py-7 text-center">
+                  {r.href ? (
+                    <a href={r.href} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
+                      {inner}
+                    </a>
+                  ) : (
+                    inner
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </section>
 
-      {/* The firm */}
-      <section className="shell grid gap-12 py-24 md:grid-cols-12 md:py-32">
-        <div className="md:col-span-7">
-          <h2 className="heading text-[clamp(2.25rem,1.5rem+2.6vw,3.5rem)]">{dict.home.introTitle}</h2>
-          <p className="lede mt-8">{dict.home.introLede}</p>
-          {dict.home.introBody.map((p) => (
-            <p key={p} className="mt-5 max-w-2xl text-ink-soft">
-              {p}
-            </p>
-          ))}
-          <Link href={href(locale, "firm")} className="link mt-8 inline-block font-medium">
-            {dict.home.introLink}
-          </Link>
+      {/* Why choose us */}
+      <section className="relative overflow-hidden bg-charcoal text-white">
+        <div className="absolute inset-y-0 right-0 hidden w-[45%] lg:block">
+          <Image src="/images/africa-regional-meeting.jpg" alt={t.africaCaption} fill sizes="45vw" className="object-cover" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/40 to-transparent" />
         </div>
-        <dl className="self-end md:col-span-4 md:col-start-9">
-          {(
-            [
-              [dict.firm.founded, dict.firm.foundedValue],
-              [dict.firm.office, dict.firm.officeValue],
-              [dict.firm.languages, dict.firm.languagesValue],
-              [dict.firm.law, dict.firm.lawValue],
-            ] as const
-          ).map(([term, value]) => (
-            <div key={term} className="border-t border-rule py-5">
-              <dt className="text-[0.8125rem] text-slate">{term}</dt>
-              <dd className="mt-1 font-serif text-[1.1875rem] leading-snug">{value}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-
-      {/* Practice areas as a typographic index */}
-      <section className="bg-stone">
-        <div className="shell py-24 md:py-32">
-          <div className="grid gap-6 md:grid-cols-12 md:items-end">
-            <h2 className="heading text-[clamp(2.25rem,1.5rem+2.6vw,3.5rem)] md:col-span-6">{dict.home.practiceTitle}</h2>
-            <p className="text-ink-soft md:col-span-5 md:col-start-8">{dict.home.practiceLede}</p>
+        <div className="shell relative py-24 md:py-32">
+          <div className="max-w-2xl">
+            <SectionHeading eyebrow={t.whyEyebrow} title={t.whyHeading} lede={t.whyBody} dark />
+            <ul className="mt-12 space-y-8">
+              {t.why.map((w, i) => {
+                const Icon = whyIcons[i] ?? Award;
+                return (
+                  <li key={w.title} className="flex gap-5">
+                    <span className="icon-tile">
+                      <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
+                    </span>
+                    <span>
+                      <span className="block font-display text-[1.25rem] font-semibold">{w.title}</span>
+                      <span className="mt-1 block text-white/75">{w.body}</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-          <div className="mt-14 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-            {practiceGroupOrder.map((group) => (
-              <div key={group}>
-                <h3 className="border-b border-ink pb-3 font-sans text-[0.9375rem] font-medium">
-                  {dict.practicePage.groups[group]}
-                </h3>
-                <ul>
-                  {areas
-                    .filter((a) => a.group === group)
-                    .map((a) => (
-                      <li key={a.id} className="border-b border-rule">
-                        <Link
-                          href={href(locale, "practice", a.slug)}
-                          className="block py-3.5 font-serif text-[1.125rem] leading-snug text-ink transition-colors hover:text-brass"
-                        >
-                          {a.title}
-                        </Link>
-                      </li>
-                    ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <Link href={href(locale, "practice")} className="link mt-12 inline-block font-medium">
-            {dict.common.allPracticeAreas}
-          </Link>
         </div>
       </section>
 
-      {/* Managing Partner */}
-      {partner && (
-        <section className="shell grid gap-12 py-24 md:grid-cols-12 md:items-center md:py-32">
-          <div className="relative aspect-[4/5] overflow-hidden bg-stone md:col-span-6">
-            <Image
-              src="/images/roland-abeng-office.jpg"
-              alt={`${partner.name}, ${partner.title}`}
-              fill
-              quality={80}
-              sizes="(min-width: 768px) 46vw, 100vw"
-              className="object-cover"
-              style={{ objectPosition: "50% 30%" }}
-            />
-          </div>
-          <div className="md:col-span-5 md:col-start-8">
-            <p className="text-[0.9375rem] text-slate">{partner.title}</p>
-            <h2 className="display mt-3 text-[clamp(2.75rem,1.8rem+3.4vw,4.75rem)]">{partner.name}</h2>
-            <p className="mt-8 border-l-2 border-brass pl-5 font-serif text-[1.1875rem] leading-snug">{dict.home.partnerRecognition}</p>
-            <p className="mt-8 text-ink-soft">{partner.bio[0]}</p>
-            <Link href={href(locale, "team", partner.slug)} className="link mt-8 inline-block font-medium">
-              {dict.common.readProfile}
-            </Link>
-          </div>
-        </section>
-      )}
-
-      {/* Lawyers */}
-      <section className="border-t border-rule">
-        <div className="shell py-24 md:py-32">
-          <div className="grid gap-6 md:grid-cols-12 md:items-end">
-            <div className="md:col-span-7">
-              <h2 className="heading text-[clamp(2.25rem,1.5rem+2.6vw,3.5rem)]">{dict.home.lawyersTitle}</h2>
-              <p className="mt-5 max-w-xl text-ink-soft">{dict.home.lawyersLede}</p>
-            </div>
-            <Link href={href(locale, "team")} className="link font-medium md:col-span-4 md:col-start-9 md:justify-self-end">
+      {/* Team */}
+      <section className="py-24 md:py-32">
+        <div className="shell">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <SectionHeading eyebrow={t.teamEyebrow} title={t.lawyersTitle} lede={t.lawyersLede} />
+            <Link href={href(locale, "team")} className="btn btn-quiet">
               {dict.common.meetTeam}
+              <ArrowRight aria-hidden className="h-4 w-4" />
             </Link>
           </div>
-          <ul className="mt-14 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-5">
-            {lawyers.map((m) => (
+          <ul className="mt-14 grid grid-cols-1 gap-6 xs:grid-cols-2 lg:grid-cols-3">
+            {lawyers.slice(0, 6).map((m) => (
               <li key={m.id}>
-                <Link href={href(locale, "team", m.slug)} className="group block">
-                  <Portrait
+                <Link href={href(locale, "team", m.slug)} className="block">
+                  <MemberCard
                     name={m.name}
+                    title={m.title}
                     src={m.photo}
                     position={m.photoPosition}
                     pendingLabel={dict.common.photoPending}
-                    sizes="(min-width: 1024px) 18vw, (min-width: 768px) 30vw, 46vw"
+                    sizes="(min-width: 1024px) 30vw, (min-width: 480px) 45vw, 100vw"
                   />
-                  <p className="mt-4 font-serif text-[1.1875rem] leading-tight group-hover:underline group-hover:decoration-1 group-hover:underline-offset-4">
-                    {m.name}
-                  </p>
-                  <p className="mt-1 text-[0.875rem] text-slate">{m.title}</p>
                 </Link>
               </li>
             ))}
@@ -207,44 +336,26 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* International networks */}
-      <section className="bg-stone">
-        <div className="shell grid gap-12 py-24 md:grid-cols-12 md:py-32">
-          <div className="md:col-span-4">
-            <h2 className="heading text-[clamp(2rem,1.5rem+2vw,3rem)]">{dict.home.networksTitle}</h2>
-            <p className="mt-6 text-ink-soft">{dict.home.networksBody}</p>
-            <Link href={href(locale, "firm")} className="link mt-8 inline-block font-medium">
-              {dict.home.introLink}
+      {/* News */}
+      <section className="bg-stone py-24 md:py-32">
+        <div className="shell">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <SectionHeading eyebrow={t.newsEyebrow} title={t.insightsTitle} />
+            <Link href={href(locale, "insights")} className="btn btn-quiet">
+              {dict.common.allInsights}
+              <ArrowRight aria-hidden className="h-4 w-4" />
             </Link>
           </div>
-          <figure className="md:col-span-5">
-            <div className="relative aspect-[4/3] overflow-hidden bg-stone-deep">
-              <Image src="/images/africa-regional-meeting.jpg" alt={dict.home.africaCaption} fill quality={80} sizes="(min-width: 768px) 38vw, 100vw" className="object-cover" />
-            </div>
-            <figcaption className="mt-3 text-2xs text-slate">{dict.home.africaCaption}</figcaption>
-          </figure>
-          <figure className="md:col-span-3 md:self-end">
-            <div className="relative aspect-[4/3] overflow-hidden bg-stone-deep">
-              <Image src="/images/tag-alliances-meeting.jpg" alt={dict.home.tagCaption} fill quality={80} sizes="(min-width: 768px) 24vw, 100vw" className="object-cover" />
-            </div>
-            <figcaption className="mt-3 text-2xs text-slate">{dict.home.tagCaption}</figcaption>
-          </figure>
-        </div>
-      </section>
-
-      {/* News & insights */}
-      <section className="shell py-24 md:py-32">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <h2 className="heading text-[clamp(2.25rem,1.5rem+2.6vw,3.5rem)]">{dict.home.insightsTitle}</h2>
-          <Link href={href(locale, "insights")} className="link font-medium">
-            {dict.common.allInsights}
-          </Link>
-        </div>
-        <div className="mt-12">
           {articles.length === 0 ? (
-            <p className="border-t border-rule py-8 text-slate">{dict.home.insightsEmpty}</p>
+            <p className="card mt-12 p-8 text-slate">{t.insightsEmpty}</p>
           ) : (
-            articles.map((a, i) => <ArticleItem key={a.id} article={a} locale={locale} dict={dict} withImage={i === 0} />)
+            <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {articles.map((a) => (
+                <li key={a.id}>
+                  <ArticleCard article={a} locale={locale} dict={dict} />
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </section>

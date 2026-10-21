@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArticleItem, Breadcrumb, ContactBand } from "@/components/site/blocks";
+import { ArticleCard, ContactBand } from "@/components/site/blocks";
 import { ArticleView } from "@/components/site/ArticleView";
 import { JsonLd } from "@/components/site/JsonLd";
 import { getArticle, getArticles } from "@/lib/data";
@@ -48,15 +48,20 @@ export default async function ArticlePage({ params }: Props) {
 
   return (
     <>
-      <Breadcrumb items={[{ label: dict.common.backToInsights, href: href(locale, "insights") }, { label: article.title }]} />
       <ArticleView article={article} locale={locale} dict={dict} />
 
       {related.length > 0 && (
-        <section className="shell pb-24 md:pb-32">
-          <h2 className="heading pb-6 text-[clamp(1.75rem,1.4rem+1.4vw,2.5rem)]">{dict.insightsPage.related}</h2>
-          {related.map((a) => (
-            <ArticleItem key={a.id} article={a} locale={locale} dict={dict} />
-          ))}
+        <section className="bg-stone py-20 md:py-24">
+          <div className="shell">
+            <h2 className="heading text-[clamp(1.75rem,1.4rem+1.4vw,2.5rem)]">{dict.insightsPage.related}</h2>
+            <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((a) => (
+                <li key={a.id}>
+                  <ArticleCard article={a} locale={locale} dict={dict} />
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
       )}
 

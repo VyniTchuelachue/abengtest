@@ -41,7 +41,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
           </Link>
         </span>
       </div>
-      <ArticleView article={article} locale={locale} dict={getDictionary(locale)} />
+      <ArticleView article={article} locale={locale} dict={getDictionary(locale)} crumbs={false} />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import type { Dictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/lib/routes";
 
 const field =
-  "mt-2 block w-full border border-rule bg-white/60 px-4 py-3 text-[1rem] text-ink transition-colors placeholder:text-slate/70 hover:border-slate focus:border-ink focus:outline-none aria-[invalid=true]:border-danger";
+  "mt-2 block w-full rounded-xl border border-rule bg-stone/60 px-4 py-3 text-[1rem] text-ink transition-colors placeholder:text-slate/70 hover:border-slate focus:border-gold focus:bg-white focus:outline-none focus:ring-2 focus:ring-gold/30 aria-[invalid=true]:border-danger";
 
 export function ContactForm({ locale, t }: { locale: Locale; t: Dictionary["contactPage"] }) {
   const [state, action, pending] = useActionState<ContactState, FormData>(sendMessage, { status: "idle" });
@@ -22,7 +22,7 @@ export function ContactForm({ locale, t }: { locale: Locale; t: Dictionary["cont
 
   if (state.status === "success") {
     return (
-      <div ref={statusRef} tabIndex={-1} role="status" className="border-t-2 border-success bg-white/60 p-8 focus:outline-none">
+      <div ref={statusRef} tabIndex={-1} role="status" className="rounded-2xl border border-success/30 bg-[#eef6f1] p-8 focus:outline-none">
         <h3 className="heading text-[1.75rem]">{t.successTitle}</h3>
         <p className="mt-3 text-ink-soft">{t.successBody}</p>
       </div>
@@ -44,7 +44,7 @@ export function ContactForm({ locale, t }: { locale: Locale; t: Dictionary["cont
       </div>
 
       {state.status === "error" && (
-        <div ref={statusRef} tabIndex={-1} role="alert" className="border-l-2 border-danger bg-white/60 px-5 py-4 text-[0.9375rem] text-danger focus:outline-none">
+        <div ref={statusRef} tabIndex={-1} role="alert" className="rounded-xl border border-danger/30 bg-[#fbefef] px-5 py-4 text-[0.9375rem] text-danger focus:outline-none">
           {t.errorBody}
         </div>
       )}
@@ -79,7 +79,7 @@ export function ContactForm({ locale, t }: { locale: Locale; t: Dictionary["cont
         {err.message && <span id="err-message" className="mt-1.5 block text-[0.875rem] font-normal text-danger">{t.errors.message}</span>}
       </label>
       <p className="text-[0.8125rem] leading-relaxed text-slate">{t.disclaimer}</p>
-      <button type="submit" disabled={pending} className="btn btn-primary disabled:opacity-60">
+      <button type="submit" disabled={pending} className="btn btn-gold disabled:opacity-60">
         {pending ? t.sending : t.send}
       </button>
     </form>
