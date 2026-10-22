@@ -80,7 +80,7 @@ check(
   "upload cover",
   await supabase.storage
     .from("media")
-    .upload(cover, fs.readFileSync("public/images/roland-abeng-office.jpg"), { contentType: "image/jpeg", upsert: true }),
+    .upload(cover, fs.readFileSync("public/images/roland-abeng-office-v2.jpg"), { contentType: "image/jpeg", upsert: true }),
 );
 
 const articles = [

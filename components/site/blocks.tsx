@@ -15,7 +15,7 @@ export function PageIntro({
   lede,
   eyebrow,
   crumbs,
-  image = "/images/team.jpg",
+  image = "/images/team-v2.jpg",
   children,
 }: {
   title: string;

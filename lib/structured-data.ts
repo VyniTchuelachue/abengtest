@@ -12,7 +12,7 @@ export function legalServiceSchema(locale: Locale) {
     name: "The Abeng Law Firm",
     url: `${siteUrl}${href(locale)}`,
     logo: `${siteUrl}/images/crest.png`,
-    image: `${siteUrl}/images/team.jpg`,
+    image: `${siteUrl}/images/team-v2.jpg`,
     foundingDate: "1998",
     founder: { "@type": "Person", name: "Roland Abeng" },
     telephone: phones[0],

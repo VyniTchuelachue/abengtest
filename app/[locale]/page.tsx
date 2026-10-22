@@ -66,7 +66,7 @@ export default async function HomePage({ params }: Props) {
     <>
       {/* Hero */}
       <section className="relative isolate overflow-hidden bg-charcoal text-white">
-        <Image src="/images/team.jpg" alt="" fill priority sizes="100vw" quality={65} className="-z-10 object-cover opacity-20" style={{ objectPosition: "50% 20%" }} />
+        <Image src="/images/team-v2.jpg" alt="" fill priority sizes="100vw" quality={65} className="-z-10 object-cover opacity-20" style={{ objectPosition: "50% 20%" }} />
         <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-charcoal via-charcoal/90 to-charcoal/55" />
         <div className="shell grid items-center gap-12 pb-32 pt-14 md:pb-40 lg:grid-cols-12 lg:pt-20">
           <div className="lg:col-span-7">
@@ -116,7 +116,7 @@ export default async function HomePage({ params }: Props) {
                 <div className="absolute inset-0 overflow-hidden rounded-b-[2.5rem]">
                   <div className="absolute inset-x-[6%] bottom-0 top-[26%] rounded-[2.5rem] bg-gold" />
                   <Image
-                    src="/images/roland-abeng-cutout.webp"
+                    src="/images/roland-abeng-cutout-v2.webp"
                     alt={`${partner.name}, ${partner.title}`}
                     fill
                     priority
@@ -165,7 +165,7 @@ export default async function HomePage({ params }: Props) {
         <div className="shell grid items-center gap-14 lg:grid-cols-12">
           <div className="relative lg:col-span-6">
             <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem]">
-              <Image src="/images/team.jpg" alt={t.heroCaption} fill sizes="(min-width: 1024px) 45vw, 100vw" quality={75} className="object-cover" style={{ objectPosition: "50% 20%" }} />
+              <Image src="/images/team-v2.jpg" alt={t.heroCaption} fill sizes="(min-width: 1024px) 45vw, 100vw" quality={75} className="object-cover" style={{ objectPosition: "50% 20%" }} />
             </div>
             <div className="absolute -bottom-8 right-6 hidden w-48 overflow-hidden rounded-[1.5rem] border-[6px] border-white shadow-xl sm:block">
               <div className="relative aspect-[4/3]">

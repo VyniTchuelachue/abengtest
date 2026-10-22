@@ -39,7 +39,7 @@ export default async function FirmPage({ params }: Props) {
         <div className="shell grid items-center gap-14 lg:grid-cols-12">
           <div className="relative lg:col-span-6">
             <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem]">
-              <Image src="/images/team.jpg" alt={dict.home.heroCaption} fill priority quality={80} sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition: "50% 15%" }} />
+              <Image src="/images/team-v2.jpg" alt={dict.home.heroCaption} fill priority quality={80} sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition: "50% 15%" }} />
             </div>
             <div className="absolute -bottom-6 left-6 flex items-center gap-3 rounded-2xl bg-white px-5 py-4 shadow-xl">
               <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gold">
@@ -133,7 +133,7 @@ export default async function FirmPage({ params }: Props) {
           <div className="shell">
             <Link href={href(locale, "team", partner.slug)} className="card card-hover group grid overflow-hidden md:grid-cols-12">
               <div className="relative aspect-[4/5] md:col-span-4 md:aspect-auto md:min-h-[26rem]">
-                <Image src="/images/roland-abeng-office.jpg" alt={`${partner.name}, ${partner.title}`} fill quality={80} sizes="(min-width: 768px) 32vw, 100vw" className="object-cover" style={{ objectPosition: "50% 30%" }} />
+                <Image src="/images/roland-abeng-office-v2.jpg" alt={`${partner.name}, ${partner.title}`} fill quality={80} sizes="(min-width: 768px) 32vw, 100vw" className="object-cover" style={{ objectPosition: "50% 30%" }} />
               </div>
               <div className="flex flex-col p-8 md:col-span-8 md:p-12">
                 <p className="eyebrow self-start">{t.leadershipTitle}</p>

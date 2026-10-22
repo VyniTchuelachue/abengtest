@@ -47,7 +47,7 @@ export default async function TeamPage({ params }: Props) {
             <Link href={href(locale, "team", partner.slug)} className="card card-hover group grid overflow-hidden md:grid-cols-12">
               <div className="relative aspect-[4/5] md:col-span-5 md:aspect-auto md:min-h-[32rem]">
                 <Image
-                  src="/images/roland-abeng-office.jpg"
+                  src="/images/roland-abeng-office-v2.jpg"
                   alt={`${partner.name}, ${partner.title}`}
                   fill
                   priority

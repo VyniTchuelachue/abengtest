@@ -14,7 +14,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <main className="grid min-h-dvh lg:grid-cols-2">
       <div className="relative hidden bg-ink lg:block">
-        <Image src="/images/team.jpg" alt="" fill priority sizes="50vw" className="object-cover opacity-55" style={{ objectPosition: "40% 20%" }} />
+        <Image src="/images/team-v2.jpg" alt="" fill priority sizes="50vw" className="object-cover opacity-55" style={{ objectPosition: "40% 20%" }} />
         <div className="absolute inset-x-0 bottom-0 p-12 text-paper">
           <p className="font-serif text-3xl">The Abeng Law Firm</p>
           <p className="mt-2 text-mist">Administration du site</p>
