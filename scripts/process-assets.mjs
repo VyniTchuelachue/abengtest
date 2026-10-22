@@ -34,10 +34,11 @@ console.log("roland-abeng-office-v2.jpg");
 await sharp(path.join(assets, "intl-africa-strategy.png"))
   .resize({ width: 1600, withoutEnlargement: true })
   .jpeg(jpeg)
-  .toFile(path.join(out, "africa-regional-meeting.jpg"));
-await sharp(path.join(assets, "intl-tag-alliances.jpeg"))
+  .toFile(path.join(out, "africa-regional-meeting-v2.jpg"));
+await sharp(path.join(assets, "intl-tag-alliances.png"))
+  .resize({ width: 1600, withoutEnlargement: true })
   .jpeg(jpeg)
-  .toFile(path.join(out, "tag-alliances-meeting.jpg"));
+  .toFile(path.join(out, "tag-alliances-meeting-v2.jpg"));
 console.log("international photos");
 
 // Crest: trim the transparent margin, then export a web logo and icons.

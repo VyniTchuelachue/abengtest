@@ -169,7 +169,7 @@ export default async function HomePage({ params }: Props) {
             </div>
             <div className="absolute -bottom-8 right-6 hidden w-48 overflow-hidden rounded-[1.5rem] border-[6px] border-white shadow-xl sm:block">
               <div className="relative aspect-[4/3]">
-                <Image src="/images/tag-alliances-meeting.jpg" alt={t.tagCaption} fill sizes="200px" className="object-cover" />
+                <Image src="/images/tag-alliances-meeting-v2.jpg" alt={t.tagCaption} fill sizes="200px" className="object-cover" />
               </div>
             </div>
           </div>
@@ -273,7 +273,7 @@ export default async function HomePage({ params }: Props) {
       {/* Why choose us */}
       <section className="relative overflow-hidden bg-charcoal text-white">
         <div className="absolute inset-y-0 right-0 hidden w-[45%] lg:block">
-          <Image src="/images/africa-regional-meeting.jpg" alt={t.africaCaption} fill sizes="45vw" className="object-cover" />
+          <Image src="/images/africa-regional-meeting-v2.jpg" alt={t.africaCaption} fill sizes="45vw" className="object-cover" />
           <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/40 to-transparent" />
         </div>
         <div className="shell relative py-24 md:py-32">
