@@ -71,9 +71,14 @@ export default async function HomePage({ params }: Props) {
         <div className="shell grid items-center gap-12 pb-32 pt-14 md:pb-40 lg:grid-cols-12 lg:pt-20">
           <div className="lg:col-span-7">
             <p className="eyebrow hero-fade">{t.eyebrow}</p>
-            <h1 className="display mt-6 text-[clamp(2.5rem,1.5rem+4.2vw,4.75rem)]">
+            {/* One line per phrase on large screens; French needs a slightly smaller size to fit. */}
+            <h1
+              className={`display mt-6 ${
+                locale === "fr" ? "text-[clamp(2.25rem,1.2rem+3.4vw,4.4rem)]" : "text-[clamp(2.5rem,1.5rem+4.2vw,4.75rem)]"
+              }`}
+            >
               {t.heroLines.map((line) => (
-                <span key={line} className="hero-line">
+                <span key={line} className="hero-line lg:whitespace-nowrap">
                   {line}
                 </span>
               ))}
@@ -122,15 +127,6 @@ export default async function HomePage({ params }: Props) {
               </div>
               <div className="hero-stat absolute -left-2 bottom-24 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-ink shadow-[0_20px_40px_-20px_rgb(0_0_0/0.6)] sm:-left-6">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold">
-                  <Landmark aria-hidden className="h-5 w-5" />
-                </span>
-                <span>
-                  <span className="block font-display text-[1.25rem] font-bold leading-none">1998</span>
-                  <span className="text-[0.75rem] text-slate">{t.statFounded}</span>
-                </span>
-              </div>
-              <div className="hero-stat absolute -right-2 top-[38%] sm:top-[22%] flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-ink shadow-[0_20px_40px_-20px_rgb(0_0_0/0.6)] sm:-right-6">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold">
                   <Award aria-hidden className="h-5 w-5" />
                 </span>
                 <span className="max-w-[9.5rem]">
@@ -175,10 +171,6 @@ export default async function HomePage({ params }: Props) {
               <div className="relative aspect-[4/3]">
                 <Image src="/images/tag-alliances-meeting.jpg" alt={t.tagCaption} fill sizes="200px" className="object-cover" />
               </div>
-            </div>
-            <div className="absolute -top-6 left-6 flex h-28 w-28 flex-col items-center justify-center rounded-full bg-gold text-center text-ink shadow-lg">
-              <span className="font-display text-[0.75rem] font-semibold uppercase tracking-[0.16em]">{locale === "fr" ? "Depuis" : "Since"}</span>
-              <span className="font-display text-[1.75rem] font-bold leading-none">1998</span>
             </div>
           </div>
           <div className="lg:col-span-6">

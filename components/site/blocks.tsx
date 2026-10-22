@@ -95,18 +95,18 @@ export function ContactBand({ locale, dict }: { locale: Locale; dict: Dictionary
         <div className="relative overflow-hidden rounded-[2rem] bg-charcoal px-6 py-12 text-white sm:px-12 md:py-16">
           <div aria-hidden className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-gold/15" />
           <div aria-hidden className="absolute -bottom-32 right-24 h-64 w-64 rounded-full bg-gold/10" />
-          <div className="relative grid gap-10 md:grid-cols-12 md:items-center">
-            <div className="md:col-span-7">
+          <div className="relative grid gap-10 lg:grid-cols-12 lg:items-center">
+            <div className="lg:col-span-6">
               <p className="eyebrow">{dict.home.contactEyebrow}</p>
               <h2 className="heading mt-5 text-[clamp(1.875rem,1.4rem+2vw,2.75rem)]">{dict.contactBand.title}</h2>
               <p className="mt-4 max-w-xl text-white/75">{dict.contactBand.body}</p>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row md:col-span-5 md:flex-col md:items-end lg:flex-row lg:justify-end">
-              <Link href={href(locale, "contact")} className="btn btn-gold">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-nowrap lg:col-span-6 lg:justify-end">
+              <Link href={href(locale, "contact")} className="btn btn-gold min-h-14 whitespace-nowrap px-8 text-[1rem] sm:flex-1 lg:flex-none">
                 {dict.common.consult}
                 <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
-              <a href={telHref(phones[0])} className="btn btn-outline-light">
+              <a href={telHref(phones[0])} className="btn btn-outline-light min-h-14 whitespace-nowrap px-8 text-[1rem] sm:flex-1 lg:flex-none">
                 <Phone aria-hidden className="h-4 w-4 text-gold" />
                 {phones[0]}
               </a>
