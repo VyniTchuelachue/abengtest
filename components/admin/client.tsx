@@ -2,6 +2,7 @@
 
 import { startTransition, useEffect, useId, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { useT } from "./i18n";
 
 /**
  * Submits a form to a useActionState dispatcher without React's automatic
@@ -109,6 +110,7 @@ export function ConfirmAction({
   confirmLabel: string;
   className?: string;
 }) {
+  const t = useT();
   const dialog = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   return (
@@ -132,9 +134,9 @@ export function ConfirmAction({
           <p className="mt-3 text-[0.9375rem] text-ink-soft">{body}</p>
           <div className="mt-7 flex justify-end gap-3">
             <button type="button" className="btn btn-quiet" onClick={() => dialog.current?.close()}>
-              Annuler
+              {t("Annuler")}
             </button>
-            <SubmitButton pendingLabel="Suppression…" className="btn bg-danger text-white hover:bg-[#7f2222]">
+            <SubmitButton pendingLabel={t("Suppression…")} className="btn bg-danger text-white hover:bg-[#7f2222]">
               {confirmLabel}
             </SubmitButton>
           </div>
@@ -161,23 +163,24 @@ export function useUnsavedChanges(dirty: boolean) {
  * readers until then). Give it a `key` per message so each one starts visible.
  */
 export function Flash({ message, tone = "success" }: { message?: string; tone?: "success" | "error" }) {
+  const t = useT();
   const [visible, setVisible] = useState(Boolean(message));
   useEffect(() => {
     if (!message || tone === "error") return;
-    const t = setTimeout(() => setVisible(false), 6000);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setVisible(false), 6000);
+    return () => clearTimeout(timer);
   }, [message, tone]);
   if (!message || !visible) return null;
   return (
     <div
       role={tone === "error" ? "alert" : "status"}
-      className={`mb-6 flex items-start justify-between gap-4 border-l-2 px-4 py-3 text-[0.9375rem] ${
-        tone === "error" ? "border-danger bg-[#fbefef] text-danger" : "border-success bg-[#eef6f1] text-success"
+      className={`mb-6 flex items-start justify-between gap-4 rounded-xl border px-4 py-3 text-[0.9375rem] ${
+        tone === "error" ? "border-danger/30 bg-[#fbefef] text-danger" : "border-success/30 bg-[#eef6f1] text-success"
       }`}
     >
       <span>{message}</span>
       <button type="button" onClick={() => setVisible(false)} className="text-[0.8125rem] underline">
-        Fermer
+        {t("Fermer")}
       </button>
     </div>
   );

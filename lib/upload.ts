@@ -7,6 +7,13 @@ const MAX_BYTES = 15 * 1024 * 1024;
 
 export const acceptedImageTypes = ACCEPTED.join(",");
 
+/** Dashboard text for an upload failure, in the dashboard language. */
+export function uploadErrorText(t: (text: string, vars?: Record<string, string>) => string, e: unknown): string {
+  const message = e instanceof Error ? e.message : "Envoi impossible.";
+  const prefix = "Envoi impossible : ";
+  return message.startsWith(prefix) ? t("Envoi impossible : {detail}", { detail: message.slice(prefix.length) }) : t(message);
+}
+
 /**
  * Downscales a photo in the browser (keeps uploads light on slow connections),
  * then stores it in the public "media" bucket. Returns the storage path.

@@ -1,22 +1,27 @@
 import type { Metadata } from "next";
 import { MemberForm } from "@/components/admin/MemberForm";
 import { PageHeader } from "@/components/admin/ui";
+import { getAdminLocale, getT } from "@/lib/admin-i18n/server";
 import { requireStaff } from "@/lib/auth";
 
-export const metadata: Metadata = { title: "Ajouter un membre" };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getT())("Ajouter un membre") };
+}
 
 export default async function NewMemberPage() {
   const { supabase } = await requireStaff();
-  const { data: areas } = await supabase.from("practice_areas").select("id, title_fr, group_key, sort_order").order("sort_order");
+  const { data: areas } = await supabase.from("practice_areas").select("id, title_fr, title_en, group_key, sort_order").order("sort_order");
+  const t = await getT();
+  const locale = await getAdminLocale();
   return (
     <>
       <PageHeader
-        title="Ajouter un membre"
-        description="Le profil reste masqué tant que vous ne choisissez pas « Publié »."
-        back={{ href: "/admin/equipe", label: "Équipe" }}
+        title={t("Ajouter un membre")}
+        description={t("Le profil reste masqué tant que vous ne choisissez pas « Publié ».")}
+        back={{ href: "/admin/equipe", label: t("Équipe") }}
       />
       <MemberForm
-        practiceAreas={(areas ?? []).map((a) => ({ id: a.id, label: a.title_fr, group: a.group_key }))}
+        practiceAreas={(areas ?? []).map((a) => ({ id: a.id, label: (locale === "en" && a.title_en) || a.title_fr, group: a.group_key }))}
         values={{
           id: null,
           slug: "",

@@ -1,8 +1,9 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import { acceptedImageTypes, publicMediaUrl, uploadImage } from "@/lib/upload";
+import { acceptedImageTypes, publicMediaUrl, uploadErrorText, uploadImage } from "@/lib/upload";
 import { Spinner } from "./client";
+import { useT } from "./i18n";
 import { hintClass } from "./ui";
 
 type Props = {
@@ -18,6 +19,7 @@ type Props = {
 
 /** Upload with preview. The storage path travels with the form in a hidden input. */
 export function ImageField({ name, label, folder, initialPath, hint, aspect = "landscape", objectPosition, onChange }: Props) {
+  const t = useT();
   const [path, setPath] = useState(initialPath ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +36,7 @@ export function ImageField({ name, label, folder, initialPath, hint, aspect = "l
       setPath(uploaded);
       onChange?.(uploaded);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Envoi impossible.");
+      setError(uploadErrorText(t, e));
     } finally {
       setBusy(false);
       if (input.current) input.current.value = "";
@@ -72,19 +74,19 @@ export function ImageField({ name, label, folder, initialPath, hint, aspect = "l
           <img src={publicMediaUrl(path)} alt="" className="h-full w-full object-cover" style={{ objectPosition }} />
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center text-[0.875rem] text-slate">
-            <span>Glissez une image ici</span>
-            <span>ou</span>
+            <span>{t("Glissez une image ici")}</span>
+            <span>{t("ou")}</span>
           </div>
         )}
         {busy && (
           <div className="absolute inset-0 flex items-center justify-center gap-2 bg-white/80 text-[0.9375rem]" role="status">
-            <Spinner /> Envoi de l&apos;image…
+            <Spinner /> {t("Envoi de l'image…")}
           </div>
         )}
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
         <label className="btn btn-quiet min-h-9 cursor-pointer px-3 py-1.5 text-[0.875rem]">
-          {path ? "Remplacer l'image" : "Choisir une image"}
+          {path ? t("Remplacer l'image") : t("Choisir une image")}
           <input
             ref={input}
             type="file"
@@ -96,7 +98,7 @@ export function ImageField({ name, label, folder, initialPath, hint, aspect = "l
         </label>
         {path && (
           <button type="button" onClick={clear} className="btn btn-quiet min-h-9 px-3 py-1.5 text-[0.875rem] text-danger">
-            Retirer
+            {t("Retirer")}
           </button>
         )}
       </div>

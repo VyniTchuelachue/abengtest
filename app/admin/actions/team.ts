@@ -1,5 +1,6 @@
 "use server";
 
+import { localized } from "@/lib/admin-i18n/server";
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -59,7 +60,11 @@ const schema = z.object({
 
 export type MemberActionResult = ActionResult & { savedAt?: number };
 
-export async function saveMember(_: MemberActionResult, formData: FormData): Promise<MemberActionResult> {
+export async function saveMember(prev: MemberActionResult, formData: FormData): Promise<MemberActionResult> {
+  return localized(await saveMemberCore(prev, formData));
+}
+
+async function saveMemberCore(_: MemberActionResult, formData: FormData): Promise<MemberActionResult> {
   const { supabase } = await requireStaff();
   const raw = Object.fromEntries([...formData.entries()].filter(([k]) => k !== "practice_area"));
   const parsed = schema.safeParse(raw);

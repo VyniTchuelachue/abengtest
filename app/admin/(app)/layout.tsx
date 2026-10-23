@@ -1,5 +1,6 @@
 import { ExternalLink, LogOut } from "lucide-react";
 import { Sidebar } from "@/components/admin/Sidebar";
+import { getAdminLocale, getT } from "@/lib/admin-i18n/server";
 import { requireStaff } from "@/lib/auth";
 import { signOut } from "../actions/session";
 
@@ -7,16 +8,18 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { supabase, staff, email } = await requireStaff();
+  const locale = await getAdminLocale();
+  const t = await getT();
   const { count: unread } = await supabase.from("contact_messages").select("id", { count: "exact", head: true }).eq("status", "new");
 
   const items = [
-    { href: "/admin", label: "Tableau de bord" },
-    { href: "/admin/actualites", label: "Actualités" },
-    { href: "/admin/equipe", label: "Équipe" },
-    { href: "/admin/messages", label: "Messages", badge: unread ?? 0 },
-    { href: "/admin/categories", label: "Catégories" },
-    ...(staff.role === "admin" ? [{ href: "/admin/utilisateurs", label: "Utilisateurs" }] : []),
-    { href: "/admin/compte", label: "Mon compte" },
+    { href: "/admin", label: t("Tableau de bord") },
+    { href: "/admin/actualites", label: t("Actualités") },
+    { href: "/admin/equipe", label: t("Équipe") },
+    { href: "/admin/messages", label: t("Messages"), badge: unread ?? 0 },
+    { href: "/admin/categories", label: t("Catégories") },
+    ...(staff.role === "admin" ? [{ href: "/admin/utilisateurs", label: t("Utilisateurs") }] : []),
+    { href: "/admin/compte", label: t("Mon compte") },
   ];
   const name = staff.full_name || email;
 
@@ -34,18 +37,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 <span className="block truncate font-medium text-white" title={email}>
                   {name}
                 </span>
-                <span className="block text-[0.75rem] uppercase tracking-[0.14em] text-gold">{staff.role === "admin" ? "Administrateur" : "Éditeur"}</span>
+                <span className="block text-[0.75rem] uppercase tracking-[0.14em] text-gold">{staff.role === "admin" ? t("Administrateur") : t("Éditeur")}</span>
               </span>
             </div>
             <div className="mt-5 flex items-center justify-between gap-3">
-              <a href="/fr" target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 transition-colors hover:text-white">
+              <a href={`/${locale}`} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 transition-colors hover:text-white">
                 <ExternalLink aria-hidden className="h-4 w-4" />
-                Voir le site
+                {t("Voir le site")}
               </a>
               <form action={signOut}>
                 <button type="submit" className="inline-flex items-center gap-1.5 transition-colors hover:text-white">
                   <LogOut aria-hidden className="h-4 w-4" />
-                  Se déconnecter
+                  {t("Se déconnecter")}
                 </button>
               </form>
             </div>

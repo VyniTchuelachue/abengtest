@@ -5,7 +5,8 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import { useRef, useState } from "react";
-import { acceptedImageTypes, publicMediaUrl, uploadImage } from "@/lib/upload";
+import { acceptedImageTypes, publicMediaUrl, uploadErrorText, uploadImage } from "@/lib/upload";
+import { useT } from "./i18n";
 
 type Props = {
   name: string;
@@ -59,6 +60,7 @@ export function RichTextEditor({ name, initialHtml, placeholder, label, invalid,
 }
 
 function Toolbar({ editor }: { editor: Editor }) {
+  const t = useT();
   const fileInput = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const state = useEditorState({
@@ -80,7 +82,7 @@ function Toolbar({ editor }: { editor: Editor }) {
 
   function setLink() {
     const previous = editor.getAttributes("link").href as string | undefined;
-    const url = window.prompt("Adresse du lien (laisser vide pour retirer le lien) :", previous ?? "https://");
+    const url = window.prompt(t("Adresse du lien (laisser vide pour retirer le lien) :"), previous ?? "https://");
     if (url === null) return;
     if (url.trim() === "" || url.trim() === "https://") {
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
@@ -94,10 +96,10 @@ function Toolbar({ editor }: { editor: Editor }) {
     setUploading(true);
     try {
       const path = await uploadImage(file, "articles/inline", 1800);
-      const alt = window.prompt("Description de l'image (pour l'accessibilité) :", "") ?? "";
+      const alt = window.prompt(t("Description de l'image (pour l'accessibilité) :"), "") ?? "";
       editor.chain().focus().setImage({ src: publicMediaUrl(path), alt }).run();
     } catch (e) {
-      window.alert(e instanceof Error ? e.message : "Envoi impossible.");
+      window.alert(uploadErrorText(t, e));
     } finally {
       setUploading(false);
       if (fileInput.current) fileInput.current.value = "";
@@ -108,50 +110,50 @@ function Toolbar({ editor }: { editor: Editor }) {
     `min-w-9 rounded-lg px-2.5 py-1.5 text-[0.875rem] transition-colors ${active ? "bg-gold text-ink" : "text-ink hover:bg-stone"} disabled:opacity-40`;
 
   return (
-    <div role="toolbar" aria-label="Mise en forme" className="flex flex-wrap items-center gap-1 border-b border-rule bg-stone/60 px-2 py-1.5">
+    <div role="toolbar" aria-label={t("Mise en forme")} className="flex flex-wrap items-center gap-1 border-b border-rule bg-stone/60 px-2 py-1.5">
       <button type="button" className={btn(state.h2)} aria-pressed={state.h2} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
-        Titre
+        {t("Titre")}
       </button>
       <button type="button" className={btn(state.h3)} aria-pressed={state.h3} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
-        Sous-titre
+        {t("Sous-titre")}
       </button>
       <span className="mx-1 h-5 w-px bg-rule" aria-hidden />
-      <button type="button" className={`${btn(state.bold)} font-bold`} aria-pressed={state.bold} aria-label="Gras" onClick={() => editor.chain().focus().toggleBold().run()}>
-        G
+      <button type="button" className={`${btn(state.bold)} font-bold`} aria-pressed={state.bold} aria-label={t("Gras")} onClick={() => editor.chain().focus().toggleBold().run()}>
+        {t("G")}
       </button>
-      <button type="button" className={`${btn(state.italic)} italic`} aria-pressed={state.italic} aria-label="Italique" onClick={() => editor.chain().focus().toggleItalic().run()}>
+      <button type="button" className={`${btn(state.italic)} italic`} aria-pressed={state.italic} aria-label={t("Italique")} onClick={() => editor.chain().focus().toggleItalic().run()}>
         I
       </button>
-      <button type="button" className={`${btn(state.underline)} underline`} aria-pressed={state.underline} aria-label="Souligné" onClick={() => editor.chain().focus().toggleUnderline().run()}>
-        S
+      <button type="button" className={`${btn(state.underline)} underline`} aria-pressed={state.underline} aria-label={t("Souligné")} onClick={() => editor.chain().focus().toggleUnderline().run()}>
+        {t("S")}
       </button>
       <span className="mx-1 h-5 w-px bg-rule" aria-hidden />
       <button type="button" className={btn(state.bullet)} aria-pressed={state.bullet} onClick={() => editor.chain().focus().toggleBulletList().run()}>
-        • Liste
+        • {t("Liste")}
       </button>
       <button type="button" className={btn(state.ordered)} aria-pressed={state.ordered} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
-        1. Liste
+        1. {t("Liste")}
       </button>
       <button type="button" className={btn(state.quote)} aria-pressed={state.quote} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
-        Citation
+        {t("Citation")}
       </button>
       <span className="mx-1 h-5 w-px bg-rule" aria-hidden />
       <button type="button" className={btn(state.link)} aria-pressed={state.link} onClick={setLink}>
-        Lien
+        {t("Lien")}
       </button>
       <button type="button" className={btn(false)} disabled={uploading} onClick={() => fileInput.current?.click()}>
-        {uploading ? "Envoi…" : "Image"}
+        {uploading ? t("Envoi…") : t("Image")}
       </button>
       <input ref={fileInput} type="file" accept={acceptedImageTypes} className="sr-only" tabIndex={-1} onChange={(e) => void insertImage(e.target.files?.[0])} />
       <button type="button" className={btn(false)} onClick={() => editor.chain().focus().setHorizontalRule().run()}>
-        Séparateur
+        {t("Séparateur")}
       </button>
       <span className="ml-auto flex gap-1">
         <button type="button" className={btn(false)} disabled={!state.canUndo} onClick={() => editor.chain().focus().undo().run()}>
-          Annuler
+          {t("Annuler")}
         </button>
         <button type="button" className={btn(false)} disabled={!state.canRedo} onClick={() => editor.chain().focus().redo().run()}>
-          Rétablir
+          {t("Rétablir")}
         </button>
       </span>
     </div>

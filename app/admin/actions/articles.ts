@@ -1,5 +1,6 @@
 "use server";
 
+import { localized } from "@/lib/admin-i18n/server";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireStaff, type ActionResult } from "@/lib/auth";
@@ -45,7 +46,11 @@ function cleanBody(html: string | undefined): string | null {
   return plainText(safe) || safe.includes("<img") ? safe : null;
 }
 
-export async function saveArticle(_: ArticleActionResult, formData: FormData): Promise<ArticleActionResult> {
+export async function saveArticle(prev: ArticleActionResult, formData: FormData): Promise<ArticleActionResult> {
+  return localized(await saveArticleCore(prev, formData));
+}
+
+async function saveArticleCore(_: ArticleActionResult, formData: FormData): Promise<ArticleActionResult> {
   const { supabase } = await requireStaff();
   const parsed = schema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {

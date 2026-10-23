@@ -1,5 +1,6 @@
 "use server";
 
+import { localized } from "@/lib/admin-i18n/server";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin, requireStaff, type ActionResult } from "@/lib/auth";
@@ -31,7 +32,11 @@ const categorySchema = z.object({
   name_en: z.string().trim().min(2, "Indiquez le nom en anglais.").max(80),
 });
 
-export async function saveCategory(_: ActionResult, formData: FormData): Promise<ActionResult> {
+export async function saveCategory(prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  return localized(await saveCategoryCore(prev, formData));
+}
+
+async function saveCategoryCore(_: ActionResult, formData: FormData): Promise<ActionResult> {
   const { supabase } = await requireStaff();
   const parsed = categorySchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
@@ -67,7 +72,11 @@ const inviteSchema = z.object({
   role: z.enum(["admin", "editor"]),
 });
 
-export async function inviteStaff(_: ActionResult, formData: FormData): Promise<ActionResult> {
+export async function inviteStaff(prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  return localized(await inviteStaffCore(prev, formData));
+}
+
+async function inviteStaffCore(_: ActionResult, formData: FormData): Promise<ActionResult> {
   const { supabase } = await requireAdmin();
   const secret = secretClient();
   if (!secret) return { ok: false, message: "Les invitations nécessitent la clé secrète Supabase sur le serveur (SUPABASE_SECRET_KEY)." };

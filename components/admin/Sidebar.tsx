@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { LanguageSwitch, useT } from "./i18n";
 import { FolderOpen, LayoutDashboard, Mail, Menu, Newspaper, Shield, UserRound, Users, X, type LucideIcon } from "lucide-react";
 
 type Item = { href: string; label: string; badge?: number };
@@ -19,18 +20,20 @@ const icons: Record<string, LucideIcon> = {
 };
 
 function Brand() {
+  const t = useT();
   return (
     <span className="flex items-center gap-3 leading-none">
       <Image src="/images/crest.png" alt="" width={44} height={44} className="h-11 w-11" />
       <span className="flex flex-col">
         <span className="font-display text-[1.0625rem] font-semibold tracking-tight text-white">The Abeng Law Firm</span>
-        <span className="mt-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-gold">Administration</span>
+        <span className="mt-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-gold">{t("Administration")}</span>
       </span>
     </span>
   );
 }
 
 export function Sidebar({ items, footer }: { items: Item[]; footer: React.ReactNode }) {
+  const t = useT();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const isActive = (href: string) => (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));
@@ -38,14 +41,14 @@ export function Sidebar({ items, footer }: { items: Item[]; footer: React.ReactN
   return (
     <>
       <div className="sticky top-0 z-30 flex h-[4.5rem] items-center justify-between border-b border-white/10 bg-charcoal px-5 lg:hidden">
-        <Link href="/admin" aria-label="Tableau de bord">
+        <Link href="/admin" aria-label={t("Tableau de bord")}>
           <Brand />
         </Link>
         <button
           type="button"
           aria-expanded={open}
           aria-controls="admin-nav"
-          aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-label={open ? t("Fermer le menu") : t("Ouvrir le menu")}
           onClick={() => setOpen((v) => !v)}
           className="flex h-11 w-11 items-center justify-center rounded-full bg-gold text-ink"
         >
@@ -56,10 +59,19 @@ export function Sidebar({ items, footer }: { items: Item[]; footer: React.ReactN
         id="admin-nav"
         className={`${open ? "block" : "hidden"} bg-charcoal text-mist lg:fixed lg:inset-y-0 lg:left-0 lg:z-20 lg:flex lg:w-72 lg:flex-col`}
       >
-        <Link href="/admin" className="hidden border-b border-white/10 px-6 py-6 lg:block">
-          <Brand />
-        </Link>
-        <nav aria-label="Administration" className="flex-1 overflow-y-auto px-4 py-6">
+        <div className="hidden border-b border-white/10 px-6 py-6 lg:block">
+          <Link href="/admin" aria-label={t("Tableau de bord")}>
+            <Brand />
+          </Link>
+          <div className="mt-4">
+            <LanguageSwitch />
+          </div>
+        </div>
+        <div className="flex items-center justify-between border-b border-white/10 px-6 py-4 lg:hidden">
+          <span className="text-[0.8125rem]">{t("Langue")}</span>
+          <LanguageSwitch />
+        </div>
+        <nav aria-label={t("Administration")} className="flex-1 overflow-y-auto px-4 py-6">
           <ul className="space-y-1">
             {items.map((item) => {
               const Icon = icons[item.href] ?? LayoutDashboard;

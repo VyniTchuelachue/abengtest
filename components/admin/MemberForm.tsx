@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useActionState, useState } from "react";
 import { saveMember, type MemberActionResult } from "@/app/admin/actions/team";
 import { slugify } from "@/lib/format";
+import { href } from "@/lib/routes";
 import { ActionButton, Flash, useKeepValuesSubmit, useUnsavedChanges } from "./client";
+import { useAdminLocale, useT } from "./i18n";
 import { ImageField } from "./ImageField";
 import { groupLabels, hintClass, inputClass, labelClass, memberStatus, panelClass } from "./ui";
 
@@ -52,6 +54,8 @@ export function MemberForm({
   practiceAreas: { id: string; label: string; group: string }[];
   flash?: string;
 }) {
+  const t = useT();
+  const locale = useAdminLocale();
   const [state, action, pending] = useActionState<MemberActionResult, FormData>(saveMember, { ok: true, message: flash });
   const { onSubmit } = useKeepValuesSubmit(action);
   const [lang, setLang] = useState<Lang>("fr");
@@ -77,9 +81,9 @@ export function MemberForm({
         <Flash key={state.savedAt ?? state.message} message={state.message} tone={state.ok ? "success" : "error"} />
 
         <section className={`${panelClass} space-y-5 p-6`}>
-          <h2 className="font-sans text-[1rem] font-semibold">Identité</h2>
+          <h2 className="font-sans text-[1rem] font-semibold">{t("Identité")}</h2>
           <label className={labelClass}>
-            Nom complet
+            {t("Nom complet")}
             <input
               name="full_name"
               required
@@ -88,32 +92,32 @@ export function MemberForm({
               aria-invalid={errors.full_name ? true : undefined}
               className={inputClass}
             />
-            <span className={hintClass}>Tel qu&apos;il apparaît sur le site, par exemple « Jean-Aimé Kounga ».</span>
+            <span className={hintClass}>{t("Tel qu'il apparaît sur le site, par exemple « Jean-Aimé Kounga ».")}</span>
             {err("full_name")}
           </label>
           <div className="grid gap-5 sm:grid-cols-2">
             <label className={labelClass}>
-              Groupe
+              {t("Groupe")}
               <select name="group_key" defaultValue={values.group_key} className={inputClass}>
                 {Object.entries(groupLabels).map(([value, label]) => (
                   <option key={value} value={value}>
-                    {label}
+                    {t(label)}
                   </option>
                 ))}
               </select>
             </label>
             <label className={labelClass}>
-              Adresse de la page
+              {t("Adresse de la page")}
               <input name="slug" defaultValue={values.slug} placeholder={slugify(name)} className={`${inputClass} font-mono text-[0.8125rem]`} />
-              <span className={hintClass}>Générée depuis le nom si laissée vide.</span>
+              <span className={hintClass}>{t("Générée depuis le nom si laissée vide.")}</span>
             </label>
             <label className={labelClass}>
-              Email professionnel (facultatif)
+              {t("Email professionnel (facultatif)")}
               <input name="email" type="email" defaultValue={values.email ?? ""} aria-invalid={errors.email ? true : undefined} className={inputClass} />
               {err("email")}
             </label>
             <label className={labelClass}>
-              Profil LinkedIn (facultatif)
+              {t("Profil LinkedIn (facultatif)")}
               <input name="linkedin_url" type="url" defaultValue={values.linkedin_url ?? ""} placeholder="https://www.linkedin.com/in/…" aria-invalid={errors.linkedin_url ? true : undefined} className={inputClass} />
               {err("linkedin_url")}
             </label>
@@ -121,7 +125,7 @@ export function MemberForm({
         </section>
 
         <section className={panelClass}>
-          <div role="tablist" aria-label="Langue" className="flex gap-1 border-b border-rule px-4">
+          <div role="tablist" aria-label={t("Langue")} className="flex gap-1 border-b border-rule px-4">
             {(["fr", "en"] as const).map((l) => (
               <button
                 key={l}
@@ -140,40 +144,40 @@ export function MemberForm({
           {(["fr", "en"] as const).map((l) => (
             <div key={l} id={`mpanel-${l}`} role="tabpanel" aria-labelledby={`mtab-${l}`} hidden={lang !== l} className="space-y-5 p-6">
               <label className={labelClass}>
-                Fonction ({langNames[l]})
+                {t("Fonction ({lang})", { lang: langNames[l] })}
                 <input
                   name={`title_${l}`}
                   defaultValue={values[`title_${l}`]}
-                  placeholder={l === "fr" ? "Collaboratrice senior" : "Senior Associate"}
+                  placeholder={l === "fr" ? "Associée senior" : "Senior Associate"}
                   aria-invalid={errors[`title_${l}`] ? true : undefined}
                   className={inputClass}
                 />
                 {err(`title_${l}`)}
               </label>
               <label className={labelClass}>
-                Biographie ({langNames[l]})
+                {t("Biographie ({lang})", { lang: langNames[l] })}
                 <textarea name={`bio_${l}`} defaultValue={values[`bio_${l}`]} rows={12} className={`${inputClass} text-[1rem] leading-relaxed`} />
-                <span className={hintClass}>Laissez une ligne vide entre deux paragraphes.</span>
+                <span className={hintClass}>{t("Laissez une ligne vide entre deux paragraphes.")}</span>
               </label>
               <div className="grid gap-5 sm:grid-cols-2">
                 <label className={labelClass}>
-                  Domaines d&apos;intervention
+                  {t("Domaines d'intervention")}
                   <textarea name={`focus_areas_${l}`} defaultValue={joined(values[`focus_areas_${l}`])} rows={7} className={inputClass} />
-                  <span className={hintClass}>Un domaine par ligne.</span>
+                  <span className={hintClass}>{t("Un domaine par ligne.")}</span>
                 </label>
                 <label className={labelClass}>
-                  Formation et diplômes
+                  {t("Formation et diplômes")}
                   <textarea name={`qualifications_${l}`} defaultValue={joined(values[`qualifications_${l}`])} rows={7} className={inputClass} />
-                  <span className={hintClass}>Un diplôme par ligne.</span>
+                  <span className={hintClass}>{t("Un diplôme par ligne.")}</span>
                 </label>
                 <label className={labelClass}>
-                  Barreau (facultatif)
+                  {t("Barreau (facultatif)")}
                   <input name={`bar_admission_${l}`} defaultValue={values[`bar_admission_${l}`] ?? ""} className={inputClass} />
                 </label>
                 <label className={labelClass}>
-                  Langues
+                  {t("Langues")}
                   <textarea name={`languages_${l}`} defaultValue={joined(values[`languages_${l}`])} rows={3} className={inputClass} />
-                  <span className={hintClass}>Une langue par ligne.</span>
+                  <span className={hintClass}>{t("Une langue par ligne.")}</span>
                 </label>
               </div>
             </div>
@@ -181,9 +185,9 @@ export function MemberForm({
         </section>
 
         <fieldset className={`${panelClass} p-6`}>
-          <legend className="sr-only">Expertises</legend>
-          <h2 className="font-sans text-[1rem] font-semibold">Expertises du cabinet</h2>
-          <p className={hintClass}>Le profil apparaîtra parmi les contacts des expertises cochées (avocats uniquement).</p>
+          <legend className="sr-only">{t("Expertises")}</legend>
+          <h2 className="font-sans text-[1rem] font-semibold">{t("Expertises du cabinet")}</h2>
+          <p className={hintClass}>{t("Le profil apparaîtra parmi les contacts des expertises cochées (avocats uniquement).")}</p>
           <div className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
             {practiceAreas.map((a) => (
               <label key={a.id} className="flex items-start gap-2.5 text-[0.9375rem]">
@@ -198,51 +202,51 @@ export function MemberForm({
       <aside className="space-y-6">
         <div className={`${panelClass} space-y-4 p-5`}>
           <label className={labelClass}>
-            Visibilité
+            {t("Visibilité")}
             <select name="status" defaultValue={values.status} className={inputClass}>
               {Object.entries(memberStatus).map(([value, s]) => (
                 <option key={value} value={value}>
-                  {s.label}
+                  {t(s.label)}
                 </option>
               ))}
             </select>
-            <span className={hintClass}>« Masqué » retire temporairement le profil du site. « Inactif » correspond à un ancien membre.</span>
+            <span className={hintClass}>{t("« Masqué » retire temporairement le profil du site. « Inactif » correspond à un ancien membre.")}</span>
           </label>
           <label className="flex items-start gap-2.5 text-[0.9375rem]">
             <input type="checkbox" name="featured" defaultChecked={values.featured} className="mt-1 h-4 w-4 accent-gold" />
             <span>
-              Afficher sur la page d&apos;accueil
-              <span className={hintClass}>Pour les avocats présentés dans la section « Les avocats ».</span>
+              {t("Afficher sur la page d'accueil")}
+              <span className={hintClass}>{t("Pour les avocats présentés dans la section « Les avocats ».")}</span>
             </span>
           </label>
-          <ActionButton pending={pending} busy={pending} pendingLabel="Enregistrement…" className="btn btn-gold w-full">
-            {values.id ? "Enregistrer le profil" : "Créer le profil"}
+          <ActionButton pending={pending} busy={pending} pendingLabel={t("Enregistrement…")} className="btn btn-gold w-full">
+            {values.id ? t("Enregistrer le profil") : t("Créer le profil")}
           </ActionButton>
           {values.id && values.status === "published" && (
-            <Link href={`/fr/equipe/${values.slug}`} target="_blank" className="btn btn-quiet w-full">
-              Voir sur le site
+            <Link href={href(locale, "team", values.slug)} target="_blank" className="btn btn-quiet w-full">
+              {t("Voir sur le site")}
             </Link>
           )}
-          {dirty && <p className="text-[0.8125rem] text-warning">Modifications non enregistrées.</p>}
+          {dirty && <p className="text-[0.8125rem] text-warning">{t("Modifications non enregistrées.")}</p>}
         </div>
 
         <div className={`${panelClass} space-y-4 p-5`}>
           <ImageField
             name="photo_path"
-            label="Portrait"
+            label={t("Portrait")}
             folder="team"
             aspect="portrait"
             initialPath={values.photo_path}
             objectPosition={position}
-            hint="Photo verticale, de préférence sur fond gris neutre comme les autres portraits."
+            hint={t("Photo verticale, de préférence sur fond gris neutre comme les autres portraits.")}
             onChange={() => setDirty(true)}
           />
           <label className={labelClass}>
-            Cadrage
+            {t("Cadrage")}
             <select name="photo_position" value={position} onChange={(e) => setPosition(e.target.value)} className={inputClass}>
               {positions.map((p) => (
                 <option key={p.value} value={p.value}>
-                  {p.label}
+                  {t(p.label)}
                 </option>
               ))}
             </select>

@@ -5,6 +5,7 @@ import { useActionState, useState } from "react";
 import { saveArticle, type ArticleActionResult } from "@/app/admin/actions/articles";
 import { slugify } from "@/lib/format";
 import { ActionButton, Flash, useKeepValuesSubmit, useUnsavedChanges } from "./client";
+import { useT } from "./i18n";
 import { ImageField } from "./ImageField";
 import { RichTextEditor } from "./RichTextEditor";
 import { Badge, articleStatus, hintClass, inputClass, labelClass, panelClass } from "./ui";
@@ -50,6 +51,7 @@ export function ArticleForm({
   authors: Option[];
   flash?: string;
 }) {
+  const t = useT();
   const [state, action, pending] = useActionState<ArticleActionResult, FormData>(saveArticle, { ok: true, message: flash });
   const { onSubmit, intent } = useKeepValuesSubmit(action);
   const busy = (v: string) => pending && intent === v;
@@ -83,7 +85,7 @@ export function ArticleForm({
       <div className="min-w-0">
         <Flash key={state.savedAt ?? state.message} message={state.message} tone={state.ok ? "success" : "error"} />
 
-        <div role="tablist" aria-label="Langue de la version" className="flex gap-1 border-b border-rule">
+        <div role="tablist" aria-label={t("Langue de la version")} className="flex gap-1 border-b border-rule">
           {(["fr", "en"] as const).map((l) => (
             <button
               key={l}
@@ -97,20 +99,20 @@ export function ArticleForm({
             >
               {langNames[l]}
               <span
-                aria-label={titles[l] ? "version renseignée" : "version vide"}
+                aria-label={titles[l] ? t("version renseignée") : t("version vide")}
                 className={`h-2 w-2 rounded-full ${titles[l] ? "bg-success" : "bg-rule"}`}
               />
             </button>
           ))}
         </div>
         <p className={`${hintClass} mb-6`}>
-          Rédigez au moins une version. Une actualité sans traduction est affichée dans sa langue d&apos;origine, avec une mention.
+          {t("Rédigez au moins une version. Une actualité sans traduction est affichée dans sa langue d'origine, avec une mention.")}
         </p>
 
         {(["fr", "en"] as const).map((l) => (
           <div key={l} id={`panel-${l}`} role="tabpanel" aria-labelledby={`tab-${l}`} hidden={lang !== l} className="space-y-6">
             <label className={labelClass}>
-              Titre ({langNames[l]})
+              {t("Titre ({lang})", { lang: langNames[l] })}
               <input
                 name={`title_${l}`}
                 defaultValue={values[`title_${l}`] ?? ""}
@@ -122,19 +124,19 @@ export function ArticleForm({
               {errors[`title_${l}`] && <span className="mt-1.5 block text-[0.875rem] font-normal text-danger">{errors[`title_${l}`]}</span>}
             </label>
             <label className={labelClass}>
-              Chapô (résumé affiché dans les listes)
+              {t("Chapô (résumé affiché dans les listes)")}
               <textarea name={`excerpt_${l}`} defaultValue={values[`excerpt_${l}`] ?? ""} maxLength={600} rows={3} className={inputClass} />
-              <span className={hintClass}>Deux ou trois phrases. Elles servent aussi de description pour les moteurs de recherche.</span>
+              <span className={hintClass}>{t("Deux ou trois phrases. Elles servent aussi de description pour les moteurs de recherche.")}</span>
             </label>
             <div>
               <p id={`body-label-${l}`} className="text-[0.9375rem] font-medium">
-                Texte ({langNames[l]})
+                {t("Texte ({lang})", { lang: langNames[l] })}
               </p>
               <RichTextEditor
                 name={`body_${l}`}
                 initialHtml={values[`body_${l}`] ?? ""}
-                label={`Texte de l'actualité, version ${langNames[l]}`}
-                placeholder="Rédigez le contenu de l'actualité…"
+                label={t("Texte de l'actualité, version {lang}", { lang: langNames[l] })}
+                placeholder={t("Rédigez le contenu de l'actualité…")}
                 invalid={Boolean(errors[`body_${l}`])}
                 describedBy={errors[`body_${l}`] ? `body-err-${l}` : undefined}
                 onDirty={markDirty}
@@ -146,9 +148,9 @@ export function ArticleForm({
               )}
             </div>
             <label className={labelClass}>
-              Description de l&apos;image de couverture ({langNames[l]})
+              {t("Description de l'image de couverture ({lang})", { lang: langNames[l] })}
               <input name={`cover_alt_${l}`} defaultValue={values[`cover_alt_${l}`] ?? ""} maxLength={240} className={inputClass} />
-              <span className={hintClass}>Décrit l&apos;image pour les personnes malvoyantes et sert de légende.</span>
+              <span className={hintClass}>{t("Décrit l'image pour les personnes malvoyantes et sert de légende.")}</span>
             </label>
           </div>
         ))}
@@ -157,50 +159,50 @@ export function ArticleForm({
       <aside className="space-y-6">
         <div className={`${panelClass} p-5`}>
           <div className="flex items-center justify-between">
-            <p className="text-[0.9375rem] font-medium">Publication</p>
-            {values.id && <Badge tone={articleStatus[statusKey].tone}>{articleStatus[statusKey].label}</Badge>}
+            <p className="text-[0.9375rem] font-medium">{t("Publication")}</p>
+            {values.id && <Badge tone={articleStatus[statusKey].tone}>{t(articleStatus[statusKey].label)}</Badge>}
           </div>
           <label className={`${labelClass} mt-4`}>
-            Date de publication
+            {t("Date de publication")}
             <input type="datetime-local" value={dateLocal} onChange={(e) => setDateLocal(e.target.value)} className={inputClass} />
-            <span className={hintClass}>Laissez vide pour publier immédiatement. Une date future programme la parution.</span>
+            <span className={hintClass}>{t("Laissez vide pour publier immédiatement. Une date future programme la parution.")}</span>
           </label>
           <div className="mt-5 flex flex-col gap-2">
             {isPublished ? (
               <>
-                <ActionButton name="intent" value="save" pending={pending} busy={busy("save")} pendingLabel="Enregistrement…">
-                  Enregistrer les modifications
+                <ActionButton name="intent" value="save" pending={pending} busy={busy("save")} pendingLabel={t("Enregistrement…")}>
+                  {t("Enregistrer les modifications")}
                 </ActionButton>
-                <ActionButton name="intent" value="unpublish" pending={pending} busy={busy("unpublish")} pendingLabel="Retrait…" className="btn btn-quiet">
-                  Dépublier
+                <ActionButton name="intent" value="unpublish" pending={pending} busy={busy("unpublish")} pendingLabel={t("Retrait…")} className="btn btn-quiet">
+                  {t("Dépublier")}
                 </ActionButton>
               </>
             ) : (
               <>
-                <ActionButton name="intent" value="publish" pending={pending} busy={busy("publish")} pendingLabel="Publication…">
-                  Publier
+                <ActionButton name="intent" value="publish" pending={pending} busy={busy("publish")} pendingLabel={t("Publication…")}>
+                  {t("Publier")}
                 </ActionButton>
-                <ActionButton name="intent" value="draft" pending={pending} busy={busy("draft")} pendingLabel="Enregistrement…" className="btn btn-quiet">
-                  Enregistrer le brouillon
+                <ActionButton name="intent" value="draft" pending={pending} busy={busy("draft")} pendingLabel={t("Enregistrement…")} className="btn btn-quiet">
+                  {t("Enregistrer le brouillon")}
                 </ActionButton>
               </>
             )}
             {values.id ? (
               <Link href={`/admin/actualites/${values.id}/apercu`} target="_blank" className="btn btn-quiet">
-                Aperçu
+                {t("Aperçu")}
               </Link>
             ) : (
-              <p className={hintClass}>L&apos;aperçu est disponible après le premier enregistrement.</p>
+              <p className={hintClass}>{t("L'aperçu est disponible après le premier enregistrement.")}</p>
             )}
           </div>
-          {dirty && <p className="mt-3 text-[0.8125rem] text-warning">Modifications non enregistrées.</p>}
+          {dirty && <p className="mt-3 text-[0.8125rem] text-warning">{t("Modifications non enregistrées.")}</p>}
         </div>
 
         <div className={`${panelClass} space-y-5 p-5`}>
           <label className={labelClass}>
-            Catégorie
+            {t("Catégorie")}
             <select name="category_id" defaultValue={values.category_id ?? ""} className={inputClass}>
-              <option value="">Sans catégorie</option>
+              <option value="">{t("Sans catégorie")}</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.label}
@@ -209,9 +211,9 @@ export function ArticleForm({
             </select>
           </label>
           <label className={labelClass}>
-            Auteur
+            {t("Auteur")}
             <select name="author_id" defaultValue={values.author_id ?? ""} className={inputClass}>
-              <option value="">Le cabinet</option>
+              <option value="">{t("Le cabinet")}</option>
               {authors.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.label}
@@ -220,17 +222,16 @@ export function ArticleForm({
             </select>
           </label>
           <label className={labelClass}>
-            Adresse de la page
+            {t("Adresse de la page")}
             <input
               name="slug"
               value={slug}
-              placeholder={suggestedSlug || "titre-de-l-actualite"}
+              placeholder={suggestedSlug || t("titre-de-l-actualite")}
               onChange={(e) => setSlug(e.target.value)}
               className={`${inputClass} font-mono text-[0.8125rem]`}
             />
             <span className={hintClass}>
-              /fr/actualites/<strong className="font-medium text-ink-soft">{slugify(slug) || suggestedSlug || "…"}</strong>. Générée depuis le titre si
-              laissée vide.
+              /fr/actualites/<strong className="font-medium text-ink-soft">{slugify(slug) || suggestedSlug || "…"}</strong>. {t("Générée depuis le titre si laissée vide.")}
             </span>
           </label>
         </div>
@@ -238,10 +239,10 @@ export function ArticleForm({
         <div className={`${panelClass} p-5`}>
           <ImageField
             name="cover_path"
-            label="Image de couverture"
+            label={t("Image de couverture")}
             folder="articles"
             initialPath={values.cover_path}
-            hint="Format paysage conseillé (au moins 1600 px de large)."
+            hint={t("Format paysage conseillé (au moins 1600 px de large).")}
             onChange={markDirty}
           />
         </div>
