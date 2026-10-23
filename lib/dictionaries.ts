@@ -744,6 +744,6 @@ export function getDictionary(locale: Locale): Dictionary {
   return dictionaries[locale];
 }
 
-export const phones = ["+237 677 78 08 78", "+237 233 43 75 79"];
+export const phones = ["+237 233420208"];
 export const officeCoordinates = { lat: 4.0290645, lng: 9.7019888 };
 export const chambersProfileUrl = "https://chambers.com/law-firm/the-abeng-law-firm-global-2:22621119";
