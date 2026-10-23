@@ -11,7 +11,7 @@ const en = {
     firm: "The firm",
     practice: "Practice areas",
     team: "Team",
-    insights: "News & insights",
+    insights: "Insights",
     careers: "Careers",
     contact: "Contact",
     menu: "Menu",

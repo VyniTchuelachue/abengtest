@@ -78,8 +78,8 @@ export function Header({ locale, nav, phones, consult, addressShort }: Props) {
 
       {/* Main bar */}
       <div className="border-b border-white/10 bg-charcoal/95 backdrop-blur-md">
-        <div className="shell flex h-[4.5rem] items-center justify-between gap-6 xl:h-20">
-          <Link href={href(locale)} aria-label={nav.home} className="flex items-center gap-3">
+        <div className="shell flex h-[4.5rem] items-center justify-between gap-4 lg:h-20 xl:gap-6">
+          <Link href={href(locale)} aria-label={nav.home} className="flex flex-none items-center gap-3 whitespace-nowrap">
             <Image src="/images/crest.png" alt="" width={48} height={48} priority className="h-11 w-11 xl:h-12 xl:w-12" />
             <span className="flex flex-col leading-none">
               <span className="font-display text-[1.0625rem] font-semibold tracking-tight text-white xl:text-[1.1875rem]">The Abeng Law Firm</span>
@@ -89,19 +89,19 @@ export function Header({ locale, nav, phones, consult, addressShort }: Props) {
             </span>
           </Link>
 
-          <nav aria-label={nav.primary} className="hidden items-center gap-1 xl:flex">
+          <nav aria-label={nav.primary} className="hidden items-center gap-0.5 lg:flex xl:gap-1">
             {items.map((key) => (
               <Link
                 key={key}
                 href={href(locale, key)}
                 aria-current={isActive(key) ? "page" : undefined}
-                className="relative whitespace-nowrap rounded-full px-3.5 py-2 font-display text-[0.9375rem] font-medium text-white/80 transition-colors hover:text-white aria-[current=page]:text-gold"
+                className="relative whitespace-nowrap rounded-full px-2 py-2 font-display text-[0.875rem] font-medium text-white/80 xl:px-3.5 xl:text-[0.9375rem] transition-colors hover:text-white aria-[current=page]:text-gold"
               >
                 {nav[key]}
               </Link>
             ))}
-            <Link href={href(locale, "contact")} className="btn btn-gold ml-4 min-h-11 whitespace-nowrap px-5 py-2">
-              <CalendarCheck aria-hidden className="h-4 w-4" />
+            <Link href={href(locale, "contact")} className="btn btn-gold ml-2 min-h-11 whitespace-nowrap px-4 py-2 xl:ml-4 xl:px-5">
+              <CalendarCheck aria-hidden className="hidden h-4 w-4 xl:block" />
               {consult}
             </Link>
           </nav>
@@ -109,7 +109,7 @@ export function Header({ locale, nav, phones, consult, addressShort }: Props) {
           <button
             ref={menuButton}
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-gold text-ink xl:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-gold text-ink lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? nav.close : nav.menu}
@@ -120,7 +120,7 @@ export function Header({ locale, nav, phones, consult, addressShort }: Props) {
         </div>
       </div>
 
-      <div id="mobile-menu" hidden={!open} className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto md:top-[7rem] bg-charcoal xl:hidden">
+      <div id="mobile-menu" hidden={!open} className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto md:top-[7rem] bg-charcoal lg:hidden">
         <nav aria-label={nav.primary} className="shell flex min-h-full flex-col py-6">
           <ul className="flex flex-col">
             {items.map((key) => (
