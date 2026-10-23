@@ -29,7 +29,6 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthShell title={t("Mot de passe oublié")}>
-      <title>{`${t("Mot de passe oublié")} · ${t("Administration Abeng Law")}`}</title>
       {sent ? (
         <p role="status" className="mt-6 rounded-xl border border-success/30 bg-[#eef6f1] px-4 py-3 text-[0.9375rem] text-success">
           {t("Si cette adresse correspond à un accès, un email contenant un lien de réinitialisation vient d'être envoyé.")}
