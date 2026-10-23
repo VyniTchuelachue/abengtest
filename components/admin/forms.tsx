@@ -35,7 +35,7 @@ export function CategoryForm({ category }: { category?: { id: string; name_fr: s
         Nom en anglais
         <input name="name_en" required defaultValue={category?.name_en} className={inputClass} />
       </label>
-      <ActionButton pending={pending} busy={pending} pendingLabel="Enregistrement…" className={category ? "btn btn-quiet" : "btn btn-primary"}>
+      <ActionButton pending={pending} busy={pending} pendingLabel="Enregistrement…" className={category ? "btn btn-quiet" : "btn btn-gold"}>
         {category ? "Enregistrer" : "Ajouter"}
       </ActionButton>
     </form>

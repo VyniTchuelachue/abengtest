@@ -131,7 +131,7 @@ export function MemberForm({
                 aria-selected={lang === l}
                 aria-controls={`mpanel-${l}`}
                 onClick={() => setLang(l)}
-                className="-mb-px border-b-2 border-transparent px-4 py-3 text-[0.9375rem] text-ink-soft aria-selected:border-ink aria-selected:text-ink"
+                className="-mb-px border-b-2 border-transparent px-4 py-3 text-[0.9375rem] text-ink-soft aria-selected:border-gold aria-selected:text-ink"
               >
                 {langNames[l]}
               </button>
@@ -152,7 +152,7 @@ export function MemberForm({
               </label>
               <label className={labelClass}>
                 Biographie ({langNames[l]})
-                <textarea name={`bio_${l}`} defaultValue={values[`bio_${l}`]} rows={12} className={`${inputClass} font-serif text-[1rem] leading-relaxed`} />
+                <textarea name={`bio_${l}`} defaultValue={values[`bio_${l}`]} rows={12} className={`${inputClass} text-[1rem] leading-relaxed`} />
                 <span className={hintClass}>Laissez une ligne vide entre deux paragraphes.</span>
               </label>
               <div className="grid gap-5 sm:grid-cols-2">
@@ -187,7 +187,7 @@ export function MemberForm({
           <div className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
             {practiceAreas.map((a) => (
               <label key={a.id} className="flex items-start gap-2.5 text-[0.9375rem]">
-                <input type="checkbox" name="practice_area" value={a.id} defaultChecked={values.practiceAreaIds.includes(a.id)} className="mt-1 h-4 w-4 accent-ink" />
+                <input type="checkbox" name="practice_area" value={a.id} defaultChecked={values.practiceAreaIds.includes(a.id)} className="mt-1 h-4 w-4 accent-gold" />
                 {a.label}
               </label>
             ))}
@@ -209,13 +209,13 @@ export function MemberForm({
             <span className={hintClass}>« Masqué » retire temporairement le profil du site. « Inactif » correspond à un ancien membre.</span>
           </label>
           <label className="flex items-start gap-2.5 text-[0.9375rem]">
-            <input type="checkbox" name="featured" defaultChecked={values.featured} className="mt-1 h-4 w-4 accent-ink" />
+            <input type="checkbox" name="featured" defaultChecked={values.featured} className="mt-1 h-4 w-4 accent-gold" />
             <span>
               Afficher sur la page d&apos;accueil
               <span className={hintClass}>Pour les avocats présentés dans la section « Les avocats ».</span>
             </span>
           </label>
-          <ActionButton pending={pending} busy={pending} pendingLabel="Enregistrement…" className="btn btn-primary w-full">
+          <ActionButton pending={pending} busy={pending} pendingLabel="Enregistrement…" className="btn btn-gold w-full">
             {values.id ? "Enregistrer le profil" : "Créer le profil"}
           </ActionButton>
           {values.id && values.status === "published" && (

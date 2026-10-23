@@ -63,7 +63,7 @@ export function ImageField({ name, label, folder, initialPath, hint, aspect = "l
           setDragging(false);
           void handle(e.dataTransfer.files[0]);
         }}
-        className={`relative mt-1.5 overflow-hidden rounded-sm border border-dashed ${dragging ? "border-ink bg-white" : "border-rule bg-stone/50"} ${
+        className={`relative mt-1.5 overflow-hidden rounded-xl border border-dashed ${dragging ? "border-gold bg-white" : "border-rule bg-stone/50"} ${
           aspect === "portrait" ? "aspect-[4/5]" : "aspect-[16/10]"
         }`}
       >

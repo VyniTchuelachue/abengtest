@@ -50,7 +50,7 @@ export function RichTextEditor({ name, initialHtml, placeholder, label, invalid,
   });
 
   return (
-    <div className={`mt-1.5 rounded-sm border bg-white ${invalid ? "border-danger" : "border-rule"} focus-within:border-ink`}>
+    <div className={`mt-1.5 overflow-hidden rounded-xl border bg-white ${invalid ? "border-danger" : "border-rule"} focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/30`}>
       <input type="hidden" name={name} value={html} />
       {editor && <Toolbar editor={editor} />}
       <EditorContent editor={editor} />
@@ -105,10 +105,10 @@ function Toolbar({ editor }: { editor: Editor }) {
   }
 
   const btn = (active: boolean) =>
-    `min-w-9 rounded-sm px-2.5 py-1.5 text-[0.875rem] transition-colors ${active ? "bg-ink text-paper" : "text-ink hover:bg-stone"} disabled:opacity-40`;
+    `min-w-9 rounded-lg px-2.5 py-1.5 text-[0.875rem] transition-colors ${active ? "bg-gold text-ink" : "text-ink hover:bg-stone"} disabled:opacity-40`;
 
   return (
-    <div role="toolbar" aria-label="Mise en forme" className="flex flex-wrap items-center gap-1 border-b border-rule bg-paper/60 px-2 py-1.5">
+    <div role="toolbar" aria-label="Mise en forme" className="flex flex-wrap items-center gap-1 border-b border-rule bg-stone/60 px-2 py-1.5">
       <button type="button" className={btn(state.h2)} aria-pressed={state.h2} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
         Titre
       </button>

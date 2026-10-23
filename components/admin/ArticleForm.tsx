@@ -93,7 +93,7 @@ export function ArticleForm({
               aria-selected={lang === l}
               aria-controls={`panel-${l}`}
               onClick={() => setLang(l)}
-              className="-mb-px flex items-center gap-2 border-b-2 border-transparent px-4 py-2.5 text-[0.9375rem] text-ink-soft aria-selected:border-ink aria-selected:text-ink"
+              className="-mb-px flex items-center gap-2 border-b-2 border-transparent px-4 py-2.5 text-[0.9375rem] text-ink-soft aria-selected:border-gold aria-selected:text-ink"
             >
               {langNames[l]}
               <span

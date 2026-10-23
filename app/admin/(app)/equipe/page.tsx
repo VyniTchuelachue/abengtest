@@ -27,7 +27,7 @@ export default async function TeamAdminPage({ searchParams }: { searchParams: Pr
         title="Équipe"
         description="Ajoutez des membres, modifiez leurs profils et choisissez l'ordre d'affichage sur le site."
         actions={
-          <Link href="/admin/equipe/nouveau" className="btn btn-primary">
+          <Link href="/admin/equipe/nouveau" className="btn btn-gold">
             Ajouter un membre
           </Link>
         }
@@ -51,12 +51,12 @@ export default async function TeamAdminPage({ searchParams }: { searchParams: Pr
                     const photo = mediaUrl(m.photo_path);
                     return (
                       <li key={m.id} className="flex flex-wrap items-center gap-4 px-4 py-3">
-                        <div className="h-16 w-[3.2rem] shrink-0 overflow-hidden bg-stone-deep">
+                        <div className="h-16 w-[3.2rem] shrink-0 overflow-hidden rounded-lg bg-stone-deep">
                           {photo ? (
                             // eslint-disable-next-line @next/next/no-img-element -- small dashboard thumbnail
                             <img src={photo} alt="" className="h-full w-full object-cover" style={{ objectPosition: m.photo_position }} />
                           ) : (
-                            <span className="flex h-full items-center justify-center font-serif text-ink-soft">{initials(m.full_name)}</span>
+                            <span className="flex h-full items-center justify-center font-display font-semibold text-ink-soft">{initials(m.full_name)}</span>
                           )}
                         </div>
                         <div className="min-w-0 flex-1">

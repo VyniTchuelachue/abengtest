@@ -1,3 +1,4 @@
+import { ExternalLink, LogOut } from "lucide-react";
 import { Sidebar } from "@/components/admin/Sidebar";
 import { requireStaff } from "@/lib/auth";
 import { signOut } from "../actions/session";
@@ -17,23 +18,33 @@ export default async function DashboardLayout({ children }: { children: React.Re
     ...(staff.role === "admin" ? [{ href: "/admin/utilisateurs", label: "Utilisateurs" }] : []),
     { href: "/admin/compte", label: "Mon compte" },
   ];
+  const name = staff.full_name || email;
 
   return (
-    <div className="min-h-dvh bg-paper">
+    <div className="min-h-dvh bg-stone">
       <Sidebar
         items={items}
         footer={
           <>
-            <p className="truncate text-paper" title={email}>
-              {staff.full_name || email}
-            </p>
-            <p className="text-[0.75rem]">{staff.role === "admin" ? "Administrateur" : "Éditeur"}</p>
-            <div className="mt-4 flex items-center justify-between gap-3">
-              <a href="/fr" target="_blank" rel="noopener" className="link">
+            <div className="flex items-center gap-3">
+              <span aria-hidden className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-gold font-display text-[0.9375rem] font-bold text-ink">
+                {name.charAt(0).toUpperCase()}
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate font-medium text-white" title={email}>
+                  {name}
+                </span>
+                <span className="block text-[0.75rem] uppercase tracking-[0.14em] text-gold">{staff.role === "admin" ? "Administrateur" : "Éditeur"}</span>
+              </span>
+            </div>
+            <div className="mt-5 flex items-center justify-between gap-3">
+              <a href="/fr" target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 transition-colors hover:text-white">
+                <ExternalLink aria-hidden className="h-4 w-4" />
                 Voir le site
               </a>
               <form action={signOut}>
-                <button type="submit" className="link">
+                <button type="submit" className="inline-flex items-center gap-1.5 transition-colors hover:text-white">
+                  <LogOut aria-hidden className="h-4 w-4" />
                   Se déconnecter
                 </button>
               </form>
@@ -41,7 +52,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </>
         }
       />
-      <main id="contenu" className="lg:pl-64">
+      <main id="contenu" className="lg:pl-72">
         <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 lg:py-12">{children}</div>
       </main>
     </div>

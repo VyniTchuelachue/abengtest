@@ -34,7 +34,7 @@ export default async function ArticlesPage({ searchParams }: { searchParams: Pro
         title="Actualités"
         description="Rédigez, publiez et organisez les actualités du cabinet en français et en anglais."
         actions={
-          <Link href="/admin/actualites/nouveau" className="btn btn-primary">
+          <Link href="/admin/actualites/nouveau" className="btn btn-gold">
             Rédiger une actualité
           </Link>
         }
@@ -48,7 +48,7 @@ export default async function ArticlesPage({ searchParams }: { searchParams: Pro
               key={f.value}
               href={`/admin/actualites${f.value ? `?statut=${f.value}` : ""}`}
               aria-current={statut === f.value ? "page" : undefined}
-              className="rounded-sm px-3 py-1.5 text-[0.875rem] text-ink-soft hover:bg-stone aria-[current=page]:bg-ink aria-[current=page]:text-paper"
+              className="rounded-full px-3.5 py-1.5 text-[0.875rem] text-ink-soft hover:bg-white aria-[current=page]:bg-charcoal aria-[current=page]:text-white"
             >
               {f.label}
             </Link>
@@ -69,7 +69,7 @@ export default async function ArticlesPage({ searchParams }: { searchParams: Pro
           title={q ? "Aucun résultat" : "Aucune actualité"}
           body={q ? "Aucune actualité ne correspond à cette recherche." : "Rédigez la première actualité du cabinet : elle apparaîtra sur le site dès sa publication."}
           action={
-            <Link href="/admin/actualites/nouveau" className="btn btn-primary">
+            <Link href="/admin/actualites/nouveau" className="btn btn-gold">
               Rédiger une actualité
             </Link>
           }
@@ -92,7 +92,7 @@ export default async function ArticlesPage({ searchParams }: { searchParams: Pro
                 const key = a.status === "published" && a.published_at && new Date(a.published_at) > new Date() ? "scheduled" : a.status;
                 const category = (a.category as { name_fr: string } | null)?.name_fr;
                 return (
-                  <tr key={a.id} className="hover:bg-paper/70">
+                  <tr key={a.id} className="hover:bg-stone/60">
                     <td className="max-w-md px-5 py-3.5">
                       <Link href={`/admin/actualites/${a.id}`} className="font-medium hover:underline">
                         {a.title_fr || a.title_en}

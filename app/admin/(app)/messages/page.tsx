@@ -24,10 +24,10 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
         description="Demandes envoyées via le formulaire de contact du site."
         actions={
           <nav className="flex gap-1" aria-label="Affichage">
-            <Link href="/admin/messages" aria-current={!archived ? "page" : undefined} className="rounded-sm px-3 py-1.5 text-[0.875rem] text-ink-soft hover:bg-stone aria-[current=page]:bg-ink aria-[current=page]:text-paper">
+            <Link href="/admin/messages" aria-current={!archived ? "page" : undefined} className="rounded-full px-3.5 py-1.5 text-[0.875rem] text-ink-soft hover:bg-white aria-[current=page]:bg-charcoal aria-[current=page]:text-white">
               Boîte de réception
             </Link>
-            <Link href="/admin/messages?vue=archives" aria-current={archived ? "page" : undefined} className="rounded-sm px-3 py-1.5 text-[0.875rem] text-ink-soft hover:bg-stone aria-[current=page]:bg-ink aria-[current=page]:text-paper">
+            <Link href="/admin/messages?vue=archives" aria-current={archived ? "page" : undefined} className="rounded-full px-3.5 py-1.5 text-[0.875rem] text-ink-soft hover:bg-white aria-[current=page]:bg-charcoal aria-[current=page]:text-white">
               Archives
             </Link>
           </nav>
@@ -38,16 +38,17 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
       {!messages || messages.length === 0 ? (
         <EmptyState
           title={archived ? "Aucun message archivé" : "Aucun message"}
-          body={archived ? "Les messages archivés apparaîtront ici." : "Les demandes envoyées depuis la page Contact du site apparaîtront ici."}
+          body={archived ? "Les messages archivés apparaîtront ici." : "Les demandes envoyées depuis les pages Contact et Recrutement du site apparaîtront ici."}
         />
       ) : (
         <ul className="space-y-4">
           {messages.map((m) => (
-            <li key={m.id} id={`m-${m.id}`} className={`${panelClass} scroll-mt-6 p-5 ${m.status === "new" ? "border-l-2 border-l-brass" : ""}`}>
+            <li key={m.id} id={`m-${m.id}`} className={`${panelClass} scroll-mt-6 p-5 ${m.status === "new" ? "border-l-4 border-l-gold" : ""}`}>
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="font-medium">
-                    {m.name} {m.status === "new" && <Badge tone="blue">Nouveau</Badge>}
+                    {m.name} {m.status === "new" && <Badge tone="gold">Nouveau</Badge>}{" "}
+                    {(m.subject === "Recrutement" || m.subject === "Careers") && <Badge tone="blue">Candidature</Badge>}
                   </p>
                   <p className="text-[0.875rem] text-ink-soft">
                     <a href={`mailto:${m.email}?subject=${encodeURIComponent(`Re: ${m.subject ?? "Votre message"}`)}`} className="link">
@@ -70,7 +71,7 @@ export default async function MessagesPage({ searchParams }: { searchParams: Pro
               {m.subject && <p className="mt-3 text-[0.9375rem] font-medium">{m.subject}</p>}
               <p className="mt-2 whitespace-pre-line text-[0.9375rem] text-ink-soft">{m.message}</p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <a href={`mailto:${m.email}?subject=${encodeURIComponent(`Re: ${m.subject ?? "Votre message"}`)}`} className="btn btn-primary min-h-9 px-3 py-1.5 text-[0.875rem]">
+                <a href={`mailto:${m.email}?subject=${encodeURIComponent(`Re: ${m.subject ?? "Votre message"}`)}`} className="btn btn-gold min-h-9 px-3 py-1.5 text-[0.875rem]">
                   Répondre par email
                 </a>
                 {m.status === "new" && (

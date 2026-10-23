@@ -28,7 +28,7 @@ export function ActionButton({
   busy,
   name,
   value,
-  className = "btn btn-primary",
+  className = "btn btn-gold",
 }: {
   children: React.ReactNode;
   pendingLabel: string;
@@ -56,7 +56,7 @@ export function ActionButton({
 export function SubmitButton({
   children,
   pendingLabel,
-  className = "btn btn-primary",
+  className = "btn btn-gold",
   name,
   value,
   formAction,
@@ -119,7 +119,7 @@ export function ConfirmAction({
       <dialog
         ref={dialog}
         aria-labelledby={titleId}
-        className="m-auto w-[min(28rem,calc(100vw-2rem))] rounded-sm border border-rule bg-white p-0 text-ink shadow-2xl backdrop:bg-ink/40"
+        className="m-auto w-[min(28rem,calc(100vw-2rem))] rounded-[1.25rem] border border-rule bg-white p-0 text-ink shadow-2xl backdrop:bg-charcoal/60"
         onClick={(e) => e.target === dialog.current && dialog.current?.close()}
       >
         <form action={action} className="p-7">

@@ -34,9 +34,9 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-8 space-y-5">
+    <form onSubmit={onSubmit} className="mt-6 space-y-5">
       {error && (
-        <p role="alert" className="border-l-2 border-danger bg-white px-4 py-3 text-[0.9375rem] text-danger">
+        <p role="alert" className="rounded-xl border border-danger/30 bg-[#fbefef] px-4 py-3 text-[0.9375rem] text-danger">
           {error}
         </p>
       )}
@@ -48,10 +48,10 @@ export function LoginForm() {
         Mot de passe
         <input name="password" type="password" required autoComplete="current-password" className={inputClass} />
       </label>
-      <button type="submit" disabled={pending} className="btn btn-primary w-full disabled:opacity-60">
+      <button type="submit" disabled={pending} className="btn btn-gold w-full disabled:opacity-60">
         {pending ? "Connexion…" : "Se connecter"}
       </button>
-      <Link href="/admin/mot-de-passe-oublie" className="link block text-center text-[0.9375rem] text-ink-soft">
+      <Link href="/admin/mot-de-passe-oublie" className="link block text-center text-[0.9375rem] text-gold-dark">
         Mot de passe oublié ?
       </Link>
     </form>

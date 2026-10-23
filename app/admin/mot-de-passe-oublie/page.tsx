@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { browserClient } from "@/lib/supabase/browser";
+import { AuthShell } from "@/components/admin/AuthShell";
 import { inputClass, labelClass } from "@/components/admin/ui";
 
 export default function ForgotPasswordPage() {
@@ -26,19 +26,17 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-6 py-16">
-      <div className="w-full max-w-sm">
-        <Image src="/images/crest.png" alt="" width={56} height={56} />
-        <h1 className="heading mt-8 text-[2.25rem]">Mot de passe oublié</h1>
+    <AuthShell title="Mot de passe oublié">
+      <>
         {sent ? (
-          <p role="status" className="mt-6 border-l-2 border-success bg-white px-4 py-3 text-[0.9375rem] text-success">
+          <p role="status" className="mt-6 rounded-xl border border-success/30 bg-[#eef6f1] px-4 py-3 text-[0.9375rem] text-success">
             Si cette adresse correspond à un accès, un email contenant un lien de réinitialisation vient d&apos;être envoyé.
           </p>
         ) : (
           <form onSubmit={onSubmit} className="mt-6 space-y-5">
             <p className="text-ink-soft">Indiquez votre adresse email : vous recevrez un lien pour choisir un nouveau mot de passe.</p>
             {error && (
-              <p role="alert" className="border-l-2 border-danger bg-white px-4 py-3 text-[0.9375rem] text-danger">
+              <p role="alert" className="rounded-xl border border-danger/30 bg-[#fbefef] px-4 py-3 text-[0.9375rem] text-danger">
                 {error}
               </p>
             )}
@@ -46,15 +44,15 @@ export default function ForgotPasswordPage() {
               Adresse email
               <input name="email" type="email" required autoComplete="username" className={inputClass} />
             </label>
-            <button type="submit" disabled={pending} className="btn btn-primary w-full disabled:opacity-60">
+            <button type="submit" disabled={pending} className="btn btn-gold w-full disabled:opacity-60">
               {pending ? "Envoi…" : "Envoyer le lien"}
             </button>
           </form>
         )}
-        <Link href="/admin/connexion" className="link mt-6 block text-center text-[0.9375rem] text-ink-soft">
+        <Link href="/admin/connexion" className="link mt-6 block text-center text-[0.9375rem] text-gold-dark">
           Retour à la connexion
         </Link>
-      </div>
-    </main>
+      </>
+    </AuthShell>
   );
 }

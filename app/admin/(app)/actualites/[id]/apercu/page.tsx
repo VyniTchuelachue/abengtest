@@ -27,8 +27,8 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
 
   return (
     // Escape the dashboard padding so the preview matches the public page.
-    <div className="-mx-5 -my-8 bg-paper sm:-mx-8 lg:-my-12">
-      <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 bg-brass px-5 py-2.5 text-[0.875rem] text-white sm:px-8">
+    <div className="-mx-5 -my-8 bg-white sm:-mx-8 lg:-my-12">
+      <div className="sticky top-[4.5rem] z-10 flex flex-wrap items-center justify-between gap-3 bg-gold lg:top-0 px-5 py-2.5 text-[0.875rem] font-medium text-ink sm:px-8">
         <span>
           Aperçu {live ? "— cette actualité est en ligne" : "— non visible sur le site"} · version {locale === "fr" ? "française" : "anglaise"}
         </span>
