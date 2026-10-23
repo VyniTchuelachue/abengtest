@@ -8,7 +8,16 @@ import type { Locale } from "@/lib/routes";
 const field =
   "mt-2 block w-full rounded-xl border border-rule bg-stone/60 px-4 py-3 text-[1rem] text-ink transition-colors placeholder:text-slate/70 hover:border-slate focus:border-gold focus:bg-white focus:outline-none focus:ring-2 focus:ring-gold/30 aria-[invalid=true]:border-danger";
 
-export function ContactForm({ locale, t }: { locale: Locale; t: Dictionary["contactPage"] }) {
+type Props = {
+  locale: Locale;
+  t: Dictionary["contactPage"];
+  /** Sends this subject without showing the subject picker (e.g. job applications). */
+  fixedSubject?: string;
+  messageLabel?: string;
+  submitLabel?: string;
+};
+
+export function ContactForm({ locale, t, fixedSubject, messageLabel, submitLabel }: Props) {
   const [state, action, pending] = useActionState<ContactState, FormData>(sendMessage, { status: "idle" });
   const startedAt = useRef<HTMLInputElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
@@ -60,27 +69,31 @@ export function ContactForm({ locale, t }: { locale: Locale; t: Dictionary["cont
           <input name="email" type="email" required autoComplete="email" defaultValue={v.email} aria-invalid={err.email ? true : undefined} aria-describedby={err.email ? "err-email" : undefined} className={field} />
           {err.email && <span id="err-email" className="mt-1.5 block text-[0.875rem] font-normal text-danger">{t.errors.email}</span>}
         </label>
-        <label className="block text-[0.9375rem] font-medium">
+        <label className={`block text-[0.9375rem] font-medium ${fixedSubject ? "sm:col-span-2" : ""}`}>
           {t.phone}
           <input name="phone" type="tel" autoComplete="tel" defaultValue={v.phone} className={field} />
         </label>
-        <label className="block text-[0.9375rem] font-medium">
-          {t.subject}
-          <select name="subject" defaultValue={v.subject || t.subjects[0]} className={field}>
-            {t.subjects.map((s) => (
-              <option key={s}>{s}</option>
-            ))}
-          </select>
-        </label>
+        {fixedSubject ? (
+          <input type="hidden" name="subject" value={fixedSubject} />
+        ) : (
+          <label className="block text-[0.9375rem] font-medium">
+            {t.subject}
+            <select name="subject" defaultValue={v.subject || t.subjects[0]} className={field}>
+              {t.subjects.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
       <label className="block text-[0.9375rem] font-medium">
-        {t.message} <span className="font-normal text-slate">({t.required})</span>
+        {messageLabel ?? t.message} <span className="font-normal text-slate">({t.required})</span>
         <textarea name="message" required rows={7} minLength={10} maxLength={5000} defaultValue={v.message} aria-invalid={err.message ? true : undefined} aria-describedby={err.message ? "err-message" : undefined} className={`${field} resize-y`} />
         {err.message && <span id="err-message" className="mt-1.5 block text-[0.875rem] font-normal text-danger">{t.errors.message}</span>}
       </label>
       <p className="text-[0.8125rem] leading-relaxed text-slate">{t.disclaimer}</p>
       <button type="submit" disabled={pending} className="btn btn-gold disabled:opacity-60">
-        {pending ? t.sending : t.send}
+        {pending ? t.sending : (submitLabel ?? t.send)}
       </button>
     </form>
   );

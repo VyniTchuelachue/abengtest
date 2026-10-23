@@ -7,7 +7,7 @@ import { telHref } from "@/lib/format";
 
 export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const year = new Date().getFullYear();
-  const links = (["firm", "practice", "team", "insights", "contact"] as const).map((key) => ({ key, label: dict.nav[key] }));
+  const links = (["firm", "practice", "team", "insights", "careers", "contact"] as const).map((key) => ({ key, label: dict.nav[key] }));
 
   return (
     <footer className="bg-charcoal text-mist">

@@ -6,13 +6,14 @@ export function isLocale(value: string | undefined): value is Locale {
   return value === "en" || value === "fr";
 }
 
-export type RouteKey = "home" | "firm" | "practice" | "team" | "insights" | "contact";
+export type RouteKey = "home" | "firm" | "practice" | "team" | "insights" | "careers" | "contact";
 
 const segments: Record<Exclude<RouteKey, "home">, { en: string; fr: string }> = {
   firm: { en: "firm", fr: "cabinet" },
   practice: { en: "practice-areas", fr: "expertises" },
   team: { en: "team", fr: "equipe" },
   insights: { en: "insights", fr: "actualites" },
+  careers: { en: "careers", fr: "recrutement" },
   contact: { en: "contact", fr: "contact" },
 };
 

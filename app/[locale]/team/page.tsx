@@ -121,6 +121,20 @@ export default async function TeamPage({ params }: Props) {
           );
         })}
 
+      {/* Recruitment */}
+      <section className="border-t border-rule py-16 md:py-20">
+        <div className="shell flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-2xl">
+            <h2 className="heading text-[clamp(1.625rem,1.3rem+1.2vw,2.25rem)]">{dict.teamPage.joinTitle}</h2>
+            <p className="mt-3 text-ink-soft">{dict.teamPage.joinBody}</p>
+          </div>
+          <Link href={href(locale, "careers")} className="btn btn-gold self-start whitespace-nowrap md:self-auto">
+            {dict.teamPage.joinCta}
+            <ArrowRight aria-hidden className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
       <ContactBand locale={locale} dict={dict} />
     </>
   );

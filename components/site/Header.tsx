@@ -10,7 +10,7 @@ import type { Dictionary } from "@/lib/dictionaries";
 
 type Props = { locale: Locale; nav: Dictionary["nav"]; phones: string[]; consult: string; addressShort: string };
 
-const items: Exclude<RouteKey, "home">[] = ["firm", "practice", "team", "insights", "contact"];
+const items: Exclude<RouteKey, "home">[] = ["firm", "practice", "team", "insights", "careers", "contact"];
 const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, "")}`;
 
 export function Header({ locale, nav, phones, consult, addressShort }: Props) {
@@ -78,29 +78,29 @@ export function Header({ locale, nav, phones, consult, addressShort }: Props) {
 
       {/* Main bar */}
       <div className="border-b border-white/10 bg-charcoal/95 backdrop-blur-md">
-        <div className="shell flex h-[4.5rem] items-center justify-between gap-6 lg:h-20">
+        <div className="shell flex h-[4.5rem] items-center justify-between gap-6 xl:h-20">
           <Link href={href(locale)} aria-label={nav.home} className="flex items-center gap-3">
-            <Image src="/images/crest.png" alt="" width={48} height={48} priority className="h-11 w-11 lg:h-12 lg:w-12" />
+            <Image src="/images/crest.png" alt="" width={48} height={48} priority className="h-11 w-11 xl:h-12 xl:w-12" />
             <span className="flex flex-col leading-none">
-              <span className="font-display text-[1.0625rem] font-semibold tracking-tight text-white lg:text-[1.1875rem]">The Abeng Law Firm</span>
+              <span className="font-display text-[1.0625rem] font-semibold tracking-tight text-white xl:text-[1.1875rem]">The Abeng Law Firm</span>
               <span className="mt-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-gold">
                 {locale === "fr" ? "Avocats d'affaires" : "Business lawyers"}
               </span>
             </span>
           </Link>
 
-          <nav aria-label={nav.primary} className="hidden items-center gap-1 lg:flex">
+          <nav aria-label={nav.primary} className="hidden items-center gap-1 xl:flex">
             {items.map((key) => (
               <Link
                 key={key}
                 href={href(locale, key)}
                 aria-current={isActive(key) ? "page" : undefined}
-                className="relative rounded-full px-3.5 py-2 font-display text-[0.9375rem] font-medium text-white/80 transition-colors hover:text-white aria-[current=page]:text-gold"
+                className="relative whitespace-nowrap rounded-full px-3.5 py-2 font-display text-[0.9375rem] font-medium text-white/80 transition-colors hover:text-white aria-[current=page]:text-gold"
               >
                 {nav[key]}
               </Link>
             ))}
-            <Link href={href(locale, "contact")} className="btn btn-gold ml-4 min-h-11 px-5 py-2">
+            <Link href={href(locale, "contact")} className="btn btn-gold ml-4 min-h-11 whitespace-nowrap px-5 py-2">
               <CalendarCheck aria-hidden className="h-4 w-4" />
               {consult}
             </Link>
@@ -109,7 +109,7 @@ export function Header({ locale, nav, phones, consult, addressShort }: Props) {
           <button
             ref={menuButton}
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-gold text-ink lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-gold text-ink xl:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? nav.close : nav.menu}
@@ -120,7 +120,7 @@ export function Header({ locale, nav, phones, consult, addressShort }: Props) {
         </div>
       </div>
 
-      <div id="mobile-menu" hidden={!open} className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto bg-charcoal lg:hidden">
+      <div id="mobile-menu" hidden={!open} className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto md:top-[7rem] bg-charcoal xl:hidden">
         <nav aria-label={nav.primary} className="shell flex min-h-full flex-col py-6">
           <ul className="flex flex-col">
             {items.map((key) => (
