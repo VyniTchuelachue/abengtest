@@ -35,7 +35,7 @@ The backend is Supabase (database, logins, image storage) plus Vercel (hosting a
 | A | Fix `NEXT_PUBLIC_SITE_URL` in Vercel | It points to `abengtest-tchuelachue.vercel.app`, which is behind Vercel's own login. Invitation links and the sitemap use it. |
 | B | Set the Supabase sign-in URLs | Password-reset and invitation links only work for addresses listed there. |
 | C | Lock down Supabase sign-ups | Accounts should exist only by invitation. |
-| D | Create Resend, verify the firm's domain, connect it | Without it: no email to contact@theabenglawfirm.com, and Supabase can't reliably send invitations or password resets. |
+| D | Create Resend, verify the firm's domain, connect it, fix the email links | Without it: no email to contact@theabenglawfirm.com, and Supabase can't reliably send invitations or password resets. |
 | E | Add `SUPABASE_SECRET_KEY` in Vercel (if not already there) | Needed to invite users from **Utilisateurs**. |
 | F | Change the temporary admin password | The current one was generated during setup. |
 | G | Optional: reconnect Supabase in Claude | Only if you want Claude to make database changes (for example the dashboard field for the profile-page photos). |
@@ -102,7 +102,22 @@ receive invitations or reset links.
 2. Supabase → **Authentication** → **Emails** → **SMTP Settings** → enable **Custom SMTP**:
    - Sender email: `noreply@theabenglawfirm.com` · Sender name: `The Abeng Law Firm`
    - Host: `smtp.resend.com` · Port: `465` · Username: `resend` · Password: the `supabase smtp` key
-3. Save. Optionally edit the email templates (same **Emails** section) into French.
+3. Save.
+
+**D5. Point the invitation and reset emails at the dashboard** (required for those links to work)
+
+Supabase → **Authentication** → **Emails** → **Templates**. In each template below, replace the link in the message body
+(the `href` that contains `{{ .ConfirmationURL }}`) with the address shown, then **Save**:
+- **Invite user**: `{{ .SiteURL }}/admin/auth/callback?token_hash={{ .TokenHash }}&type=invite&next=/admin/compte?bienvenue=1`
+- **Reset password**: `{{ .SiteURL }}/admin/auth/callback?token_hash={{ .TokenHash }}&type=recovery&next=/admin/compte?reinitialisation=1`
+
+These links work even when the email is opened on another device than the one that asked for it. You can also translate
+the subject and text of these emails into French on the same screen.
+
+**Where the firm's DNS is:** `theabenglawfirm.com` uses GoDaddy name servers (`ns41/ns42.domaincontrol.com`); its email is
+Microsoft 365 with Proofpoint filtering. Add the Resend records in GoDaddy → **My Products** → the domain → **DNS**.
+Don't change the existing MX, SPF or Microsoft records. If the first alerts don't arrive, check the Proofpoint quarantine
+and allow `theabenglawfirm.com` mail sent through Resend.
 
 ### E. Supabase secret key in Vercel (user invitations)
 
