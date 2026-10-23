@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Award, CalendarCheck, CheckCircle2, Globe2, Landmark, Languages, Phone } from "lucide-react";
+import { ArrowRight, Award, CalendarCheck, Globe2, Landmark, Languages, Phone } from "lucide-react";
 import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/blocks";
 import { PracticeIcon, SectorIcon } from "@/components/site/icons";
 import { MemberCard } from "@/components/site/Portrait";
@@ -21,14 +21,6 @@ const featuredAreas = [
   "mergers-acquisitions",
   "litigation-arbitration",
   "tax-customs-exchange",
-];
-const checklistAreas = [
-  "corporate-commercial-ohada",
-  "mergers-acquisitions",
-  "banking-finance",
-  "regulatory-public-law",
-  "employment-immigration",
-  "debt-recovery-insolvency",
 ];
 /** Indexes into the dictionary's sector list: energy, banking, infrastructure, telecoms. */
 const heroSectors = [0, 3, 5, 4];
@@ -176,20 +168,6 @@ export default async function HomePage({ params }: Props) {
           <div className="lg:col-span-6">
             <SectionHeading eyebrow={t.firmEyebrow} title={t.introTitle} lede={t.introLede} />
             <p className="mt-4 text-ink-soft">{t.introBody[0]}</p>
-            <h3 className="mt-8 font-display text-[1rem] font-semibold text-ink">{t.checklistTitle}</h3>
-            <ul className="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-2">
-              {checklistAreas.map((slug) => {
-                const a = bySlug(slug);
-                return a ? (
-                  <li key={slug}>
-                    <Link href={href(locale, "practice", a.slug)} className="flex items-start gap-2.5 text-[0.9375rem] text-ink transition-colors hover:text-gold-dark">
-                      <CheckCircle2 aria-hidden className="mt-0.5 h-5 w-5 flex-none text-gold" />
-                      {a.title}
-                    </Link>
-                  </li>
-                ) : null;
-              })}
-            </ul>
             <div className="mt-10 flex flex-wrap gap-3">
               <Link href={href(locale, "firm")} className="btn btn-gold">
                 {t.introLink}
