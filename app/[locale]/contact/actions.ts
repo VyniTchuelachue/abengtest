@@ -3,7 +3,8 @@
 import { headers } from "next/headers";
 import { z } from "zod";
 import { anonClient } from "@/lib/supabase/public";
-import { isLocale } from "@/lib/routes";
+import { getDictionary } from "@/lib/dictionaries";
+import { isLocale, siteUrl } from "@/lib/routes";
 
 export type ContactState = {
   status: "idle" | "success" | "error";
@@ -57,27 +58,51 @@ export async function sendMessage(_: ContactState, formData: FormData): Promise<
     return { status: "error", values };
   }
 
-  await notifyByEmail({ name, email, phone, subject, message });
+  await notifyByEmail({ name, email, phone, subject, message, locale });
   return { status: "success" };
 }
 
-/** Optional email alert through Resend when RESEND_API_KEY and CONTACT_NOTIFY_EMAIL are set. */
-async function notifyByEmail(m: { name: string; email: string; phone?: string; subject?: string; message: string }) {
+/** The firm's inbox; CONTACT_NOTIFY_EMAIL overrides it (e.g. for testing). */
+const firmInbox = "contact@theabenglawfirm.com";
+/** Subjects used by the careers form ("Careers" / "Recrutement"). */
+const applicationSubjects = new Set((["en", "fr"] as const).map((l) => getDictionary(l).contactPage.subjects[2]));
+
+/**
+ * Emails each message to the firm through Resend once RESEND_API_KEY is set.
+ * Messages are stored in the dashboard either way, so a failed email loses nothing.
+ */
+async function notifyByEmail(m: { name: string; email: string; phone?: string; subject?: string; message: string; locale: string }) {
   const key = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_NOTIFY_EMAIL;
-  if (!key || !to) return;
+  if (!key) return;
+  const isApplication = applicationSubjects.has(m.subject ?? "");
+  const lines = [
+    isApplication ? "Nouvelle candidature reçue depuis la page Recrutement du site." : "Nouveau message reçu depuis le formulaire de contact du site.",
+    "",
+    `Nom : ${m.name}`,
+    `Email : ${m.email}`,
+    m.phone ? `Téléphone : ${m.phone}` : null,
+    `Objet : ${m.subject || "Demande générale"}`,
+    `Langue : ${m.locale === "fr" ? "français" : "anglais"}`,
+    "",
+    m.message,
+    "",
+    "—",
+    `Répondez directement à cet email pour écrire à ${m.name}.`,
+    `Tous les messages : ${siteUrl}/admin/messages`,
+  ].filter((l) => l !== null);
   try {
-    await fetch("https://api.resend.com/emails", {
+    const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         from: process.env.CONTACT_FROM_EMAIL ?? "Site Abeng Law <onboarding@resend.dev>",
-        to: [to],
+        to: [process.env.CONTACT_NOTIFY_EMAIL || firmInbox],
         reply_to: m.email,
-        subject: `Nouveau message du site : ${m.subject || "Demande"}`,
-        text: `${m.name} <${m.email}>${m.phone ? ` — ${m.phone}` : ""}\n\n${m.message}`,
+        subject: isApplication ? `Nouvelle candidature : ${m.name}` : `Nouveau message du site : ${m.subject || "Demande"} — ${m.name}`,
+        text: lines.join("\n"),
       }),
     });
+    if (!res.ok) console.error("contact notification rejected", res.status, await res.text());
   } catch (err) {
     console.error("contact notification failed", err);
   }

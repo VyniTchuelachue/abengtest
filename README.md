@@ -34,7 +34,9 @@ scripts/                  asset processing and seeding
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | all | publishable key (safe in the browser; RLS protects data) |
 | `NEXT_PUBLIC_SITE_URL` | all | canonical origin, e.g. `https://www.abenglaw.com` (used for canonical, hreflang, sitemap) |
 | `SUPABASE_SECRET_KEY` | server only, optional | enables inviting dashboard users from `/admin/utilisateurs`. Never prefix with `NEXT_PUBLIC_` |
-| `RESEND_API_KEY`, `CONTACT_NOTIFY_EMAIL`, `CONTACT_FROM_EMAIL` | server only, optional | email alert for each contact message (messages are always stored in the dashboard) |
+| `RESEND_API_KEY` | server only, optional | turns on an email to contact@theabenglawfirm.com for each contact message or job application (messages are always stored in the dashboard) |
+| `CONTACT_FROM_EMAIL` | server only, optional | sender address once theabenglawfirm.com is verified in Resend, e.g. `Site Abeng Law <site@theabenglawfirm.com>`; without it Resend's test sender is used, which only delivers to the email of the Resend account |
+| `CONTACT_NOTIFY_EMAIL` | server only, optional | sends the alerts to another inbox instead (testing) |
 
 ## Local development
 

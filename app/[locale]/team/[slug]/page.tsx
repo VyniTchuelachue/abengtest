@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "profile",
       title: member.name,
       description,
-      images: member.photo ? [{ url: member.photo, width: 1200, height: 1500, alt: member.name }] : undefined,
+      images: member.profilePhoto ? [{ url: member.profilePhoto, width: 1200, height: 1500, alt: member.name }] : undefined,
     },
   };
 }
@@ -100,7 +100,7 @@ export default async function MemberPage({ params }: Props) {
             <div className="card overflow-hidden p-3 shadow-[0_30px_60px_-35px_rgb(0_0_0/0.5)]">
               <Portrait
                 name={member.name}
-                src={member.photo}
+                src={member.profilePhoto}
                 position={member.photoPosition}
                 pendingLabel={dict.common.photoPending}
                 sizes="(min-width: 768px) 30vw, 100vw"

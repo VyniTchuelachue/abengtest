@@ -22,6 +22,8 @@ export type Member = {
   linkedin: string | null;
   photo: string | null;
   photoPosition: string;
+  /** Photo for the profile page; falls back to the card portrait. */
+  profilePhoto: string | null;
   featured: boolean;
   updatedAt: string;
 };
@@ -32,6 +34,13 @@ export const groupOrder: TeamGroup[] = ["partner", "senior_associate", "lawyer",
 export function isLawyerGroup(group: TeamGroup): boolean {
   return group === "partner" || group === "senior_associate" || group === "lawyer";
 }
+
+/** Second photographs shown on profile pages only (cards keep the studio portrait). */
+const profilePhotos: Record<string, string> = {
+  "abeng-roland": "/images/profile/abeng-roland-v1.jpg",
+  "doly-azangue": "/images/profile/doly-azangue-v1.jpg",
+  "jean-patrick-musima": "/images/profile/jean-patrick-musima-v1.jpg",
+};
 
 function toMember(row: TeamMemberRecord, locale: Locale): Member {
   const l = <K extends string>(key: K) => row[`${key}_${locale}` as keyof TeamMemberRecord];
@@ -52,6 +61,7 @@ function toMember(row: TeamMemberRecord, locale: Locale): Member {
     linkedin: row.linkedin_url,
     photo: mediaUrl(row.photo_path),
     photoPosition: row.photo_position,
+    profilePhoto: profilePhotos[row.slug] ?? mediaUrl(row.photo_path),
     featured: row.featured,
     updatedAt: row.updated_at,
   };
