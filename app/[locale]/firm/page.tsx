@@ -3,8 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Award, Building, Globe2, Lock, Scale, TrendingUp } from "lucide-react";
+import { AwardGallery } from "@/components/site/AwardGallery";
 import { ContactBand, PageIntro, SectionHeading } from "@/components/site/blocks";
 import { getTeam } from "@/lib/data";
+import { getRecognitions } from "@/lib/recognitions";
 import { chambersProfileUrl, getDictionary } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
@@ -109,8 +111,29 @@ export default async function FirmPage({ params }: Props) {
         </div>
       </section>
 
+      {/* Awards and distinctions */}
+      <section id="distinctions" className="scroll-mt-28 border-t border-rule bg-stone py-20 md:py-28">
+        <div className="shell">
+          <SectionHeading eyebrow={t.awardsEyebrow} title={t.awardsTitle} lede={t.awardsLede} />
+          <h3 className="mt-12 flex items-center gap-3 font-display text-[1.25rem] font-semibold text-ink">
+            <span aria-hidden className="h-px w-8 bg-gold" />
+            {t.awardsFirm}
+          </h3>
+          <div className="mt-6">
+            <AwardGallery items={getRecognitions("firm", locale)} labels={dict.common.gallery} />
+          </div>
+          <h3 className="mt-14 flex items-center gap-3 font-display text-[1.25rem] font-semibold text-ink">
+            <span aria-hidden className="h-px w-8 bg-gold" />
+            {t.awardsPartner}
+          </h3>
+          <div className="mt-6">
+            <AwardGallery items={getRecognitions("abeng-roland", locale)} labels={dict.common.gallery} />
+          </div>
+        </div>
+      </section>
+
       {/* International meetings */}
-      <section className="bg-stone py-20 md:py-24">
+      <section className="py-20 md:py-24">
         <div className="shell grid gap-6 md:grid-cols-12">
           <figure className="md:col-span-7">
             <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem]">

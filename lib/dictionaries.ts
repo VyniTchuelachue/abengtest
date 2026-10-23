@@ -31,6 +31,7 @@ const en = {
     allInsights: "All news & insights",
     readArticle: "Read article",
     learnMore: "Learn more",
+    gallery: { enlarge: "View full size", close: "Close", previous: "Previous", next: "Next" },
     backToInsights: "News & insights",
     backToTeam: "Team",
     backToPractice: "Practice areas",
@@ -89,6 +90,7 @@ const en = {
     practiceEyebrow: "Practice areas",
     practiceHeading: "Complete business-law counsel for Cameroon and the OHADA region",
     recognitionEyebrow: "Recognition & networks",
+    awardsLink: "See all awards and distinctions",
     whyEyebrow: "Why choose the firm",
     whyHeading: "Local depth, international standards",
     whyBody:
@@ -168,6 +170,11 @@ const en = {
     institutions:
       "Roland Abeng has served as Cameroon consultant or local counsel to international institutions and organisations, including the World Bank, the International Monetary Fund and the World Justice Project.",
     leadershipTitle: "Leadership",
+    awardsEyebrow: "Awards",
+    awardsTitle: "Awards and distinctions",
+    awardsLede: "Rankings, awards and certificates received by the firm and by its Managing Partner, as photographed at the Bonapriso office.",
+    awardsFirm: "The firm",
+    awardsPartner: "Roland Abeng, Managing Partner",
   },
   practicePage: {
     metaTitle: "Practice areas",
@@ -224,6 +231,7 @@ const en = {
     joinTitle: "Join the firm",
     joinBody: "The firm welcomes applications from lawyers, trainee lawyers and legal professionals who want to practise business law in Douala.",
     joinCta: "Careers at the firm",
+    distinctions: "Distinctions",
   },
   careersPage: {
     metaTitle: "Careers",
@@ -402,6 +410,7 @@ const fr: Dictionary = {
     allInsights: "Toutes les actualités",
     readArticle: "Lire l'article",
     learnMore: "En savoir plus",
+    gallery: { enlarge: "Agrandir", close: "Fermer", previous: "Précédent", next: "Suivant" },
     backToInsights: "Actualités",
     backToTeam: "Équipe",
     backToPractice: "Expertises",
@@ -460,6 +469,7 @@ const fr: Dictionary = {
     practiceEyebrow: "Nos expertises",
     practiceHeading: "Un conseil complet en droit des affaires au Cameroun et dans l'espace OHADA",
     recognitionEyebrow: "Distinctions et réseaux",
+    awardsLink: "Voir tous les prix et distinctions",
     whyEyebrow: "Pourquoi nous choisir",
     whyHeading: "Un ancrage local, des standards internationaux",
     whyBody:
@@ -539,6 +549,11 @@ const fr: Dictionary = {
     institutions:
       "Roland Abeng est intervenu comme consultant ou conseil local au Cameroun pour des institutions et organisations internationales, dont la Banque mondiale, le Fonds monétaire international et le World Justice Project.",
     leadershipTitle: "Direction",
+    awardsEyebrow: "Distinctions",
+    awardsTitle: "Prix et distinctions",
+    awardsLede: "Classements, prix et certificats reçus par le cabinet et par son associé gérant, photographiés au cabinet de Bonapriso.",
+    awardsFirm: "Le cabinet",
+    awardsPartner: "Roland Abeng, associé gérant",
   },
   practicePage: {
     metaTitle: "Expertises",
@@ -595,6 +610,7 @@ const fr: Dictionary = {
     joinTitle: "Rejoindre le cabinet",
     joinBody: "Le cabinet accueille les candidatures d'avocats, d'avocats stagiaires et de professionnels du droit qui souhaitent exercer le droit des affaires à Douala.",
     joinCta: "Recrutement",
+    distinctions: "Distinctions",
   },
   careersPage: {
     metaTitle: "Recrutement",

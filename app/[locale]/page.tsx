@@ -7,6 +7,7 @@ import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/bloc
 import { PracticeIcon, SectorIcon } from "@/components/site/icons";
 import { MemberCard } from "@/components/site/Portrait";
 import { getArticles, getPracticeAreas, getTeam, isLawyerGroup } from "@/lib/data";
+import { getRecognitions } from "@/lib/recognitions";
 import { chambersProfileUrl, getDictionary, phones } from "@/lib/dictionaries";
 import { telHref } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
@@ -245,6 +246,25 @@ export default async function HomePage({ params }: Props) {
               );
             })}
           </ul>
+          <ul className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {getRecognitions("firm", locale).map((r) => (
+              <li key={r.id}>
+                <Link href={`${href(locale, "firm")}#distinctions`} className="group relative block aspect-[4/5] overflow-hidden rounded-[1.25rem] bg-stone-deep">
+                  <Image src={r.image} alt={`${r.issuer}${r.year ? ` ${r.year}` : ""}`} fill sizes="(min-width: 1024px) 22vw, 45vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-charcoal/95 via-charcoal/70 to-transparent px-4 pb-4 pt-10 text-white">
+                    <span className="block font-display text-[0.9375rem] font-semibold leading-tight">{r.issuer}</span>
+                    {r.year && <span className="text-[0.8125rem] text-gold">{r.year}</span>}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-8 text-center">
+            <Link href={`${href(locale, "firm")}#distinctions`} className="btn btn-quiet">
+              {t.awardsLink}
+              <ArrowRight aria-hidden className="h-4 w-4" />
+            </Link>
+          </p>
         </div>
       </section>
 

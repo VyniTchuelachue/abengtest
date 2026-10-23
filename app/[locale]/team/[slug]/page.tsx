@@ -4,9 +4,11 @@ import { notFound } from "next/navigation";
 import { Briefcase, CalendarCheck, GraduationCap, Languages, SquareArrowOutUpRight, Mail, Scale, Target, type LucideIcon } from "lucide-react";
 import { Breadcrumb, ContactBand } from "@/components/site/blocks";
 import { JsonLd } from "@/components/site/JsonLd";
+import { AwardGallery } from "@/components/site/AwardGallery";
 import { Portrait } from "@/components/site/Portrait";
 import { getMember, getMemberAreas, getTeam, isLawyerGroup } from "@/lib/data";
 import { getDictionary } from "@/lib/dictionaries";
+import { getRecognitions } from "@/lib/recognitions";
 import { summarize } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 import { breadcrumbSchema, personSchema } from "@/lib/structured-data";
@@ -46,6 +48,7 @@ export default async function MemberPage({ params }: Props) {
   const t = dict.teamPage;
   const areas = await getMemberAreas(member.id, locale);
   const isLawyer = isLawyerGroup(member.group);
+  const distinctions = member.slug === "abeng-roland" ? getRecognitions("abeng-roland", locale) : [];
 
   const list = (items: string[]) => (
     <ul className="space-y-2">
@@ -151,6 +154,17 @@ export default async function MemberPage({ params }: Props) {
                 </div>
               ))}
             </dl>
+          )}
+
+          {distinctions.length > 0 && (
+            <section aria-labelledby="distinctions" className="mt-14">
+              <h2 id="distinctions" className="heading text-[clamp(1.5rem,1.3rem+0.8vw,2rem)]">
+                {t.distinctions}
+              </h2>
+              <div className="mt-6">
+                <AwardGallery items={distinctions} labels={dict.common.gallery} columns={3} />
+              </div>
+            </section>
           )}
         </div>
       </article>
