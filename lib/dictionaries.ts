@@ -279,7 +279,7 @@ const en = {
       },
       {
         title: "Send your application",
-        body: "Introduce yourself through the form on this page. You can also drop your file at the office in Bonapriso or send it by post to P.O. Box 4155, Douala.",
+        body: "Introduce yourself through the form on this page, or email your file to contact@theabenglawfirm.com. You can also drop it at the office in Bonapriso or send it by post to P.O. Box 4155, Douala.",
       },
       {
         title: "Review by the firm",
@@ -307,6 +307,7 @@ const en = {
     formLede: "Introduce yourself in a few lines: the profile you are applying for, your background and your availability. The firm will tell you how to send your full file.",
     otherWays: "Other ways to apply",
     dropOff: "Drop off your file",
+    byEmail: "By email",
     byPost: "By post",
     byPhone: "Questions",
     messageLabel: "Your introduction",
@@ -649,7 +650,7 @@ const fr: Dictionary = {
       },
       {
         title: "Envoyez votre candidature",
-        body: "Présentez-vous au moyen du formulaire de cette page. Vous pouvez aussi déposer votre dossier au cabinet, à Bonapriso, ou l'envoyer par courrier à la BP 4155, Douala.",
+        body: "Présentez-vous au moyen du formulaire de cette page, ou envoyez votre dossier par e-mail à contact@theabenglawfirm.com. Vous pouvez aussi le déposer au cabinet, à Bonapriso, ou l'envoyer par courrier à la BP 4155, Douala.",
       },
       {
         title: "Étude par le cabinet",
@@ -677,6 +678,7 @@ const fr: Dictionary = {
     formLede: "Présentez-vous en quelques lignes : le profil visé, votre parcours et vos disponibilités. Le cabinet vous indiquera comment transmettre votre dossier complet.",
     otherWays: "Autres moyens de postuler",
     dropOff: "Déposer votre dossier",
+    byEmail: "Par e-mail",
     byPost: "Par courrier",
     byPhone: "Questions",
     messageLabel: "Votre présentation",
@@ -745,5 +747,6 @@ export function getDictionary(locale: Locale): Dictionary {
 }
 
 export const phones = ["+237 233420208"];
+export const firmEmail = "contact@theabenglawfirm.com";
 export const officeCoordinates = { lat: 4.0290645, lng: 9.7019888 };
 export const chambersProfileUrl = "https://chambers.com/law-firm/the-abeng-law-firm-global-2:22621119";

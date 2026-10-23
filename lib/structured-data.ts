@@ -1,4 +1,4 @@
-import { officeCoordinates, phones } from "./dictionaries";
+import { firmEmail, officeCoordinates, phones } from "./dictionaries";
 import { href, siteUrl, type Locale } from "./routes";
 import type { Article, Member } from "./data";
 
@@ -16,6 +16,7 @@ export function legalServiceSchema(locale: Locale) {
     foundingDate: "1998",
     founder: { "@type": "Person", name: "Roland Abeng" },
     telephone: phones[0],
+    email: firmEmail,
     areaServed: ["Cameroon", "Central Africa"],
     knowsLanguage: ["en", "fr"],
     address: {

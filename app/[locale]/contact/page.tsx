@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ExternalLink, MapPin, Phone, Mailbox } from "lucide-react";
+import { ExternalLink, Mail, MapPin, Phone, Mailbox } from "lucide-react";
 import { PageIntro } from "@/components/site/blocks";
 import { ContactForm } from "@/components/site/ContactForm";
-import { getDictionary, officeCoordinates, phones } from "@/lib/dictionaries";
+import { firmEmail, getDictionary, officeCoordinates, phones } from "@/lib/dictionaries";
 import { telHref } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
@@ -56,6 +56,15 @@ export default async function ContactPage({ params }: Props) {
         </span>
       ),
     },
+    {
+      icon: Mail,
+      title: locale === "fr" ? "E-mail" : "Email",
+      body: (
+        <a href={`mailto:${firmEmail}`} className="break-all transition-colors hover:text-gold-dark">
+          {firmEmail}
+        </a>
+      ),
+    },
     { icon: Mailbox, title: locale === "fr" ? "Courrier" : "Mail", body: <span>{dict.address.poBox}, Douala</span> },
   ];
 
@@ -64,7 +73,7 @@ export default async function ContactPage({ params }: Props) {
       <PageIntro title={t.title} lede={t.lede} eyebrow={dict.home.contactEyebrow} crumbs={[{ label: dict.nav.homeLabel, href: href(locale) }, { label: t.title }]} />
 
       <section className="relative z-10 -mt-10">
-        <ul className="shell grid gap-4 md:grid-cols-3">
+        <ul className="shell grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {cards.map((c) => (
             <li key={c.title} className="card flex gap-4 p-6 shadow-[0_24px_50px_-30px_rgb(0_0_0/0.45)]">
               <span className="icon-tile">

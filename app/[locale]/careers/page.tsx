@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowDown, ArrowRight, Award, BookOpen, Briefcase, CheckCircle2, Globe2, GraduationCap, Languages, Lightbulb, Mailbox, MapPin, Phone, Scale, Users } from "lucide-react";
+import { ArrowDown, ArrowRight, Award, BookOpen, Briefcase, CheckCircle2, Globe2, GraduationCap, Languages, Lightbulb, Mail, Mailbox, MapPin, Phone, Scale, Users } from "lucide-react";
 import { PageIntro, SectionHeading } from "@/components/site/blocks";
 import { ContactForm } from "@/components/site/ContactForm";
-import { getDictionary, phones } from "@/lib/dictionaries";
+import { firmEmail, getDictionary, phones } from "@/lib/dictionaries";
 import { telHref } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
@@ -170,6 +170,17 @@ export default async function CareersPage({ params }: Props) {
                       </span>
                     ))}
                   </address>
+                </span>
+              </li>
+              <li className="flex gap-4">
+                <span className="icon-tile">
+                  <Mail aria-hidden className="h-6 w-6" strokeWidth={1.75} />
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-semibold text-ink">{t.byEmail}</span>
+                  <a href={`mailto:${firmEmail}`} className="break-all transition-colors hover:text-gold-dark">
+                    {firmEmail}
+                  </a>
                 </span>
               </li>
               <li className="flex gap-4">

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
 import { href, type Locale } from "@/lib/routes";
-import { phones, type Dictionary } from "@/lib/dictionaries";
+import { firmEmail, phones, type Dictionary } from "@/lib/dictionaries";
 import { telHref } from "@/lib/format";
 
 export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
@@ -65,9 +65,9 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
             ))}
             <li className="flex gap-3">
               <Mail aria-hidden className="mt-0.5 h-5 w-5 flex-none text-gold" />
-              <Link href={href(locale, "contact")} className="transition-colors hover:text-white">
-                {dict.contactPage.formTitle}
-              </Link>
+              <a href={`mailto:${firmEmail}`} className="break-all transition-colors hover:text-white">
+                {firmEmail}
+              </a>
             </li>
           </ul>
         </div>

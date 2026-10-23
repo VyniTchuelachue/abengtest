@@ -4,7 +4,7 @@ import { DM_Sans, Heebo } from "next/font/google";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { JsonLd } from "@/components/site/JsonLd";
-import { getDictionary, phones } from "@/lib/dictionaries";
+import { firmEmail, getDictionary, phones } from "@/lib/dictionaries";
 import { isLocale, locales, siteUrl } from "@/lib/routes";
 import { legalServiceSchema } from "@/lib/structured-data";
 import "../globals.css";
@@ -62,7 +62,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   return (
     <html lang={locale} className={`${display.variable} ${sans.variable}`}>
       <body className="flex min-h-dvh flex-col">
-        <Header locale={locale} nav={dict.nav} phones={phones} consult={dict.common.consult} addressShort={dict.address.short} />
+        <Header locale={locale} nav={dict.nav} phones={phones} email={firmEmail} consult={dict.common.consult} addressShort={dict.address.short} />
         <main id="main" className="flex-1">
           {children}
         </main>

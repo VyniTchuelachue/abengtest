@@ -4,16 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { CalendarCheck, MapPin, Menu, Phone, X } from "lucide-react";
+import { CalendarCheck, Mail, MapPin, Menu, Phone, X } from "lucide-react";
 import { href, switchLocalePath, type Locale, type RouteKey } from "@/lib/routes";
 import type { Dictionary } from "@/lib/dictionaries";
 
-type Props = { locale: Locale; nav: Dictionary["nav"]; phones: string[]; consult: string; addressShort: string };
+type Props = { locale: Locale; nav: Dictionary["nav"]; phones: string[]; email: string; consult: string; addressShort: string };
 
 const items: Exclude<RouteKey, "home">[] = ["firm", "practice", "team", "insights", "careers", "contact"];
 const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, "")}`;
 
-export function Header({ locale, nav, phones, consult, addressShort }: Props) {
+export function Header({ locale, nav, phones, email, consult, addressShort }: Props) {
   const pathname = usePathname() ?? `/${locale}`;
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
@@ -57,7 +57,11 @@ export function Header({ locale, nav, phones, consult, addressShort }: Props) {
               <Phone aria-hidden className="h-3.5 w-3.5 text-gold" />
               {phones[0]}
             </a>
-            <span className="flex items-center gap-2">
+            <a href={`mailto:${email}`} className="flex items-center gap-2 transition-colors hover:text-white">
+              <Mail aria-hidden className="h-3.5 w-3.5 text-gold" />
+              {email}
+            </a>
+            <span className="hidden items-center gap-2 lg:flex">
               <MapPin aria-hidden className="h-3.5 w-3.5 text-gold" />
               {addressShort}
             </span>
@@ -147,6 +151,10 @@ export function Header({ locale, nav, phones, consult, addressShort }: Props) {
                   {p}
                 </a>
               ))}
+              <a href={`mailto:${email}`} className="flex items-center gap-2 break-all">
+                <Mail aria-hidden className="h-4 w-4 flex-none text-gold" />
+                {email}
+              </a>
             </div>
             <Link href={switchLocalePath(pathname, other)} hrefLang={other} lang={other} className="rounded-full border border-white/30 px-4 py-2 font-display font-semibold text-white">
               {nav.switchLabel}
