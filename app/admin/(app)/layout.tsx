@@ -1,4 +1,5 @@
-import { ExternalLink, LogOut } from "lucide-react";
+import Link from "next/link";
+import { ExternalLink, KeyRound, LogOut } from "lucide-react";
 import { Sidebar } from "@/components/admin/Sidebar";
 import { getAdminLocale, getT } from "@/lib/admin-i18n/server";
 import { requireStaff } from "@/lib/auth";
@@ -40,7 +41,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 <span className="block text-[0.75rem] uppercase tracking-[0.14em] text-gold">{staff.role === "admin" ? t("Administrateur") : t("Éditeur")}</span>
               </span>
             </div>
-            <div className="mt-5 flex items-center justify-between gap-3">
+            <Link href="/admin/compte#mot-de-passe" className="mt-4 inline-flex items-center gap-1.5 text-gold transition-colors hover:text-white">
+              <KeyRound aria-hidden className="h-4 w-4" />
+              {t("Modifier le mot de passe")}
+            </Link>
+            <div className="mt-4 flex items-center justify-between gap-3">
               <a href={`/${locale}`} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 transition-colors hover:text-white">
                 <ExternalLink aria-hidden className="h-4 w-4" />
                 {t("Voir le site")}
