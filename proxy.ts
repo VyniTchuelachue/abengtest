@@ -54,6 +54,7 @@ async function guardAdmin(request: NextRequest) {
   return response;
 }
 
+// Files served as they are, without the locale redirect (google*.html: Search Console verification).
 export const config = {
-  matcher: ["/((?!_next/|api/|images/|icon.png|apple-icon.png|favicon.ico|robots.txt|sitemap.xml|opengraph-image).*)"],
+  matcher: ["/((?!_next/|api/|images/|icon.png|apple-icon.png|favicon.ico|robots.txt|sitemap.xml|opengraph-image|google[a-z0-9]+\\.html).*)"],
 };
