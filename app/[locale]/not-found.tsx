@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = { title: "Page not found · Page introuvable" };
 
 // not-found receives no params, so the message is given in both languages.
 export default function NotFound() {

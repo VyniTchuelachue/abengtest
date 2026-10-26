@@ -22,9 +22,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await getArticle(slug, locale);
   if (!article) return {};
   // Untranslated pages point search engines at the language the text is written in.
-  const languages = Object.fromEntries(article.availableIn.map((l) => [l, `${siteUrl}${href(l, "insights", slug)}`]));
+  const languages: Record<string, string> = Object.fromEntries(article.availableIn.map((l) => [l, `${siteUrl}${href(l, "insights", slug)}`]));
+  languages["x-default"] = languages.en ?? languages[article.lang];
   return {
-    title: article.title,
+    // Headlines that already name the firm skip the "| The Abeng Law Firm" suffix.
+    title: /abeng law firm/i.test(article.title) ? { absolute: article.title } : article.title,
     description: article.excerpt ? summarize(article.excerpt) : undefined,
     alternates: { canonical: `${siteUrl}${href(article.lang, "insights", slug)}`, languages },
     openGraph: {
