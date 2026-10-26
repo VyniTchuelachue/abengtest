@@ -9,7 +9,7 @@ import { MemberCard } from "@/components/site/Portrait";
 import { getAreaMembers, getPracticeArea, getPracticeAreas } from "@/lib/data";
 import { getDictionary } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
-import { breadcrumbSchema } from "@/lib/structured-data";
+import { breadcrumbSchema, serviceSchema } from "@/lib/structured-data";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -125,6 +125,7 @@ export default async function PracticeAreaPage({ params }: Props) {
       )}
 
       <ContactBand locale={locale} dict={dict} />
+      <JsonLd data={serviceSchema(area, locale)} />
       <JsonLd
         data={breadcrumbSchema([
           { name: dict.nav.practice, path: href(locale, "practice") },

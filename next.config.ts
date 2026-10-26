@@ -1,5 +1,12 @@
 import type { NextConfig } from "next";
-import { localizedSegments } from "./lib/routes";
+import { localizedSegments, siteUrl } from "./lib/routes";
+
+// The production build answers on its *.vercel.app alias too; send those visits (and crawlers)
+// to the real domain so search engines see a single site. Preview deployments are left alone.
+const vercelAliasRedirect =
+  process.env.VERCEL_ENV === "production" && !new URL(siteUrl).hostname.endsWith(".vercel.app")
+    ? [{ source: "/:path*", has: [{ type: "host" as const, value: "(?<alias>.+)\\.vercel\\.app" }], destination: `${siteUrl}/:path*`, permanent: true }]
+    : [];
 
 const supabaseHost = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://example.supabase.co").hostname;
 
@@ -37,10 +44,16 @@ const nextConfig: NextConfig = {
     };
   },
   async redirects() {
-    return localizedSegments.flatMap(({ en, fr }) => [
-      { source: `/fr/${en}`, destination: `/fr/${fr}`, permanent: true },
-      { source: `/fr/${en}/:path*`, destination: `/fr/${fr}/:path*`, permanent: true },
-    ]);
+    return [
+      ...vercelAliasRedirect,
+      ...localizedSegments.flatMap(({ en, fr }) => [
+        { source: `/fr/${en}`, destination: `/fr/${fr}`, permanent: true },
+        { source: `/fr/${en}/:path*`, destination: `/fr/${fr}/:path*`, permanent: true },
+        // French segment under /en (old links, hand-typed URLs) → the English page.
+        { source: `/en/${fr}`, destination: `/en/${en}`, permanent: true },
+        { source: `/en/${fr}/:path*`, destination: `/en/${en}/:path*`, permanent: true },
+      ]),
+    ];
   },
 };
 

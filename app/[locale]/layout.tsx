@@ -6,7 +6,8 @@ import { Footer } from "@/components/site/Footer";
 import { JsonLd } from "@/components/site/JsonLd";
 import { firmEmail, getDictionary, phones } from "@/lib/dictionaries";
 import { isLocale, locales, siteUrl } from "@/lib/routes";
-import { legalServiceSchema } from "@/lib/structured-data";
+import { getPracticeAreas } from "@/lib/data";
+import { siteSchema } from "@/lib/structured-data";
 import "../globals.css";
 
 const display = DM_Sans({
@@ -58,6 +59,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
+  const areas = await getPracticeAreas(locale);
 
   return (
     <html lang={locale} className={`${display.variable} ${sans.variable}`}>
@@ -67,7 +69,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
           {children}
         </main>
         <Footer locale={locale} dict={dict} />
-        <JsonLd data={legalServiceSchema(locale)} />
+        <JsonLd data={siteSchema(locale, areas)} />
       </body>
     </html>
   );

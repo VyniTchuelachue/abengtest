@@ -32,6 +32,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: alternatesFor({ en: href("en", "team", slug), fr: href("fr", "team", slug) }, locale),
     openGraph: {
       type: "profile",
+      siteName: "The Abeng Law Firm",
+      locale: locale === "fr" ? "fr_CM" : "en_GB",
+      url: href(locale, "team", slug),
       title: member.name,
       description,
       images: member.profilePhoto ? [{ url: member.profilePhoto, width: 1200, height: 1500, alt: member.name }] : undefined,
@@ -170,7 +173,7 @@ export default async function MemberPage({ params }: Props) {
       </article>
 
       <ContactBand locale={locale} dict={dict} />
-      <JsonLd data={personSchema(member, locale)} />
+      <JsonLd data={personSchema(member, locale, isLawyer ? areas : [])} />
       <JsonLd
         data={breadcrumbSchema([
           { name: dict.nav.team, path: href(locale, "team") },

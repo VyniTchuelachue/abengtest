@@ -4,10 +4,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Award } from "lucide-react";
 import { ContactBand, PageIntro } from "@/components/site/blocks";
+import { JsonLd } from "@/components/site/JsonLd";
 import { MemberCard } from "@/components/site/Portrait";
 import { getTeam, groupOrder } from "@/lib/data";
 import { getDictionary } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
+import { teamListSchema } from "@/lib/structured-data";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -136,6 +138,7 @@ export default async function TeamPage({ params }: Props) {
       </section>
 
       <ContactBand locale={locale} dict={dict} />
+      <JsonLd data={teamListSchema(groupOrder.flatMap((g) => team.filter((m) => m.group === g)), locale)} />
     </>
   );
 }

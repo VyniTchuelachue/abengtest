@@ -70,9 +70,11 @@ export default async function HomePage({ params }: Props) {
                 locale === "fr" ? "text-[clamp(2.25rem,1.2rem+3.4vw,4.4rem)]" : "text-[clamp(2.5rem,1.5rem+4.2vw,4.75rem)]"
               }`}
             >
-              {t.heroLines.map((line) => (
+              {t.heroLines.map((line, i) => (
                 <span key={line} className="hero-line lg:whitespace-nowrap">
                   {line}
+                  {/* Keeps the words apart for search engines and screen readers; invisible on screen. */}
+                  {i < t.heroLines.length - 1 && " "}
                 </span>
               ))}
             </h1>

@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { defaultLocale, isLocale } from "./lib/routes";
+import { defaultLocale, isLocale, localizedSegments } from "./lib/routes";
 
+const frenchSegments = new Set(localizedSegments.map((s) => s.fr));
 const PUBLIC_ADMIN_PATHS = ["/admin/connexion", "/admin/mot-de-passe-oublie", "/admin/auth/callback"];
 
 export async function proxy(request: NextRequest) {
@@ -15,7 +16,9 @@ export async function proxy(request: NextRequest) {
   const first = pathname.split("/")[1];
   if (isLocale(first)) return NextResponse.next();
 
-  const preferred = request.headers.get("accept-language")?.toLowerCase().startsWith("fr") ? "fr" : defaultLocale;
+  // A French page name without its prefix (/equipe, /cabinet…) is a French page; otherwise follow the browser.
+  const preferred =
+    frenchSegments.has(first) || request.headers.get("accept-language")?.toLowerCase().startsWith("fr") ? "fr" : defaultLocale;
   const url = request.nextUrl.clone();
   url.pathname = `/${preferred}${pathname === "/" ? "" : pathname}`;
   return NextResponse.redirect(url);
@@ -54,7 +57,8 @@ async function guardAdmin(request: NextRequest) {
   return response;
 }
 
-// Files served as they are, without the locale redirect (google*.html: Search Console verification).
+// Files served as they are, without the locale redirect (google*.html: Search Console verification;
+// llms.txt: site guide for AI assistants).
 export const config = {
-  matcher: ["/((?!_next/|api/|images/|icon.png|apple-icon.png|favicon.ico|robots.txt|sitemap.xml|opengraph-image|google[a-z0-9]+\\.html).*)"],
+  matcher: ["/((?!_next/|api/|images/|icon.png|apple-icon.png|favicon.ico|robots.txt|sitemap.xml|llms.txt|opengraph-image|google[a-z0-9]+\\.html).*)"],
 };

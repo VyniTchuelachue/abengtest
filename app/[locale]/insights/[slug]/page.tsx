@@ -29,6 +29,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: { canonical: `${siteUrl}${href(article.lang, "insights", slug)}`, languages },
     openGraph: {
       type: "article",
+      siteName: "The Abeng Law Firm",
+      locale: article.lang === "fr" ? "fr_CM" : "en_GB",
+      url: href(article.lang, "insights", slug),
       title: article.title,
       description: article.excerpt || undefined,
       publishedTime: article.publishedAt,
