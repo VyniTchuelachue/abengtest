@@ -61,10 +61,11 @@ export const articleStatus = {
   draft: { label: "Brouillon", tone: "amber" },
 } as const;
 
+/** Kind of position; decides who counts as a lawyer (home page, article authors). Not shown on the site. */
 export const groupLabels = {
   partner: "Associé gérant",
-  senior_associate: "Associés seniors",
-  lawyer: "Associés",
+  senior_associate: "Collaborateurs seniors",
+  lawyer: "Collaborateurs",
   paralegal: "Juristes",
   administration: "Équipe administrative",
 } as const;

@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Award, Building, Globe2, Lock, Scale, TrendingUp } from "lucide-react";
-import { AwardGallery } from "@/components/site/AwardGallery";
+import { ArrowRight, Award, BarChart3, Building, Globe2, HandHeart, Lock, Network, Scale, TrendingUp, type LucideIcon } from "lucide-react";
 import { ContactBand, PageIntro, SectionHeading } from "@/components/site/blocks";
 import { getTeam } from "@/lib/data";
-import { getRecognitions } from "@/lib/recognitions";
+import { getRecognitions, recognitionKinds, type RecognitionKind } from "@/lib/recognitions";
 import { chambersProfileUrl, getDictionary } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
@@ -24,6 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const approachIcons = [Scale, Lock, TrendingUp, Globe2];
+const kindIcons: Record<RecognitionKind, LucideIcon> = { ranking: BarChart3, award: Award, membership: Network, contribution: HandHeart };
 
 export default async function FirmPage({ params }: Props) {
   const { locale } = await params;
@@ -85,8 +85,8 @@ export default async function FirmPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Recognition and networks */}
-      <section className="py-20 md:py-28">
+      {/* Recognition and networks, by kind: rankings, awards, memberships, contributions. */}
+      <section id="recognition" className="scroll-mt-28 py-20 md:py-28">
         <div className="shell">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <SectionHeading eyebrow={dict.home.recognitionEyebrow} title={t.recognitionTitle} />
@@ -95,39 +95,31 @@ export default async function FirmPage({ params }: Props) {
               <ArrowRight aria-hidden className="h-4 w-4" />
             </a>
           </div>
-          <ul className="mt-10 grid gap-5 md:grid-cols-2">
-            {[...t.recognition, { name: t.institutionsTitle, body: t.institutions }].map((r) => (
-              <li key={r.name} className="card flex gap-5 p-7">
-                <span className="icon-tile">
-                  <Award aria-hidden className="h-6 w-6" strokeWidth={1.75} />
-                </span>
-                <span>
-                  <span className="block font-display text-[1.1875rem] font-semibold text-ink">{r.name}</span>
-                  <span className="mt-2 block text-ink-soft">{r.body}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Awards and distinctions */}
-      <section id="distinctions" className="scroll-mt-28 border-t border-rule bg-stone py-20 md:py-28">
-        <div className="shell">
-          <SectionHeading eyebrow={t.awardsEyebrow} title={t.awardsTitle} lede={t.awardsLede} />
-          <h3 className="mt-12 flex items-center gap-3 font-display text-[1.25rem] font-semibold text-ink">
-            <span aria-hidden className="h-px w-8 bg-gold" />
-            {t.awardsFirm}
-          </h3>
-          <div className="mt-6">
-            <AwardGallery items={getRecognitions("firm", locale)} labels={dict.common.gallery} />
-          </div>
-          <h3 className="mt-14 flex items-center gap-3 font-display text-[1.25rem] font-semibold text-ink">
-            <span aria-hidden className="h-px w-8 bg-gold" />
-            {t.awardsPartner}
-          </h3>
-          <div className="mt-6">
-            <AwardGallery items={getRecognitions("abeng-roland", locale)} labels={dict.common.gallery} />
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
+            {recognitionKinds.map((kind) => {
+              const Icon = kindIcons[kind];
+              return (
+                <section key={kind} aria-labelledby={`rk-${kind}`} className="card p-7">
+                  <h3 id={`rk-${kind}`} className="flex items-center gap-4 font-display text-[1.1875rem] font-semibold text-ink">
+                    <span className="icon-tile">
+                      <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
+                    </span>
+                    {t.recognitionKinds[kind]}
+                  </h3>
+                  <ul className="mt-6 space-y-5">
+                    {getRecognitions(locale, kind).map((r) => (
+                      <li key={r.id} className="border-l-2 border-gold/60 pl-4">
+                        <p className="font-semibold text-ink">{r.name}</p>
+                        {(r.recipient || r.year) && (
+                          <p className="text-[0.875rem] text-slate">{[r.recipient, r.year].filter(Boolean).join(" · ")}</p>
+                        )}
+                        {r.detail && <p className="mt-1.5 text-[0.9375rem] text-ink-soft">{r.detail}</p>}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              );
+            })}
           </div>
         </div>
       </section>

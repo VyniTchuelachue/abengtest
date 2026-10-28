@@ -54,9 +54,12 @@ type MessageRow = {
 };
 
 type PracticeAreaRow = {
+  body_en: string;
+  body_fr: string;
   created_at: string;
   group_key: Enums["practice_group"];
   id: string;
+  published: boolean;
   scope_en: string[];
   scope_fr: string[];
   slug: string;
@@ -143,7 +146,7 @@ export type Database = {
         ]
       >;
       contact_messages: Table<MessageRow, "email" | "message" | "name">;
-      practice_areas: Table<PracticeAreaRow, "group_key" | "slug" | "slug_fr" | "title_en" | "title_fr">;
+      practice_areas: Table<PracticeAreaRow, "slug" | "slug_fr" | "title_en" | "title_fr">;
       staff: Table<StaffRow, "email" | "user_id">;
       team_member_practice_areas: Table<
         MemberPracticeAreaRow,

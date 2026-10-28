@@ -66,8 +66,7 @@ export async function saveMember(prev: MemberActionResult, formData: FormData): 
 
 async function saveMemberCore(_: MemberActionResult, formData: FormData): Promise<MemberActionResult> {
   const { supabase } = await requireStaff();
-  const raw = Object.fromEntries([...formData.entries()].filter(([k]) => k !== "practice_area"));
-  const parsed = schema.safeParse(raw);
+  const parsed = schema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
     const fieldErrors = Object.fromEntries(parsed.error.issues.map((i) => [String(i.path[0]), i.message]));
     return { ok: false, message: "Le profil n'a pas été enregistré. Corrigez les champs signalés.", fieldErrors };
@@ -76,23 +75,15 @@ async function saveMemberCore(_: MemberActionResult, formData: FormData): Promis
   if (!d.title_fr && !d.title_en) {
     return { ok: false, message: "Indiquez la fonction, au moins en français.", fieldErrors: { title_fr: "Indiquez la fonction." } };
   }
-  const practiceAreas = formData.getAll("practice_area").map(String).filter((v) => /^[0-9a-f-]{36}$/i.test(v));
-
-  const existing = id ? (await supabase.from("team_members").select("slug, photo_path, sort_order, group_key").eq("id", id).maybeSingle()).data : null;
+  const existing = id ? (await supabase.from("team_members").select("slug, photo_path, sort_order").eq("id", id).maybeSingle()).data : null;
   if (id && !existing) return { ok: false, message: "Ce profil n'existe plus." };
 
   const slug = await uniqueSlug(supabase, slugify(rawSlug || "") || existing?.slug || slugify(d.full_name), id);
 
-  // New profiles (or a change of group) go to the end of their group.
+  // New profiles go to the end of the team list.
   let sort_order = existing?.sort_order ?? 0;
-  if (!existing || existing.group_key !== d.group_key) {
-    const { data: last } = await supabase
-      .from("team_members")
-      .select("sort_order")
-      .eq("group_key", d.group_key)
-      .order("sort_order", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+  if (!existing) {
+    const { data: last } = await supabase.from("team_members").select("sort_order").order("sort_order", { ascending: false }).limit(1).maybeSingle();
     sort_order = (last?.sort_order ?? 0) + 10;
   }
 
@@ -105,15 +96,6 @@ async function saveMemberCore(_: MemberActionResult, formData: FormData): Promis
     const { data, error } = await supabase.from("team_members").insert(record).select("id").single();
     if (error) return { ok: false, message: `Enregistrement impossible : ${error.message}` };
     memberId = data.id;
-  }
-
-  // Replace practice-area links.
-  await supabase.from("team_member_practice_areas").delete().eq("member_id", memberId);
-  if (practiceAreas.length) {
-    const { error } = await supabase
-      .from("team_member_practice_areas")
-      .insert(practiceAreas.map((practice_area_id) => ({ member_id: memberId!, practice_area_id })));
-    if (error) return { ok: false, message: `Les expertises n'ont pas pu être enregistrées : ${error.message}` };
   }
 
   if (existing?.photo_path && existing.photo_path !== d.photo_path && existing.photo_path.startsWith("team/")) {
@@ -129,20 +111,18 @@ async function saveMemberCore(_: MemberActionResult, formData: FormData): Promis
   };
 }
 
-/** Swaps a profile with its neighbour in the same group. */
+/** Swaps a profile with its neighbour in the team list. */
 export async function moveMember(formData: FormData) {
   const { supabase } = await requireStaff();
   const id = z.string().uuid().parse(formData.get("id"));
   const direction = formData.get("direction") === "up" ? "up" : "down";
-  const { data: me } = await supabase.from("team_members").select("id, group_key, sort_order").eq("id", id).maybeSingle();
-  if (!me) return;
-  const { data: group } = await supabase.from("team_members").select("id, sort_order").eq("group_key", me.group_key).order("sort_order").order("full_name");
-  const list = group ?? [];
+  const { data: all } = await supabase.from("team_members").select("id, sort_order").order("sort_order").order("full_name");
+  const list = all ?? [];
   const index = list.findIndex((m) => m.id === id);
   const target = direction === "up" ? index - 1 : index + 1;
   if (index < 0 || target < 0 || target >= list.length) return;
   [list[index], list[target]] = [list[target], list[index]];
-  // Re-number the whole group so equal or missing values never stall the move.
+  // Re-number the whole list so equal or missing values never stall the move.
   await Promise.all(list.map((m, i) => supabase.from("team_members").update({ sort_order: (i + 1) * 10 }).eq("id", m.id)));
   refreshPublic("team");
   refresh();

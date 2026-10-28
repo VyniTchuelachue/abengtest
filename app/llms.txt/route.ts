@@ -1,4 +1,4 @@
-import { getArticles, getPracticeAreas, getTeam, groupOrder } from "@/lib/data";
+import { getArticles, getPracticeAreas, getTeam } from "@/lib/data";
 import { firmEmail, getDictionary, phones } from "@/lib/dictionaries";
 import { href, siteUrl } from "@/lib/routes";
 
@@ -10,7 +10,6 @@ export async function GET() {
   const en = getDictionary("en");
   const fr = getDictionary("fr");
   const link = (label: string, path: string, note?: string) => `- [${label}](${siteUrl}${path})${note ? `: ${note}` : ""}`;
-  const people = groupOrder.flatMap((g) => team.filter((m) => m.group === g));
 
   const body = [
     "# The Abeng Law Firm",
@@ -20,7 +19,7 @@ export async function GET() {
     `Business law firm in Douala, Cameroon, founded in 1998 by Barrister Roland Abeng. The site is published in English (/en) and French (/fr). ${en.address.lines.join(", ")}. Telephone ${phones[0]}. Email ${firmEmail}.`,
     "",
     "## Main pages",
-    link(en.firmPage.title, href("en", "firm"), "history, approach, recognition, awards and distinctions"),
+    link(en.firmPage.title, href("en", "firm"), "history, approach, rankings, awards, memberships and acknowledged contributions"),
     link(en.practicePage.title, href("en", "practice")),
     link(en.teamPage.title, href("en", "team")),
     link(en.insightsPage.title, href("en", "insights")),
@@ -32,7 +31,7 @@ export async function GET() {
     ...areas.map((a) => link(a.title, href("en", "practice", a.slug), a.summary)),
     "",
     "## People",
-    ...people.map((m) => link(m.name, href("en", "team", m.slug), m.title)),
+    ...team.map((m) => link(m.name, href("en", "team", m.slug), m.title)),
     ...(articles.length ? ["", "## News", ...articles.map((a) => link(a.title, href("en", "insights", a.slug), a.publishedAt.slice(0, 10)))] : []),
     "",
     "## Optional",

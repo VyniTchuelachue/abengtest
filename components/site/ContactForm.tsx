@@ -15,9 +15,11 @@ type Props = {
   fixedSubject?: string;
   messageLabel?: string;
   submitLabel?: string;
+  /** Notice above the button; defaults to the contact form's, `null` shows none. */
+  notice?: string | null;
 };
 
-export function ContactForm({ locale, t, fixedSubject, messageLabel, submitLabel }: Props) {
+export function ContactForm({ locale, t, fixedSubject, messageLabel, submitLabel, notice = t.disclaimer }: Props) {
   const [state, action, pending] = useActionState<ContactState, FormData>(sendMessage, { status: "idle" });
   const startedAt = useRef<HTMLInputElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
@@ -45,11 +47,9 @@ export function ContactForm({ locale, t, fixedSubject, messageLabel, submitLabel
     <form action={action} noValidate className="space-y-6">
       <input type="hidden" name="locale" value={locale} />
       <input ref={startedAt} type="hidden" name="started_at" defaultValue="0" />
-      <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
-        <label>
-          Website
-          <input type="text" name="website" tabIndex={-1} autoComplete="off" />
-        </label>
+      {/* Anti-spam trap for bots: never shown, unlabelled, skipped by keyboard and screen readers. */}
+      <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden" style={{ display: "none" }}>
+        <input type="text" name="website" tabIndex={-1} autoComplete="off" />
       </div>
 
       {state.status === "error" && (
@@ -91,7 +91,7 @@ export function ContactForm({ locale, t, fixedSubject, messageLabel, submitLabel
         <textarea name="message" required rows={7} minLength={10} maxLength={5000} defaultValue={v.message} aria-invalid={err.message ? true : undefined} aria-describedby={err.message ? "err-message" : undefined} className={`${field} resize-y`} />
         {err.message && <span id="err-message" className="mt-1.5 block text-[0.875rem] font-normal text-danger">{t.errors.message}</span>}
       </label>
-      <p className="text-[0.8125rem] leading-relaxed text-slate">{t.disclaimer}</p>
+      {notice && <p className="text-[0.8125rem] leading-relaxed text-slate">{notice}</p>}
       <button type="submit" disabled={pending} className="btn btn-gold disabled:opacity-60">
         {pending ? t.sending : (submitLabel ?? t.send)}
       </button>

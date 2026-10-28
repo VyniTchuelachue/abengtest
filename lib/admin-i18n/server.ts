@@ -15,7 +15,7 @@ export async function getT() {
 }
 
 /** Messages that end with a variable part (an email, a database error). */
-const prefixed = ["Enregistrement impossible : ", "Les expertises n'ont pas pu être enregistrées : ", "Invitation impossible : ", "Accès non enregistré : ", "Invitation envoyée à "];
+const prefixed = ["Enregistrement impossible : ","Invitation impossible : ", "Accès non enregistré : ", "Invitation envoyée à "];
 
 /** Puts a server action's message and field errors into the dashboard language. */
 export async function localized<R extends { message?: string; fieldErrors?: Record<string, string> }>(result: R): Promise<R> {

@@ -23,11 +23,7 @@ export default async function EditMemberPage({
   const { ok, erreur } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
-  const [{ data: member }, { data: areas }, { data: links }] = await Promise.all([
-    supabase.from("team_members").select("*").eq("id", id).maybeSingle(),
-    supabase.from("practice_areas").select("id, title_fr, title_en, group_key, sort_order").order("sort_order"),
-    supabase.from("team_member_practice_areas").select("practice_area_id").eq("member_id", id),
-  ]);
+  const { data: member } = await supabase.from("team_members").select("*").eq("id", id).maybeSingle();
   if (!member) notFound();
   const t = await getT();
   const locale = await getAdminLocale();
@@ -53,11 +49,7 @@ export default async function EditMemberPage({
         }
       />
       {erreur === "suppression" && <Notice tone="error">{t("La suppression a échoué. Réessayez.")}</Notice>}
-      <MemberForm
-        flash={ok === "cree" ? t("Profil créé.") : undefined}
-        practiceAreas={(areas ?? []).map((a) => ({ id: a.id, label: pick(a.title_fr, a.title_en), group: a.group_key }))}
-        values={{ ...member, practiceAreaIds: (links ?? []).map((l) => l.practice_area_id) }}
-      />
+      <MemberForm flash={ok === "cree" ? t("Profil créé.") : undefined} values={member} />
     </>
   );
 }

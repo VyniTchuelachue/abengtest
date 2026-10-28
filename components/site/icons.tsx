@@ -23,6 +23,10 @@ import {
   Pickaxe,
   Globe2,
   Briefcase,
+  Bug,
+  Shield,
+  Umbrella,
+  FileSearch,
   type LucideIcon,
 } from "lucide-react";
 
@@ -44,6 +48,10 @@ const practiceIcons: Record<string, LucideIcon> = {
   "debt-recovery-insolvency": HandCoins,
   "maritime-transport": Anchor,
   "private-client": Home,
+  "cybercrime-digital-disputes": Bug,
+  "criminal-law-proceedings": Shield,
+  "insurance-law-disputes": Umbrella,
+  "legal-due-diligence-audits": FileSearch,
 };
 
 export function PracticeIcon({ slug, className }: { slug: string; className?: string }) {

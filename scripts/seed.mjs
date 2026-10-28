@@ -24,14 +24,13 @@ if (authError) throw authError;
 
 // Practice areas -------------------------------------------------------------
 const areas = JSON.parse(fs.readFileSync("supabase/seed/practice-areas.json", "utf8"));
-const groupOrder = {};
-const areaRows = areas.map(({ members, ...a }) => {
-  groupOrder[a.group_key] = (groupOrder[a.group_key] ?? 0) + 10;
-  return { ...a, sort_order: groupOrder[a.group_key] };
-});
+// One order for the whole list: by former group, then as listed in the file.
+const groupRank = ["transactions", "regulatory", "disputes", "sectors"];
+const areaRows = areas
+  .map(({ members: _members, ...a }, i) => ({ a, i }))
+  .sort((x, y) => groupRank.indexOf(x.a.group_key) - groupRank.indexOf(y.a.group_key) || x.i - y.i)
+  .map(({ a }, n) => ({ ...a, sort_order: (n + 1) * 10 }));
 check("practice areas", await supabase.from("practice_areas").upsert(areaRows, { onConflict: "slug" }));
-const { data: areaIds } = await supabase.from("practice_areas").select("id, slug");
-const areaBySlug = Object.fromEntries(areaIds.map((a) => [a.slug, a.id]));
 console.log(`practice areas: ${areaRows.length}`);
 
 // Team members + portraits ------------------------------------------------------
@@ -59,16 +58,10 @@ const { data: memberIds } = await supabase.from("team_members").select("id, slug
 const memberBySlug = Object.fromEntries(memberIds.map((m) => [m.slug, m.id]));
 console.log(`team members: ${team.length}`);
 
-const links = areas.flatMap((a) => a.members.map((slug) => ({ member_id: memberBySlug[slug], practice_area_id: areaBySlug[a.slug] })));
-check("links", await supabase.from("team_member_practice_areas").upsert(links, { onConflict: "member_id,practice_area_id" }));
-console.log(`practice links: ${links.length}`);
-
 // Categories ---------------------------------------------------------------------
 const categories = [
-  { slug: "firm-news", name_en: "Firm news", name_fr: "Vie du cabinet", sort_order: 10 },
-  { slug: "legal-updates", name_en: "Legal updates", name_fr: "Actualités juridiques", sort_order: 20 },
-  { slug: "recognition", name_en: "Recognition", name_fr: "Distinctions", sort_order: 30 },
-  { slug: "events", name_en: "Events", name_fr: "Événements", sort_order: 40 },
+  { slug: "legal-updates", name_en: "Legal articles and updates", name_fr: "Articles et actualités juridiques", sort_order: 10 },
+  { slug: "firm-news", name_en: "Firm news", name_fr: "Vie du cabinet", sort_order: 20 },
 ];
 check("categories", await supabase.from("article_categories").upsert(categories, { onConflict: "slug" }));
 const { data: cats } = await supabase.from("article_categories").select("id, slug");

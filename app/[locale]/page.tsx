@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Award, CalendarCheck, Globe2, Landmark, Languages, Phone } from "lucide-react";
+import { ArrowRight, Award, Globe2, Landmark, Languages, Phone } from "lucide-react";
 import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/blocks";
 import { PracticeIcon, SectorIcon } from "@/components/site/icons";
 import { MemberCard } from "@/components/site/Portrait";
 import { getArticles, getPracticeAreas, getTeam, isLawyerGroup } from "@/lib/data";
-import { getRecognitions } from "@/lib/recognitions";
-import { chambersProfileUrl, getDictionary, phones } from "@/lib/dictionaries";
+import { getRecognitions, recognitionKinds } from "@/lib/recognitions";
+import { getDictionary, phones } from "@/lib/dictionaries";
 import { telHref } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
@@ -48,12 +48,11 @@ export default async function HomePage({ params }: Props) {
   const faces = team.filter((m) => m.photo && m.group !== "partner").slice(0, 5);
   const bySlug = (slug: string) => areas.find((a) => a.slugs.en === slug);
   const whyIcons = [Landmark, Globe2, Languages];
-  const recognitions = [
-    { name: "Chambers Global", detail: locale === "fr" ? "Classement 2026" : "2026 ranking", href: chambersProfileUrl },
-    { name: "TAGLaw", detail: locale === "fr" ? "Membre de l'alliance" : "Alliance member" },
-    { name: "TRACE", detail: locale === "fr" ? "Réseau anticorruption" : "Anti-bribery network" },
-    { name: "Legal 500 · IFLR1000", detail: locale === "fr" ? "Associé gérant distingué" : "Managing Partner recognised" },
-  ];
+  // One line per kind of recognition; the detail lives on the firm page.
+  const recognitionSummary = recognitionKinds.map((kind) => ({
+    kind,
+    names: [...new Set(getRecognitions(locale, kind).map((r) => r.name))],
+  }));
 
   return (
     <>
@@ -81,8 +80,8 @@ export default async function HomePage({ params }: Props) {
             <p className="hero-fade mt-6 max-w-xl text-[1.0625rem] leading-relaxed text-white/80">{t.heroLede}</p>
             <div className="hero-fade mt-9 flex flex-wrap gap-3">
               <Link href={href(locale, "contact")} className="btn btn-gold">
-                <CalendarCheck aria-hidden className="h-4 w-4" />
                 {dict.common.consult}
+                <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
               <a href={telHref(phones[0])} className="btn btn-outline-light">
                 <Phone aria-hidden className="h-4 w-4 text-gold" />
@@ -119,15 +118,6 @@ export default async function HomePage({ params }: Props) {
                     className="object-contain object-bottom"
                   />
                 </div>
-              </div>
-              <div className="hero-stat absolute -left-2 bottom-24 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-ink shadow-[0_20px_40px_-20px_rgb(0_0_0/0.6)] sm:-left-6">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold">
-                  <Award aria-hidden className="h-5 w-5" />
-                </span>
-                <span className="max-w-[9.5rem]">
-                  <span className="block font-display text-[1rem] font-bold leading-tight">Chambers Global</span>
-                  <span className="text-[0.75rem] leading-tight text-slate">{t.statChambers}</span>
-                </span>
               </div>
               <div className="absolute inset-x-[12%] -bottom-5 rounded-2xl bg-ink/90 px-5 py-3 text-center backdrop-blur">
                 <p className="font-display font-semibold">{partner.name}</p>
@@ -221,49 +211,23 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Recognition */}
+      {/* Recognition: a compact summary; the firm page has the detail. */}
       <section className="border-b border-rule py-16 md:py-20">
         <div className="shell">
           <p className="text-center">
             <span className="eyebrow">{t.recognitionEyebrow}</span>
           </p>
-          <ul className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {recognitions.map((r) => {
-              const inner = (
-                <>
-                  <span className="font-display text-[1.25rem] font-bold tracking-tight text-ink">{r.name}</span>
-                  <span className="mt-1 block text-[0.8125rem] text-slate">{r.detail}</span>
-                </>
-              );
-              return (
-                <li key={r.name} className="card flex flex-col items-center justify-center px-4 py-7 text-center">
-                  {r.href ? (
-                    <a href={r.href} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center">
-                      {inner}
-                    </a>
-                  ) : (
-                    inner
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-          <ul className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {getRecognitions("firm", locale).map((r) => (
-              <li key={r.id}>
-                <Link href={`${href(locale, "firm")}#distinctions`} className="group relative block aspect-[4/5] overflow-hidden rounded-[1.25rem] bg-stone-deep">
-                  <Image src={r.image} alt={`${r.issuer}${r.year ? ` ${r.year}` : ""}`} fill sizes="(min-width: 1024px) 22vw, 45vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
-                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-charcoal/95 via-charcoal/70 to-transparent px-4 pb-4 pt-10 text-white">
-                    <span className="block font-display text-[0.9375rem] font-semibold leading-tight">{r.issuer}</span>
-                    {r.year && <span className="text-[0.8125rem] text-gold">{r.year}</span>}
-                  </span>
-                </Link>
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {recognitionSummary.map((r) => (
+              <li key={r.kind} className="card flex flex-col px-6 py-6">
+                <span className="text-[0.75rem] font-semibold uppercase tracking-[0.14em] text-gold-dark">{dict.firmPage.recognitionKinds[r.kind]}</span>
+                <span className="mt-3 font-display text-[1.0625rem] font-semibold leading-snug text-ink">{r.names.join(" · ")}</span>
               </li>
             ))}
           </ul>
           <p className="mt-8 text-center">
-            <Link href={`${href(locale, "firm")}#distinctions`} className="btn btn-quiet">
-              {t.awardsLink}
+            <Link href={`${href(locale, "firm")}#recognition`} className="btn btn-quiet">
+              {t.recognitionLink}
               <ArrowRight aria-hidden className="h-4 w-4" />
             </Link>
           </p>

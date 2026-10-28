@@ -9,9 +9,11 @@ const websiteId = `${siteUrl}/#website`;
 const personId = (slug: string) => `${siteUrl}${href("en", "team", slug)}#person`;
 const partnerSlug = "abeng-roland";
 
-/** One line per award, worded as printed on the item (see lib/recognitions.ts). */
+/** Rankings and awards held by the firm or a person, one line each (see lib/recognitions.ts). */
 const awardLines = (holder: "firm" | "abeng-roland", locale: Locale) =>
-  getRecognitions(holder, locale).map((r) => `${r.issuer}${r.year ? ` ${r.year}` : ""}: ${r.title}`);
+  getRecognitions(locale)
+    .filter((r) => (r.kind === "ranking" || r.kind === "award") && r.recipientKey === holder)
+    .map((r) => `${r.name}${r.year ? ` ${r.year}` : ""}${r.detail ? `: ${r.detail}` : ""}`);
 
 export function websiteSchema() {
   return {
@@ -65,10 +67,7 @@ export function legalServiceSchema(locale: Locale, areas: PracticeArea[]) {
     hasMap: `https://www.google.com/maps/search/?api=1&query=${officeCoordinates.lat},${officeCoordinates.lng}`,
     sameAs: [chambersProfileUrl],
     award: awardLines("firm", locale),
-    memberOf: [
-      { "@type": "Organization", name: "TAGLaw" },
-      { "@type": "Organization", name: "TRACE" },
-    ],
+    memberOf: getRecognitions(locale, "membership").map((r) => ({ "@type": "Organization", name: r.name })),
   };
 }
 
@@ -77,8 +76,8 @@ export function siteSchema(locale: Locale, areas: PracticeArea[]) {
   return { "@context": "https://schema.org", "@graph": [websiteSchema(), legalServiceSchema(locale, areas)] };
 }
 
-export function personSchema(member: Member, locale: Locale, areas: PracticeArea[] = []) {
-  const knowsAbout = [...new Set([...member.focusAreas, ...areas.map((a) => a.title)])];
+export function personSchema(member: Member, locale: Locale) {
+  const knowsAbout = member.focusAreas;
   return {
     "@context": "https://schema.org",
     "@type": "Person",

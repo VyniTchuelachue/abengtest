@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { mediaUrl, publicClient } from "./supabase/public";
-import type { ArticleRecord, CategoryRecord, PracticeAreaRecord, PracticeGroup, TeamGroup, TeamMemberRecord } from "./database.types";
+import type { ArticleRecord, CategoryRecord, PracticeAreaRecord, TeamGroup, TeamMemberRecord } from "./database.types";
 import type { Locale } from "./routes";
 
 // ---------------------------------------------------------------------------
@@ -27,8 +27,6 @@ export type Member = {
   featured: boolean;
   updatedAt: string;
 };
-
-export const groupOrder: TeamGroup[] = ["partner", "senior_associate", "lawyer", "paralegal", "administration"];
 
 /** Partner, senior associates and associates: the people shown as lawyers. */
 export function isLawyerGroup(group: TeamGroup): boolean {
@@ -67,14 +65,16 @@ function toMember(row: TeamMemberRecord, locale: Locale): Member {
   };
 }
 
+/** One list in the firm's chosen order (set in the dashboard), not split by position. */
 const fetchTeamRows = cache(async () => {
   const { data, error } = await publicClient(["team"])
     .from("team_members")
     .select("*")
     .eq("status", "published")
-    .order("sort_order", { ascending: true });
+    .order("sort_order", { ascending: true })
+    .order("full_name", { ascending: true });
   if (error) throw new Error(`Team could not be loaded: ${error.message}`);
-  return [...(data ?? [])].sort((a, b) => groupOrder.indexOf(a.group_key) - groupOrder.indexOf(b.group_key) || a.sort_order - b.sort_order);
+  return data ?? [];
 });
 
 export async function getTeam(locale: Locale): Promise<Member[]> {
@@ -86,12 +86,6 @@ export async function getMember(slug: string, locale: Locale): Promise<Member | 
   return row ? toMember(row, locale) : null;
 }
 
-const fetchLinks = cache(async () => {
-  const { data, error } = await publicClient(["team", "practice"]).from("team_member_practice_areas").select("member_id, practice_area_id");
-  if (error) throw new Error(`Practice links could not be loaded: ${error.message}`);
-  return data ?? [];
-});
-
 // ---------------------------------------------------------------------------
 // Practice areas
 // ---------------------------------------------------------------------------
@@ -99,33 +93,37 @@ export type PracticeArea = {
   id: string;
   slug: string;
   slugs: Record<Locale, string>;
-  group: PracticeGroup;
   title: string;
   summary: string;
+  /** Full description, one string per paragraph. */
+  body: string[];
   scope: string[];
 };
 
-export const practiceGroupOrder: PracticeGroup[] = ["transactions", "regulatory", "disputes", "sectors"];
-
 function toArea(row: PracticeAreaRecord, locale: Locale): PracticeArea {
   const slugs = { en: row.slug, fr: row.slug_fr };
+  const body = locale === "en" ? row.body_en : row.body_fr;
   return {
     id: row.id,
     slug: slugs[locale],
     slugs,
-    group: row.group_key,
     title: locale === "en" ? row.title_en : row.title_fr,
     summary: locale === "en" ? row.summary_en : row.summary_fr,
+    body: body.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean),
     scope: locale === "en" ? row.scope_en : row.scope_fr,
   };
 }
 
+/** Published areas in the order set in the dashboard. */
 const fetchAreaRows = cache(async () => {
-  const { data, error } = await publicClient(["practice"]).from("practice_areas").select("*").order("sort_order");
+  const { data, error } = await publicClient(["practice"])
+    .from("practice_areas")
+    .select("*")
+    .eq("published", true)
+    .order("sort_order")
+    .order("title_en");
   if (error) throw new Error(`Practice areas could not be loaded: ${error.message}`);
-  return [...(data ?? [])].sort(
-    (a, b) => practiceGroupOrder.indexOf(a.group_key) - practiceGroupOrder.indexOf(b.group_key) || a.sort_order - b.sort_order,
-  );
+  return data ?? [];
 });
 
 export async function getPracticeAreas(locale: Locale): Promise<PracticeArea[]> {
@@ -136,18 +134,6 @@ export async function getPracticeAreas(locale: Locale): Promise<PracticeArea[]> 
 export async function getPracticeArea(slug: string, locale: Locale): Promise<PracticeArea | null> {
   const row = (await fetchAreaRows()).find((r) => r.slug === slug || r.slug_fr === slug);
   return row ? toArea(row, locale) : null;
-}
-
-export async function getAreaMembers(areaId: string, locale: Locale): Promise<Member[]> {
-  const [links, team] = await Promise.all([fetchLinks(), getTeam(locale)]);
-  const ids = new Set(links.filter((l) => l.practice_area_id === areaId).map((l) => l.member_id));
-  return team.filter((m) => ids.has(m.id) && isLawyerGroup(m.group));
-}
-
-export async function getMemberAreas(memberId: string, locale: Locale): Promise<PracticeArea[]> {
-  const [links, areas] = await Promise.all([fetchLinks(), getPracticeAreas(locale)]);
-  const ids = new Set(links.filter((l) => l.member_id === memberId).map((l) => l.practice_area_id));
-  return areas.filter((a) => ids.has(a.id));
 }
 
 // ---------------------------------------------------------------------------

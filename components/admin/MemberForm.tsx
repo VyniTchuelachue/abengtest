@@ -33,7 +33,6 @@ export type MemberFormValues = {
   bar_admission_en: string | null;
   languages_fr: string[];
   languages_en: string[];
-  practiceAreaIds: string[];
 };
 
 type Lang = "fr" | "en";
@@ -45,15 +44,7 @@ const positions = [
   { value: "50% 50%", label: "Centrée" },
 ];
 
-export function MemberForm({
-  values,
-  practiceAreas,
-  flash,
-}: {
-  values: MemberFormValues;
-  practiceAreas: { id: string; label: string; group: string }[];
-  flash?: string;
-}) {
+export function MemberForm({ values, flash }: { values: MemberFormValues; flash?: string }) {
   const t = useT();
   const locale = useAdminLocale();
   const [state, action, pending] = useActionState<MemberActionResult, FormData>(saveMember, { ok: true, message: flash });
@@ -148,7 +139,7 @@ export function MemberForm({
                 <input
                   name={`title_${l}`}
                   defaultValue={values[`title_${l}`]}
-                  placeholder={l === "fr" ? "Associée senior" : "Senior Associate"}
+                  placeholder={l === "fr" ? "Collaboratrice senior" : "Senior Associate"}
                   aria-invalid={errors[`title_${l}`] ? true : undefined}
                   className={inputClass}
                 />
@@ -183,20 +174,6 @@ export function MemberForm({
             </div>
           ))}
         </section>
-
-        <fieldset className={`${panelClass} p-6`}>
-          <legend className="sr-only">{t("Expertises")}</legend>
-          <h2 className="font-sans text-[1rem] font-semibold">{t("Expertises du cabinet")}</h2>
-          <p className={hintClass}>{t("Le profil apparaîtra parmi les contacts des expertises cochées (avocats uniquement).")}</p>
-          <div className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
-            {practiceAreas.map((a) => (
-              <label key={a.id} className="flex items-start gap-2.5 text-[0.9375rem]">
-                <input type="checkbox" name="practice_area" value={a.id} defaultChecked={values.practiceAreaIds.includes(a.id)} className="mt-1 h-4 w-4 accent-gold" />
-                {a.label}
-              </label>
-            ))}
-          </div>
-        </fieldset>
       </div>
 
       <aside className="space-y-6">

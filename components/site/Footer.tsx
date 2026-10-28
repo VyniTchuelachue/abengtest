@@ -73,11 +73,10 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="shell flex flex-col gap-2 py-6 text-[0.8125rem] sm:flex-row sm:items-center sm:justify-between">
+        <div className="shell py-6 text-[0.8125rem]">
           <p>
             © {year} The Abeng Law Firm. {dict.footer.rights}
           </p>
-          <p>{dict.footer.ohada}</p>
         </div>
       </div>
     </footer>

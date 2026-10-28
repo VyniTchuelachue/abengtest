@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Briefcase, CalendarCheck, GraduationCap, Languages, SquareArrowOutUpRight, Mail, Scale, Target, type LucideIcon } from "lucide-react";
+import { ArrowRight, GraduationCap, Languages, SquareArrowOutUpRight, Mail, Scale, Target, type LucideIcon } from "lucide-react";
 import { Breadcrumb, ContactBand } from "@/components/site/blocks";
 import { JsonLd } from "@/components/site/JsonLd";
-import { AwardGallery } from "@/components/site/AwardGallery";
 import { Portrait } from "@/components/site/Portrait";
-import { getMember, getMemberAreas, getTeam, isLawyerGroup } from "@/lib/data";
+import { getMember, getTeam } from "@/lib/data";
 import { getDictionary } from "@/lib/dictionaries";
-import { getRecognitions } from "@/lib/recognitions";
 import { summarize } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 import { breadcrumbSchema, personSchema } from "@/lib/structured-data";
@@ -49,9 +47,6 @@ export default async function MemberPage({ params }: Props) {
   if (!member) notFound();
   const dict = getDictionary(locale);
   const t = dict.teamPage;
-  const areas = await getMemberAreas(member.id, locale);
-  const isLawyer = isLawyerGroup(member.group);
-  const distinctions = member.slug === "abeng-roland" ? getRecognitions("abeng-roland", locale) : [];
 
   const list = (items: string[]) => (
     <ul className="space-y-2">
@@ -66,23 +61,6 @@ export default async function MemberPage({ params }: Props) {
 
   const details: { label: string; icon: LucideIcon; content: React.ReactNode }[] = [];
   if (member.focusAreas.length) details.push({ label: t.focus, icon: Target, content: list(member.focusAreas) });
-  if (isLawyer && areas.length)
-    details.push({
-      label: t.practiceAreas,
-      icon: Briefcase,
-      content: (
-        <ul className="space-y-2">
-          {areas.map((a) => (
-            <li key={a.id} className="flex gap-2.5">
-              <span aria-hidden className="mt-2.5 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
-              <Link href={href(locale, "practice", a.slug)} className="text-ink underline decoration-gold/50 underline-offset-4 transition-colors hover:text-gold-dark">
-                {a.title}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ),
-    });
   if (member.qualifications.length) details.push({ label: t.qualifications, icon: GraduationCap, content: list(member.qualifications) });
   if (member.barAdmission) details.push({ label: t.bar, icon: Scale, content: <p>{member.barAdmission}</p> });
   if (member.languages.length) details.push({ label: t.languages, icon: Languages, content: <p>{member.languages.join(", ")}</p> });
@@ -127,8 +105,8 @@ export default async function MemberPage({ params }: Props) {
                 </a>
               )}
               <Link href={href(locale, "contact")} className="btn btn-gold w-full">
-                <CalendarCheck aria-hidden className="h-4 w-4" />
                 {dict.common.consult}
+                <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
             </div>
           </div>
@@ -158,22 +136,11 @@ export default async function MemberPage({ params }: Props) {
               ))}
             </dl>
           )}
-
-          {distinctions.length > 0 && (
-            <section aria-labelledby="distinctions" className="mt-14">
-              <h2 id="distinctions" className="heading text-[clamp(1.5rem,1.3rem+0.8vw,2rem)]">
-                {t.distinctions}
-              </h2>
-              <div className="mt-6">
-                <AwardGallery items={distinctions} labels={dict.common.gallery} columns={3} />
-              </div>
-            </section>
-          )}
         </div>
       </article>
 
       <ContactBand locale={locale} dict={dict} />
-      <JsonLd data={personSchema(member, locale, isLawyer ? areas : [])} />
+      <JsonLd data={personSchema(member, locale)} />
       <JsonLd
         data={breadcrumbSchema([
           { name: dict.nav.team, path: href(locale, "team") },
