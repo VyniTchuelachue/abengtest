@@ -152,11 +152,6 @@ export default async function HomePage({ params }: Props) {
             <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem]">
               <Image src="/images/team-v2.jpg" alt={t.heroCaption} fill sizes="(min-width: 1024px) 45vw, 100vw" quality={75} className="object-cover" style={{ objectPosition: "50% 20%" }} />
             </div>
-            <div className="absolute -bottom-8 right-6 hidden w-48 overflow-hidden rounded-[1.5rem] border-[6px] border-white shadow-xl sm:block">
-              <div className="relative aspect-[4/3]">
-                <Image src="/images/tag-alliances-meeting-v2.jpg" alt={t.tagCaption} fill sizes="200px" className="object-cover" />
-              </div>
-            </div>
           </div>
           <div className="lg:col-span-6">
             <SectionHeading eyebrow={t.firmEyebrow} title={t.introTitle} lede={t.introLede} />
