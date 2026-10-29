@@ -28,7 +28,9 @@ export function anonClient() {
   });
 }
 
+/** Public URL of an image: a storage path ("team/…"), or a file shipped with the site ("/images/…"). */
 export function mediaUrl(path: string | null | undefined): string | null {
   if (!path) return null;
+  if (path.startsWith("/")) return path;
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${path}`;
 }

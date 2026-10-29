@@ -52,6 +52,8 @@ async function downscale(file: File, maxEdge: number): Promise<Blob> {
   );
 }
 
+/** Same rule as mediaUrl (lib/supabase/public.ts): site files start with "/". */
 export function publicMediaUrl(path: string): string {
+  if (path.startsWith("/")) return path;
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${path}`;
 }

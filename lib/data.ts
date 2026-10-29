@@ -36,8 +36,6 @@ export function isLawyerGroup(group: TeamGroup): boolean {
 /** Second photographs shown on profile pages only (cards keep the studio portrait). */
 const profilePhotos: Record<string, string> = {
   "abeng-roland": "/images/profile/abeng-roland-v1.jpg",
-  "doly-azangue": "/images/profile/doly-azangue-v1.jpg",
-  "jean-patrick-musima": "/images/profile/jean-patrick-musima-v1.jpg",
 };
 
 function toMember(row: TeamMemberRecord, locale: Locale): Member {
