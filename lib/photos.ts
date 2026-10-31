@@ -1,4 +1,5 @@
-// Hover photos of the practice-area and approach cards (scripts/fetch-stock-photos.mjs).
+// Hover photos of the practice-area cards (generated, scripts/process-practice-photos.mjs)
+// and of the approach boxes (Unsplash, scripts/fetch-stock-photos.mjs).
 
 /** Practice areas (by English slug) that have a photo in public/images/practice. */
 const practicePhotos = new Set([
@@ -21,7 +22,7 @@ const practicePhotos = new Set([
 ]);
 
 export function practicePhoto(slug: string): string | undefined {
-  return practicePhotos.has(slug) ? `/images/practice/${slug}.jpg` : undefined;
+  return practicePhotos.has(slug) ? `/images/practice/${slug}-v2.jpg` : undefined;
 }
 
 /** Photos of the firm page's "How we work" boxes, in the order of the boxes. */
