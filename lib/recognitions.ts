@@ -175,11 +175,3 @@ export function getRecognitions(locale: Locale, kind?: RecognitionKind): Recogni
       };
     });
 }
-
-/** Photos for the home page strip, one per item, in this order. */
-const featuredPhotos = ["chambers-global-firm", "iflr1000", "taglaw", "uja-cameroon", "aba-best-stand-alone-program", "world-bank-doing-business-2011"];
-
-export function getFeaturedRecognitionPhotos(locale: Locale): RecognitionPhoto[] {
-  const all = getRecognitions(locale);
-  return featuredPhotos.flatMap((id) => all.find((r) => r.id === id)?.photos.slice(0, 1) ?? []);
-}

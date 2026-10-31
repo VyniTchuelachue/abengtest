@@ -7,10 +7,10 @@ import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/bloc
 import { SectorIcon } from "@/components/site/icons";
 import { PracticePhotoCard } from "@/components/site/PracticePhotoCard";
 import { MemberCard } from "@/components/site/Portrait";
-import { RecognitionPhotoStrip } from "@/components/site/RecognitionPhotos";
+import { RecognitionTabs } from "@/components/site/RecognitionPhotos";
 import { getArticles, getPracticeAreas, getTeam, isLawyerGroup } from "@/lib/data";
 import { practicePhoto } from "@/lib/photos";
-import { getFeaturedRecognitionPhotos } from "@/lib/recognitions";
+import { getRecognitions, recognitionKinds } from "@/lib/recognitions";
 import { getDictionary, phones } from "@/lib/dictionaries";
 import { telHref } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
@@ -206,7 +206,10 @@ export default async function HomePage({ params }: Props) {
             <span className="eyebrow">{t.recognitionEyebrow}</span>
           </p>
           <div className="mt-10">
-            <RecognitionPhotoStrip photos={getFeaturedRecognitionPhotos(locale)} labels={dict.common.gallery} />
+            <RecognitionTabs
+              labels={dict.common.gallery}
+              groups={recognitionKinds.map((kind) => ({ kind, title: dict.firmPage.recognitionKinds[kind], items: getRecognitions(locale, kind) }))}
+            />
           </div>
           <p className="mt-8 text-center">
             <Link href={`${href(locale, "firm")}#recognition`} className="btn btn-quiet">

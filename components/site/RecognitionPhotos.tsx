@@ -77,19 +77,84 @@ function PhotoButton({ photo, label, onOpen, sizes, className }: { photo: Recogn
   );
 }
 
-/** A row of award photos (home page). */
-export function RecognitionPhotoStrip({ photos, labels }: { photos: RecognitionPhoto[]; labels: Labels }) {
+type Group = { kind: RecognitionKind; title: string; items: Recognition[] };
+
+/**
+ * Home page: one switchable tab per kind of recognition (rankings, awards,
+ * memberships, contributions), so the kinds are never mixed. Items without a
+ * photo (e.g. a network membership) show as a name card.
+ */
+export function RecognitionTabs({ groups, labels }: { groups: Group[]; labels: Labels }) {
+  const [active, setActive] = useState(0);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const group = groups[active];
+  const GroupIcon = kindIcons[group.kind];
+  const photos = group.items.flatMap((r) => r.photos);
   const { open, viewer } = usePhotoViewer(photos, labels);
+
+  // Arrow keys move between tabs, as in any tab list.
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!step) return;
+    e.preventDefault();
+    const next = (active + step + groups.length) % groups.length;
+    setActive(next);
+    tabs.current[next]?.focus();
+  };
+
   return (
     <>
-      <ul className="grid grid-cols-3 gap-3 sm:grid-cols-6 sm:gap-4">
-        {photos.map((p, i) => (
-          <li key={p.src}>
-            <PhotoButton photo={p} label={labels.enlarge} onOpen={() => open(i)} sizes="(min-width: 640px) 15vw, 30vw" className="aspect-[4/5] w-full rounded-xl" />
-            <p className="mt-2 text-center text-[0.75rem] leading-snug text-slate">{p.label}</p>
-          </li>
-        ))}
-      </ul>
+      <div role="tablist" aria-label={groups.map((g) => g.title).join(", ")} onKeyDown={onKeyDown} className="flex flex-wrap justify-center gap-2">
+        {groups.map((g, i) => {
+          const Icon = kindIcons[g.kind];
+          const selected = i === active;
+          return (
+            <button
+              key={g.kind}
+              ref={(el) => {
+                tabs.current[i] = el;
+              }}
+              type="button"
+              role="tab"
+              id={`rtab-${g.kind}`}
+              aria-selected={selected}
+              aria-controls={`rpanel-${g.kind}`}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => setActive(i)}
+              className="inline-flex items-center gap-2 rounded-full border border-rule bg-white px-5 py-2.5 font-display text-[0.9375rem] font-medium text-ink-soft transition-colors hover:border-gold aria-selected:border-gold aria-selected:bg-gold aria-selected:text-ink"
+            >
+              <Icon aria-hidden className="h-4 w-4" strokeWidth={1.75} />
+              {g.title}
+            </button>
+          );
+        })}
+      </div>
+
+      <div role="tabpanel" id={`rpanel-${group.kind}`} aria-labelledby={`rtab-${group.kind}`} className="mt-10">
+        <ul className="flex flex-wrap justify-center gap-4 sm:gap-5">
+          {group.items.flatMap((r) =>
+            r.photos.length
+              ? r.photos.map((p) => (
+                  <li key={p.src} className="w-[calc(50%-0.5rem)] sm:w-48 lg:w-52">
+                    <PhotoButton photo={p} label={labels.enlarge} onOpen={() => open(photos.indexOf(p))} sizes="(min-width: 640px) 13rem, 45vw" className="aspect-[4/5] w-full rounded-xl" />
+                    <p className="mt-2 text-center text-[0.8125rem] font-medium leading-snug text-ink">{p.label}</p>
+                    {r.recipient && <p className="text-center text-[0.75rem] text-slate">{r.recipient}</p>}
+                  </li>
+                ))
+              : [
+                  <li key={r.id} className="w-[calc(50%-0.5rem)] sm:w-48 lg:w-52">
+                    <div className="flex aspect-[4/5] w-full flex-col items-center justify-center gap-4 rounded-xl bg-stone-deep px-4 text-center">
+                      <span className="icon-tile">
+                        <GroupIcon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
+                      </span>
+                      <span className="font-display text-[1.125rem] font-semibold text-ink">{r.name}</span>
+                    </div>
+                    {r.recipient && <p className="mt-2 text-center text-[0.75rem] text-slate">{r.recipient}</p>}
+                  </li>,
+                ],
+          )}
+        </ul>
+      </div>
       {viewer}
     </>
   );
