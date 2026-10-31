@@ -69,8 +69,6 @@ const en = {
     networksTitle: "Part of international networks",
     networksBody:
       "The firm takes part in the work of international legal and compliance networks, which gives clients access to trusted counsel beyond Cameroon.",
-    tagCaption: "A TAG Alliances member meeting.",
-    africaCaption: "Africa Regional Strategy Meeting on civil society participation.",
     insightsTitle: "News & insights",
     insightsEmpty: "Publications from the firm will appear here.",
     eyebrow: "Business law firm in Douala",
@@ -327,8 +325,6 @@ const fr: Dictionary = {
     networksTitle: "Membre de réseaux internationaux",
     networksBody:
       "Le cabinet participe aux travaux de réseaux juridiques et de conformité internationaux, qui offrent à ses clients l'accès à des conseils de confiance au-delà du Cameroun.",
-    tagCaption: "Une réunion des membres de TAG Alliances.",
-    africaCaption: "Réunion de stratégie régionale pour l'Afrique sur la participation de la société civile.",
     insightsTitle: "Actualités",
     insightsEmpty: "Les publications du cabinet apparaîtront ici.",
     eyebrow: "Cabinet d'avocats d'affaires à Douala",

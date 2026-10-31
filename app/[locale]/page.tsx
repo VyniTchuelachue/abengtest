@@ -218,31 +218,25 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {/* Why choose us */}
-      <section className="relative overflow-hidden bg-charcoal text-white">
-        <div className="absolute inset-y-0 right-0 hidden w-[45%] lg:block">
-          <Image src="/images/africa-regional-meeting-v2.jpg" alt={t.africaCaption} fill sizes="45vw" className="object-cover" />
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-charcoal via-charcoal/40 to-transparent" />
-        </div>
-        <div className="shell relative py-24 md:py-32">
-          <div className="max-w-2xl">
-            <SectionHeading eyebrow={t.whyEyebrow} title={t.whyHeading} lede={t.whyBody} dark />
-            <ul className="mt-12 space-y-8">
-              {t.why.map((w, i) => {
-                const Icon = whyIcons[i] ?? Award;
-                return (
-                  <li key={w.title} className="flex gap-5">
-                    <span className="icon-tile">
-                      <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
-                    </span>
-                    <span>
-                      <span className="block font-display text-[1.25rem] font-semibold">{w.title}</span>
-                      <span className="mt-1 block text-white/75">{w.body}</span>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+      <section className="bg-charcoal text-white">
+        <div className="shell py-24 md:py-32">
+          <SectionHeading eyebrow={t.whyEyebrow} title={t.whyHeading} lede={t.whyBody} dark />
+          <ul className="mt-12 grid gap-8 md:grid-cols-3">
+            {t.why.map((w, i) => {
+              const Icon = whyIcons[i] ?? Award;
+              return (
+                <li key={w.title} className="flex gap-5">
+                  <span className="icon-tile">
+                    <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
+                  </span>
+                  <span>
+                    <span className="block font-display text-[1.25rem] font-semibold">{w.title}</span>
+                    <span className="mt-1 block text-white/75">{w.body}</span>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </section>
 

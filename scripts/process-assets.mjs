@@ -30,17 +30,6 @@ await sharp(path.join(assets, "Barrister Abeng.jpg"))
   .toFile(path.join(out, "roland-abeng-office-v2.jpg"));
 console.log("roland-abeng-office-v2.jpg");
 
-// International meetings.
-await sharp(path.join(assets, "intl-africa-strategy.png"))
-  .resize({ width: 1600, withoutEnlargement: true })
-  .jpeg(jpeg)
-  .toFile(path.join(out, "africa-regional-meeting-v2.jpg"));
-await sharp(path.join(assets, "intl-tag-alliances.png"))
-  .resize({ width: 1600, withoutEnlargement: true })
-  .jpeg(jpeg)
-  .toFile(path.join(out, "tag-alliances-meeting-v2.jpg"));
-console.log("international photos");
-
 // Crest: trim the transparent margin, then export a web logo and icons.
 const crest = await sharp(path.join(assets, "Logo.png")).trim().png().toBuffer();
 await sharp(crest).resize(240, 240, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } }).png({ palette: true, quality: 92 }).toFile(path.join(out, "crest.png"));

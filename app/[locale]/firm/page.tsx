@@ -113,24 +113,6 @@ export default async function FirmPage({ params }: Props) {
         </div>
       </section>
 
-      {/* International meetings */}
-      <section className="py-20 md:py-24">
-        <div className="shell grid gap-6 md:grid-cols-12">
-          <figure className="md:col-span-7">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem]">
-              <Image src="/images/africa-regional-meeting-v2.jpg" alt={dict.home.africaCaption} fill quality={80} sizes="(min-width: 768px) 55vw, 100vw" className="object-cover" />
-            </div>
-            <figcaption className="mt-3 text-[0.8125rem] text-slate">{dict.home.africaCaption}</figcaption>
-          </figure>
-          <figure className="md:col-span-5 md:self-end">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem]">
-              <Image src="/images/tag-alliances-meeting-v2.jpg" alt={dict.home.tagCaption} fill quality={80} sizes="(min-width: 768px) 38vw, 100vw" className="object-cover" />
-            </div>
-            <figcaption className="mt-3 text-[0.8125rem] text-slate">{dict.home.tagCaption}</figcaption>
-          </figure>
-        </div>
-      </section>
-
       {/* Leadership */}
       {partner && (
         <section className="py-20 md:py-28">
