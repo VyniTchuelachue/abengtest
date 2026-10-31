@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Phone } from "lucide-react";
+import { ArrowRight, Award, Landmark, Languages, Phone, Scale } from "lucide-react";
 import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/blocks";
 import { PracticePhotoCard } from "@/components/site/PracticePhotoCard";
 import { MemberCard } from "@/components/site/Portrait";
@@ -25,6 +25,9 @@ const featuredAreas = [
   "litigation-arbitration",
   "tax-customs-exchange",
 ];
+
+/** Icons of the "Why choose the firm" reasons, in the order of dict.home.why. */
+const whyIcons = [Landmark, Scale, Award, Languages];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -52,14 +55,21 @@ export default async function HomePage({ params }: Props) {
   return (
     <>
       {/* Opening section: the team photograph and a short statement introducing the firm. */}
-      <section className="bg-charcoal text-white">
-        <div className="shell grid items-center gap-10 py-14 lg:grid-cols-12 lg:gap-12 lg:py-20">
-          <div className="lg:col-span-5">
+      <section className="@container relative isolate overflow-hidden bg-charcoal text-white">
+        {/* From 1280px: a blurred copy of the photo reaches back behind the text and fades out
+            towards the left, so the picture seems to start near the text without anyone in the
+            photo being covered or dimmed. */}
+        <div aria-hidden className="absolute inset-0 -z-10 hidden xl:block">
+          <Image src="/images/team-v2.jpg" alt="" fill sizes="60vw" quality={70} className="scale-110 object-cover blur-2xl" />
+          <div className="absolute inset-0 bg-gradient-to-r from-charcoal from-15% via-charcoal/80 via-45% to-charcoal/35" />
+        </div>
+        <div className="shell grid items-center gap-10 pt-14 xl:grid-cols-12 xl:gap-0 xl:pt-0">
+          <div className="xl:col-span-5 xl:py-20 xl:pr-6">
             <p className="eyebrow hero-fade">{t.eyebrow}</p>
             {/* French needs a slightly smaller size to sit as well beside the photo. */}
             <h1
               className={`display mt-6 ${
-                locale === "fr" ? "text-[clamp(2.125rem,1.3rem+2.4vw,3.5rem)]" : "text-[clamp(2.375rem,1.5rem+2.8vw,3.875rem)]"
+                locale === "fr" ? "text-[clamp(2.125rem,1.3rem+2.2vw,3.125rem)]" : "text-[clamp(2.375rem,1.5rem+2.8vw,3.875rem)]"
               }`}
             >
               {t.heroLines.map((line, i) => (
@@ -83,27 +93,31 @@ export default async function HomePage({ params }: Props) {
             </div>
           </div>
 
-          {/* The whole group photo, at its own proportions, so no one is cut off. */}
-          <div className="hero-fade lg:col-span-7">
-            <div className="relative aspect-[2400/1510] overflow-hidden rounded-[2rem] shadow-[0_30px_60px_-30px_rgb(0_0_0/0.7)]">
-              <Image src="/images/team-v2.jpg" alt={t.heroCaption} fill priority sizes="(min-width: 1024px) 58vw, 100vw" quality={80} className="object-cover" />
+          {/* The whole group photo, at its own proportions, so no one is cut off. It runs to the
+              edge of the section (the bleed margins match .shell's padding; cqw leaves out the
+              scrollbar, which 100vw would not), and only a thin strip of its edge fades: on top below
+              1280px (the wall above the heads), on the left from 1280px. */}
+          <div className="hero-fade -mx-4 sm:-mx-8 xl:col-span-7 xl:ml-0 xl:-mr-[calc(max(0px,(100cqw-80rem)/2)+2.5rem)]">
+            <div className="relative aspect-[2400/1510] [mask-image:linear-gradient(to_bottom,transparent,black_6%)] xl:[mask-image:linear-gradient(to_right,transparent,black_3%)]">
+              <Image
+                src="/images/team-v2.jpg"
+                alt={t.heroCaption}
+                fill
+                priority
+                sizes="(min-width: 1280px) 60vw, 100vw"
+                quality={90}
+                className="object-cover"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* The firm */}
+      {/* Why choose the firm: whom it assists, then the reasons, without repeating the team photo. */}
       <section className="py-24 md:py-32">
-        <div className="shell grid items-center gap-14 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            {/* The whole group photo, at its own proportions, so no one is cut off. */}
-            <div className="relative aspect-[2400/1510] overflow-hidden rounded-[2rem]">
-              <Image src="/images/team-v2.jpg" alt={t.heroCaption} fill sizes="(min-width: 1024px) 55vw, 100vw" quality={80} className="object-cover" />
-            </div>
-          </div>
+        <div className="shell grid gap-14 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-5">
-            <SectionHeading eyebrow={t.firmEyebrow} title={t.introTitle} lede={t.introLede} />
-            <p className="mt-4 text-ink-soft">{t.introBody[0]}</p>
+            <SectionHeading eyebrow={t.whyEyebrow} title={t.whyHeading} lede={t.introLede} />
             <div className="mt-10 flex flex-wrap gap-3">
               <Link href={href(locale, "firm")} className="btn btn-gold">
                 {t.introLink}
@@ -114,6 +128,20 @@ export default async function HomePage({ params }: Props) {
               </Link>
             </div>
           </div>
+          <ul className="grid gap-5 sm:grid-cols-2 lg:col-span-7">
+            {t.why.map((w, i) => {
+              const Icon = whyIcons[i];
+              return (
+                <li key={w.title} className="card p-7">
+                  <span className="icon-tile">
+                    <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
+                  </span>
+                  <h3 className="mt-5 font-display text-[1.25rem] font-semibold leading-snug">{w.title}</h3>
+                  <p className="mt-2 text-ink-soft">{w.body}</p>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </section>
 
