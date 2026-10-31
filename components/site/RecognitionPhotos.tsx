@@ -42,7 +42,7 @@ function usePhotoViewer(photos: RecognitionPhoto[], labels: Labels) {
             </button>
           </div>
           <div className="relative mx-5 my-4 min-h-0 flex-1">
-            <Image key={current.src} src={current.src} alt={current.label} fill sizes="(min-width: 1024px) 64rem, 100vw" quality={85} className="object-contain" />
+            <Image key={current.src} src={current.src} alt={current.label} fill sizes="(min-width: 1024px) 64rem, 100vw" quality={90} className="object-contain" />
           </div>
           {photos.length > 1 && (
             <div className="flex items-center justify-between gap-4 border-t border-white/10 px-5 py-4">

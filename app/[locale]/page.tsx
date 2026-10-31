@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Award, Globe2, Landmark, Languages, Phone } from "lucide-react";
+import { ArrowRight, Phone } from "lucide-react";
 import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/blocks";
-import { SectorIcon } from "@/components/site/icons";
 import { PracticePhotoCard } from "@/components/site/PracticePhotoCard";
 import { MemberCard } from "@/components/site/Portrait";
 import { RecognitionTabs } from "@/components/site/RecognitionPhotos";
@@ -26,8 +25,6 @@ const featuredAreas = [
   "litigation-arbitration",
   "tax-customs-exchange",
 ];
-/** Indexes into the dictionary's sector list: energy, banking, infrastructure, telecoms. */
-const heroSectors = [0, 3, 5, 4];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -46,29 +43,27 @@ export default async function HomePage({ params }: Props) {
   const t = dict.home;
   const [team, areas, articles] = await Promise.all([getTeam(locale), getPracticeAreas(locale), getArticles(locale, { limit: 3 })]);
 
-  const partner = team.find((m) => m.group === "partner");
   const lawyers = team.filter((m) => isLawyerGroup(m.group) && (m.group === "partner" || m.featured));
-  const faces = team.filter((m) => m.photo && m.group !== "partner").slice(0, 5);
   const bySlug = (slug: string) => areas.find((a) => a.slugs.en === slug);
-  const whyIcons = [Landmark, Globe2, Languages];
+
+  // Sections follow the order the firm asked for: opening, introduction, practice areas,
+  // team, recognition, publications and news, contact.
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative isolate overflow-hidden bg-charcoal text-white">
-        <Image src="/images/team-v2.jpg" alt="" fill priority sizes="100vw" quality={65} className="-z-10 object-cover opacity-20" style={{ objectPosition: "50% 20%" }} />
-        <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-charcoal via-charcoal/90 to-charcoal/55" />
-        <div className="shell grid items-center gap-12 pb-32 pt-14 md:pb-40 lg:grid-cols-12 lg:pt-20">
-          <div className="lg:col-span-7">
+      {/* Opening section: the team photograph and a short statement introducing the firm. */}
+      <section className="bg-charcoal text-white">
+        <div className="shell grid items-center gap-10 py-14 lg:grid-cols-12 lg:gap-12 lg:py-20">
+          <div className="lg:col-span-5">
             <p className="eyebrow hero-fade">{t.eyebrow}</p>
-            {/* One line per phrase on large screens; French needs a slightly smaller size to fit. */}
+            {/* French needs a slightly smaller size to sit as well beside the photo. */}
             <h1
               className={`display mt-6 ${
-                locale === "fr" ? "text-[clamp(2.25rem,1.2rem+3.4vw,4.4rem)]" : "text-[clamp(2.5rem,1.5rem+4.2vw,4.75rem)]"
+                locale === "fr" ? "text-[clamp(2.125rem,1.3rem+2.4vw,3.5rem)]" : "text-[clamp(2.375rem,1.5rem+2.8vw,3.875rem)]"
               }`}
             >
               {t.heroLines.map((line, i) => (
-                <span key={line} className="hero-line lg:whitespace-nowrap">
+                <span key={line} className="hero-line">
                   {line}
                   {/* Keeps the words apart for search engines and screen readers; invisible on screen. */}
                   {i < t.heroLines.length - 1 && " "}
@@ -86,61 +81,15 @@ export default async function HomePage({ params }: Props) {
                 {phones[0]}
               </a>
             </div>
-            {faces.length > 0 && (
-              <div className="hero-fade mt-10 flex items-center gap-4">
-                <div className="flex -space-x-3">
-                  {faces.map((m) => (
-                    <span key={m.id} className="relative h-11 w-11 overflow-hidden rounded-full ring-2 ring-charcoal">
-                      <Image src={m.photo!} alt="" fill sizes="44px" className="object-cover" style={{ objectPosition: "50% 15%" }} />
-                    </span>
-                  ))}
-                </div>
-                <p className="text-[0.875rem] leading-snug text-white/80">
-                  <span className="font-display text-[1.125rem] font-semibold text-white">{team.length}</span> {t.teamCount}
-                </p>
-              </div>
-            )}
           </div>
 
-          {partner && (
-            <div className="relative mx-auto w-full max-w-md lg:col-span-5 lg:max-w-none">
-              <div className="hero-photo relative aspect-[5/6]">
-                <div className="absolute inset-0 overflow-hidden rounded-b-[2.5rem]">
-                  <div className="absolute inset-x-[6%] bottom-0 top-[26%] rounded-[2.5rem] bg-gold" />
-                  <Image
-                    src="/images/roland-abeng-cutout-v2.webp"
-                    alt={`${partner.name}, ${partner.title}`}
-                    fill
-                    priority
-                    sizes="(min-width: 1024px) 40vw, 90vw"
-                    className="object-contain object-bottom"
-                  />
-                </div>
-              </div>
-              <div className="absolute inset-x-[12%] -bottom-5 rounded-2xl bg-ink/90 px-5 py-3 text-center backdrop-blur">
-                <p className="font-display font-semibold">{partner.name}</p>
-                <p className="text-[0.8125rem] text-gold">{partner.title}</p>
-              </div>
+          {/* The whole group photo, at its own proportions, so no one is cut off. */}
+          <div className="hero-fade lg:col-span-7">
+            <div className="relative aspect-[2400/1510] overflow-hidden rounded-[2rem] shadow-[0_30px_60px_-30px_rgb(0_0_0/0.7)]">
+              <Image src="/images/team-v2.jpg" alt={t.heroCaption} fill priority sizes="(min-width: 1024px) 58vw, 100vw" quality={80} className="object-cover" />
             </div>
-          )}
+          </div>
         </div>
-      </section>
-
-      {/* Sector cards overlapping the hero */}
-      <section aria-label={t.sectorsLabel} className="relative z-10 -mt-20">
-        <ul className="shell grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
-          {heroSectors.map((index, i) => (
-            <li
-              key={index}
-              className={`flex flex-col gap-5 rounded-[1.25rem] p-6 shadow-[0_24px_50px_-30px_rgb(0_0_0/0.45)] ${i % 2 === 0 ? "bg-white" : "bg-gold"}`}
-            >
-              <span className={`flex h-12 w-12 items-center justify-center rounded-full ${i % 2 === 0 ? "bg-gold text-ink" : "bg-white text-ink"}`}>
-                <SectorIcon index={index} className="h-6 w-6" />
-              </span>
-              <span className="font-display text-[1.0625rem] font-semibold leading-snug text-ink">{dict.practicePage.sectors[index]}</span>
-            </li>
-          ))}
-        </ul>
       </section>
 
       {/* The firm */}
@@ -199,50 +148,6 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Recognition: award photos only; the firm page sorts them by kind. */}
-      <section className="border-b border-rule py-16 md:py-20">
-        <div className="shell">
-          <p className="text-center">
-            <span className="eyebrow">{t.recognitionEyebrow}</span>
-          </p>
-          <div className="mt-10">
-            <RecognitionTabs
-              labels={dict.common.gallery}
-              groups={recognitionKinds.map((kind) => ({ kind, title: dict.firmPage.recognitionKinds[kind], items: getRecognitions(locale, kind) }))}
-            />
-          </div>
-          <p className="mt-8 text-center">
-            <Link href={`${href(locale, "firm")}#recognition`} className="btn btn-quiet">
-              {t.recognitionLink}
-              <ArrowRight aria-hidden className="h-4 w-4" />
-            </Link>
-          </p>
-        </div>
-      </section>
-
-      {/* Why choose us */}
-      <section className="bg-charcoal text-white">
-        <div className="shell py-24 md:py-32">
-          <SectionHeading eyebrow={t.whyEyebrow} title={t.whyHeading} lede={t.whyBody} dark />
-          <ul className="mt-12 grid gap-8 md:grid-cols-3">
-            {t.why.map((w, i) => {
-              const Icon = whyIcons[i] ?? Award;
-              return (
-                <li key={w.title} className="flex gap-5">
-                  <span className="icon-tile">
-                    <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
-                  </span>
-                  <span>
-                    <span className="block font-display text-[1.25rem] font-semibold">{w.title}</span>
-                    <span className="mt-1 block text-white/75">{w.body}</span>
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </section>
-
       {/* Team */}
       <section className="py-24 md:py-32">
         <div className="shell">
@@ -267,6 +172,27 @@ export default async function HomePage({ params }: Props) {
             {dict.common.meetTeam}
             <ArrowRight aria-hidden className="h-4 w-4" />
           </Link>
+        </div>
+      </section>
+
+      {/* Recognition, one tab per kind; the firm page has the detail. */}
+      <section className="border-t border-rule py-16 md:py-20">
+        <div className="shell">
+          <p className="text-center">
+            <span className="eyebrow">{t.recognitionEyebrow}</span>
+          </p>
+          <div className="mt-10">
+            <RecognitionTabs
+              labels={dict.common.gallery}
+              groups={recognitionKinds.map((kind) => ({ kind, title: dict.firmPage.recognitionKinds[kind], items: getRecognitions(locale, kind) }))}
+            />
+          </div>
+          <p className="mt-8 text-center">
+            <Link href={`${href(locale, "firm")}#recognition`} className="btn btn-quiet">
+              {t.recognitionLink}
+              <ArrowRight aria-hidden className="h-4 w-4" />
+            </Link>
+          </p>
         </div>
       </section>
 
