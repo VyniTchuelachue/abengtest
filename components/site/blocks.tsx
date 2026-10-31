@@ -27,7 +27,8 @@ export function PageIntro({
 }) {
   return (
     <section className="relative isolate overflow-hidden bg-charcoal text-white">
-      <Image src={image} alt="" fill priority sizes="100vw" quality={70} className="-z-10 object-cover opacity-25" style={{ objectPosition: "50% 25%" }} />
+      {/* Whole photo on the right from tablet width up (no one cut off); a faint cover behind the text on phones. */}
+      <Image src={image} alt="" fill priority sizes="100vw" quality={70} className="-z-10 object-cover object-[50%_25%] opacity-25 md:object-contain md:object-right md:opacity-40" />
       <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-charcoal via-charcoal/85 to-charcoal/40" />
       <div className="shell py-16 md:py-24">
         {crumbs && <Breadcrumb items={crumbs} />}

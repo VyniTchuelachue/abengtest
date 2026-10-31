@@ -4,10 +4,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Award, Globe2, Landmark, Languages, Phone } from "lucide-react";
 import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/blocks";
-import { PracticeIcon, SectorIcon } from "@/components/site/icons";
+import { SectorIcon } from "@/components/site/icons";
+import { PracticePhotoCard } from "@/components/site/PracticePhotoCard";
 import { MemberCard } from "@/components/site/Portrait";
+import { RecognitionPhotoStrip } from "@/components/site/RecognitionPhotos";
 import { getArticles, getPracticeAreas, getTeam, isLawyerGroup } from "@/lib/data";
-import { getRecognitions, recognitionKinds } from "@/lib/recognitions";
+import { practicePhoto } from "@/lib/photos";
+import { getFeaturedRecognitionPhotos } from "@/lib/recognitions";
 import { getDictionary, phones } from "@/lib/dictionaries";
 import { telHref } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
@@ -48,11 +51,6 @@ export default async function HomePage({ params }: Props) {
   const faces = team.filter((m) => m.photo && m.group !== "partner").slice(0, 5);
   const bySlug = (slug: string) => areas.find((a) => a.slugs.en === slug);
   const whyIcons = [Landmark, Globe2, Languages];
-  // One line per kind of recognition; the detail lives on the firm page.
-  const recognitionSummary = recognitionKinds.map((kind) => ({
-    kind,
-    names: [...new Set(getRecognitions(locale, kind).map((r) => r.name))],
-  }));
 
   return (
     <>
@@ -148,12 +146,13 @@ export default async function HomePage({ params }: Props) {
       {/* The firm */}
       <section className="py-24 md:py-32">
         <div className="shell grid items-center gap-14 lg:grid-cols-12">
-          <div className="relative lg:col-span-6">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem]">
-              <Image src="/images/team-v2.jpg" alt={t.heroCaption} fill sizes="(min-width: 1024px) 45vw, 100vw" quality={75} className="object-cover" style={{ objectPosition: "50% 20%" }} />
+          <div className="lg:col-span-7">
+            {/* The whole group photo, at its own proportions, so no one is cut off. */}
+            <div className="relative aspect-[2400/1510] overflow-hidden rounded-[2rem]">
+              <Image src="/images/team-v2.jpg" alt={t.heroCaption} fill sizes="(min-width: 1024px) 55vw, 100vw" quality={80} className="object-cover" />
             </div>
           </div>
-          <div className="lg:col-span-6">
+          <div className="lg:col-span-5">
             <SectionHeading eyebrow={t.firmEyebrow} title={t.introTitle} lede={t.introLede} />
             <p className="mt-4 text-ink-soft">{t.introBody[0]}</p>
             <div className="mt-10 flex flex-wrap gap-3">
@@ -179,20 +178,14 @@ export default async function HomePage({ params }: Props) {
               if (!a) return null;
               return (
                 <li key={slug}>
-                  <Link
+                  <PracticePhotoCard
                     href={href(locale, "practice", a.slug)}
-                    className="group flex h-full flex-col rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-7 transition-colors hover:border-gold/60 hover:bg-white/[0.08]"
-                  >
-                    <span className="icon-tile">
-                      <PracticeIcon slug={slug} className="h-6 w-6" />
-                    </span>
-                    <h3 className="mt-6 font-display text-[1.25rem] font-semibold leading-snug">{a.title}</h3>
-                    <p className="mt-3 text-[0.9375rem] leading-relaxed text-white/70">{a.summary}</p>
-                    <span className="mt-auto inline-flex items-center gap-2 pt-6 font-display text-[0.9375rem] font-semibold text-gold">
-                      {dict.common.learnMore}
-                      <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </Link>
+                    slug={slug}
+                    title={a.title}
+                    summary={a.summary}
+                    image={practicePhoto(slug)}
+                    moreLabel={dict.common.learnMore}
+                  />
                 </li>
               );
             })}
@@ -206,20 +199,15 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Recognition: a compact summary; the firm page has the detail. */}
+      {/* Recognition: award photos only; the firm page sorts them by kind. */}
       <section className="border-b border-rule py-16 md:py-20">
         <div className="shell">
           <p className="text-center">
             <span className="eyebrow">{t.recognitionEyebrow}</span>
           </p>
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {recognitionSummary.map((r) => (
-              <li key={r.kind} className="card flex flex-col px-6 py-6">
-                <span className="text-[0.75rem] font-semibold uppercase tracking-[0.14em] text-gold-dark">{dict.firmPage.recognitionKinds[r.kind]}</span>
-                <span className="mt-3 font-display text-[1.0625rem] font-semibold leading-snug text-ink">{r.names.join(" · ")}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-10">
+            <RecognitionPhotoStrip photos={getFeaturedRecognitionPhotos(locale)} labels={dict.common.gallery} />
+          </div>
           <p className="mt-8 text-center">
             <Link href={`${href(locale, "firm")}#recognition`} className="btn btn-quiet">
               {t.recognitionLink}
@@ -261,13 +249,7 @@ export default async function HomePage({ params }: Props) {
       {/* Team */}
       <section className="py-24 md:py-32">
         <div className="shell">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <SectionHeading eyebrow={t.teamEyebrow} title={t.lawyersTitle} lede={t.lawyersLede} />
-            <Link href={href(locale, "team")} className="btn btn-quiet">
-              {dict.common.meetTeam}
-              <ArrowRight aria-hidden className="h-4 w-4" />
-            </Link>
-          </div>
+          <SectionHeading eyebrow={t.teamEyebrow} title={t.lawyersTitle} lede={t.lawyersLede} />
           <ul className="mt-14 grid grid-cols-1 gap-6 xs:grid-cols-2 lg:grid-cols-3">
             {lawyers.slice(0, 6).map((m) => (
               <li key={m.id}>
@@ -284,6 +266,10 @@ export default async function HomePage({ params }: Props) {
               </li>
             ))}
           </ul>
+          <Link href={href(locale, "team")} className="btn btn-gold mt-12 min-h-14 w-full text-[1rem]">
+            {dict.common.meetTeam}
+            <ArrowRight aria-hidden className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 

@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Award, BarChart3, Building, Globe2, HandHeart, Lock, Network, Scale, TrendingUp, type LucideIcon } from "lucide-react";
+import { ArrowRight, Building, Globe2, Lock, Scale, TrendingUp } from "lucide-react";
 import { ContactBand, PageIntro, SectionHeading } from "@/components/site/blocks";
+import { PhotoRevealBox } from "@/components/site/PhotoReveal";
+import { RecognitionList } from "@/components/site/RecognitionPhotos";
 import { getTeam } from "@/lib/data";
-import { getRecognitions, recognitionKinds, type RecognitionKind } from "@/lib/recognitions";
+import { approachPhotos } from "@/lib/photos";
+import { getRecognitions, recognitionKinds } from "@/lib/recognitions";
 import { chambersProfileUrl, getDictionary } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
@@ -23,7 +26,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const approachIcons = [Scale, Lock, TrendingUp, Globe2];
-const kindIcons: Record<RecognitionKind, LucideIcon> = { ranking: BarChart3, award: Award, membership: Network, contribution: HandHeart };
 
 export default async function FirmPage({ params }: Props) {
   const { locale } = await params;
@@ -39,11 +41,12 @@ export default async function FirmPage({ params }: Props) {
       {/* History */}
       <section className="py-20 md:py-28">
         <div className="shell grid items-center gap-14 lg:grid-cols-12">
-          <div className="relative lg:col-span-6">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem]">
-              <Image src="/images/team-v2.jpg" alt={dict.home.heroCaption} fill priority quality={80} sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition: "50% 15%" }} />
+          <div className="lg:col-span-7">
+            {/* The whole group photo, at its own proportions, so no one is cut off. */}
+            <div className="relative aspect-[2400/1510] overflow-hidden rounded-[2rem]">
+              <Image src="/images/team-v2.jpg" alt={dict.home.heroCaption} fill priority quality={80} sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
             </div>
-            <div className="absolute -bottom-6 left-6 flex items-center gap-3 rounded-2xl bg-white px-5 py-4 shadow-xl">
+            <div className="mt-5 inline-flex items-center gap-3 rounded-2xl bg-white px-5 py-4 shadow-xl">
               <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gold">
                 <Building aria-hidden className="h-5 w-5" />
               </span>
@@ -53,7 +56,7 @@ export default async function FirmPage({ params }: Props) {
               </span>
             </div>
           </div>
-          <div className="lg:col-span-6">
+          <div className="lg:col-span-5">
             <SectionHeading eyebrow={dict.home.firmEyebrow} title={t.historyTitle} />
             {t.history.map((p, i) => (
               <p key={p} className={i === 0 ? "mt-6 text-[1.0625rem] text-ink" : "mt-4 text-ink-soft"}>
@@ -72,12 +75,18 @@ export default async function FirmPage({ params }: Props) {
             {t.approach.map((a, i) => {
               const Icon = approachIcons[i] ?? Scale;
               return (
-                <li key={a.title} className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-7">
-                  <span className="icon-tile">
-                    <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
-                  </span>
-                  <h3 className="mt-6 font-display text-[1.1875rem] font-semibold">{a.title}</h3>
-                  <p className="mt-3 text-[0.9375rem] text-white/70">{a.body}</p>
+                <li key={a.title}>
+                  <PhotoRevealBox
+                    image={approachPhotos[i]}
+                    sizes="(min-width: 1024px) 24vw, (min-width: 640px) 45vw, 100vw"
+                    className="h-full rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-7 transition-colors hover:border-gold/60 data-[active=true]:border-gold/60"
+                  >
+                    <span className="icon-tile">
+                      <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
+                    </span>
+                    <h3 className="mt-6 font-display text-[1.1875rem] font-semibold">{a.title}</h3>
+                    <p className="mt-3 text-[0.9375rem] text-white/70 transition-colors group-hover:text-white/85 group-data-[active=true]:text-white/85">{a.body}</p>
+                  </PhotoRevealBox>
                 </li>
               );
             })}
@@ -95,31 +104,11 @@ export default async function FirmPage({ params }: Props) {
               <ArrowRight aria-hidden className="h-4 w-4" />
             </a>
           </div>
-          <div className="mt-10 grid gap-5 md:grid-cols-2">
-            {recognitionKinds.map((kind) => {
-              const Icon = kindIcons[kind];
-              return (
-                <section key={kind} aria-labelledby={`rk-${kind}`} className="card p-7">
-                  <h3 id={`rk-${kind}`} className="flex items-center gap-4 font-display text-[1.1875rem] font-semibold text-ink">
-                    <span className="icon-tile">
-                      <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
-                    </span>
-                    {t.recognitionKinds[kind]}
-                  </h3>
-                  <ul className="mt-6 space-y-5">
-                    {getRecognitions(locale, kind).map((r) => (
-                      <li key={r.id} className="border-l-2 border-gold/60 pl-4">
-                        <p className="font-semibold text-ink">{r.name}</p>
-                        {(r.recipient || r.year) && (
-                          <p className="text-[0.875rem] text-slate">{[r.recipient, r.year].filter(Boolean).join(" · ")}</p>
-                        )}
-                        {r.detail && <p className="mt-1.5 text-[0.9375rem] text-ink-soft">{r.detail}</p>}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              );
-            })}
+          <div className="mt-10">
+            <RecognitionList
+              labels={dict.common.gallery}
+              groups={recognitionKinds.map((kind) => ({ kind, title: t.recognitionKinds[kind], items: getRecognitions(locale, kind) }))}
+            />
           </div>
         </div>
       </section>

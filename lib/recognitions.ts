@@ -18,6 +18,8 @@ type Entry = {
   recipient?: "firm" | "abeng-roland";
   year?: string;
   detail?: Text;
+  /** Photos of the award or certificate (scripts/process-recognitions.mjs), with the year printed on each. */
+  photos?: { file: string; year?: string }[];
 };
 
 const recipients: Record<NonNullable<Entry["recipient"]>, string> = {
@@ -28,6 +30,7 @@ const recipients: Record<NonNullable<Entry["recipient"]>, string> = {
 const entries: Entry[] = [
   {
     id: "chambers-global-firm",
+    photos: [{ file: "chambers-global-2024", year: "2024" }, { file: "chambers-global-2022", year: "2022" }],
     kind: "ranking",
     name: { en: "Chambers Global", fr: "Chambers Global" },
     recipient: "firm",
@@ -39,6 +42,7 @@ const entries: Entry[] = [
   },
   {
     id: "chambers-global-abeng",
+    photos: [{ file: "chambers-global-2019", year: "2019" }],
     kind: "ranking",
     name: { en: "Chambers Global", fr: "Chambers Global" },
     recipient: "abeng-roland",
@@ -50,6 +54,7 @@ const entries: Entry[] = [
   },
   {
     id: "iflr1000",
+    photos: [{ file: "iflr1000-2021-22", year: "2021/22" }],
     kind: "ranking",
     name: { en: "IFLR1000", fr: "IFLR1000" },
     recipient: "firm",
@@ -61,6 +66,7 @@ const entries: Entry[] = [
   },
   {
     id: "uja-cameroon",
+    photos: [{ file: "uja-cameroon" }],
     kind: "award",
     name: { en: "Cameroon Union of Young Lawyers (UJA)", fr: "Union des jeunes avocats du Cameroun (UJA)" },
     recipient: "abeng-roland",
@@ -71,6 +77,7 @@ const entries: Entry[] = [
   },
   {
     id: "aba-best-stand-alone-program",
+    photos: [{ file: "aba-international-law-award-2008-09", year: "2008–2009" }],
     kind: "award",
     name: { en: "American Bar Association, Section of International Law", fr: "American Bar Association, Section of International Law" },
     year: "2008–2009",
@@ -81,6 +88,7 @@ const entries: Entry[] = [
   },
   {
     id: "taglaw",
+    photos: [{ file: "taglaw-15-years" }],
     kind: "membership",
     name: { en: "TAGLaw", fr: "TAGLaw" },
     recipient: "firm",
@@ -107,6 +115,7 @@ const entries: Entry[] = [
   },
   {
     id: "world-bank-doing-business-2011",
+    photos: [{ file: "world-bank-doing-business-2011", year: "2011" }],
     kind: "contribution",
     name: { en: "The World Bank", fr: "Banque mondiale" },
     recipient: "abeng-roland",
@@ -118,6 +127,7 @@ const entries: Entry[] = [
   },
   {
     id: "world-justice-project-2012-13",
+    photos: [{ file: "world-justice-project-2012-13", year: "2012–2013" }],
     kind: "contribution",
     name: { en: "The World Justice Project", fr: "World Justice Project" },
     recipient: "abeng-roland",
@@ -129,18 +139,47 @@ const entries: Entry[] = [
   },
 ];
 
-export type Recognition = { id: string; kind: RecognitionKind; name: string; recipient?: string; recipientKey?: Entry["recipient"]; year?: string; detail?: string };
+/** One photo, ready for the page: `label` names the item and its year, e.g. "Chambers Global 2024". */
+export type RecognitionPhoto = { src: string; label: string; recipient?: string; year?: string };
+
+export type Recognition = {
+  id: string;
+  kind: RecognitionKind;
+  name: string;
+  recipient?: string;
+  recipientKey?: Entry["recipient"];
+  year?: string;
+  detail?: string;
+  photos: RecognitionPhoto[];
+};
 
 export function getRecognitions(locale: Locale, kind?: RecognitionKind): Recognition[] {
   return entries
     .filter((e) => !kind || e.kind === kind)
-    .map((e) => ({
-      id: e.id,
-      kind: e.kind,
-      name: e.name[locale],
-      recipient: e.recipient && recipients[e.recipient],
-      recipientKey: e.recipient,
-      year: e.year,
-      detail: e.detail?.[locale],
-    }));
+    .map((e) => {
+      const recipient = e.recipient && recipients[e.recipient];
+      return {
+        id: e.id,
+        kind: e.kind,
+        name: e.name[locale],
+        recipient,
+        recipientKey: e.recipient,
+        year: e.year,
+        detail: e.detail?.[locale],
+        photos: (e.photos ?? []).map((p) => ({
+          src: `/images/recognitions/${p.file}.jpg`,
+          label: `${e.name[locale]}${p.year ? ` ${p.year}` : ""}`,
+          recipient,
+          year: p.year,
+        })),
+      };
+    });
+}
+
+/** Photos for the home page strip, one per item, in this order. */
+const featuredPhotos = ["chambers-global-firm", "iflr1000", "taglaw", "uja-cameroon", "aba-best-stand-alone-program", "world-bank-doing-business-2011"];
+
+export function getFeaturedRecognitionPhotos(locale: Locale): RecognitionPhoto[] {
+  const all = getRecognitions(locale);
+  return featuredPhotos.flatMap((id) => all.find((r) => r.id === id)?.photos.slice(0, 1) ?? []);
 }

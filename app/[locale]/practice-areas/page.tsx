@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight } from "lucide-react";
 import { ContactBand, PageIntro, SectionHeading } from "@/components/site/blocks";
-import { PracticeIcon, SectorIcon } from "@/components/site/icons";
+import { SectorIcon } from "@/components/site/icons";
+import { PracticePhotoCard } from "@/components/site/PracticePhotoCard";
 import { getPracticeAreas } from "@/lib/data";
+import { practicePhoto } from "@/lib/photos";
 import { getDictionary } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
@@ -43,17 +43,16 @@ export default async function PracticeAreasPage({ params }: Props) {
           <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {areas.map((a) => (
               <li key={a.id}>
-                <Link href={href(locale, "practice", a.slug)} className="card card-hover group flex h-full flex-col p-7">
-                  <span className="icon-tile">
-                    <PracticeIcon slug={a.slugs.en} className="h-6 w-6" />
-                  </span>
-                  <h2 className="mt-6 font-display text-[1.1875rem] font-semibold leading-snug text-ink">{a.title}</h2>
-                  {a.summary && <p className="mt-3 text-[0.9375rem] text-ink-soft">{a.summary}</p>}
-                  <span className="more mt-auto pt-6">
-                    {dict.common.learnMore}
-                    <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </Link>
+                <PracticePhotoCard
+                  href={href(locale, "practice", a.slug)}
+                  slug={a.slugs.en}
+                  title={a.title}
+                  summary={a.summary}
+                  image={practicePhoto(a.slugs.en)}
+                  moreLabel={dict.common.learnMore}
+                  tone="light"
+                  headingLevel="h2"
+                />
               </li>
             ))}
           </ul>
