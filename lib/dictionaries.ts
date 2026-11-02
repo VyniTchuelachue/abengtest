@@ -51,6 +51,8 @@ const en = {
   home: {
     metaTitle: "The Abeng Law Firm — Business law in Douala, Cameroon",
     heroLines: ["Business law", "for Cameroon and", "Central Africa."],
+    /** The two large words of the opening section. Interim wording, for the firm to approve. */
+    heroWords: ["Experience", "Matters"],
     heroLede:
       "Since 1998, a Douala firm advising companies, financial institutions and investors on transactions, regulation and disputes under OHADA and Cameroonian law.",
     heroCaption: "The firm's lawyers and staff at the Bonapriso office, Douala.",
@@ -305,6 +307,7 @@ const fr: Dictionary = {
   home: {
     metaTitle: "The Abeng Law Firm — Droit des affaires à Douala, Cameroun",
     heroLines: ["Le droit des affaires", "au Cameroun et en", "Afrique centrale."],
+    heroWords: ["L'expérience", "compte"],
     heroLede:
       "Depuis 1998, un cabinet de Douala qui conseille entreprises, institutions financières et investisseurs en matière de transactions, de réglementation et de contentieux, en droit OHADA et camerounais.",
     heroCaption: "Les avocats et collaborateurs du cabinet au bureau de Bonapriso, à Douala.",

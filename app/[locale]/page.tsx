@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Award, Landmark, Languages, Phone, Scale } from "lucide-react";
+import { ArrowRight, Award, Landmark, Languages, Scale } from "lucide-react";
 import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/blocks";
 import { PracticePhotoCard } from "@/components/site/PracticePhotoCard";
 import { MemberCard } from "@/components/site/Portrait";
@@ -10,8 +10,7 @@ import { RecognitionTabs } from "@/components/site/RecognitionPhotos";
 import { getArticles, getPracticeAreas, getTeam, isLawyerGroup } from "@/lib/data";
 import { practicePhoto } from "@/lib/photos";
 import { getRecognitions, recognitionKinds } from "@/lib/recognitions";
-import { getDictionary, phones } from "@/lib/dictionaries";
-import { telHref } from "@/lib/format";
+import { getDictionary } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -28,6 +27,9 @@ const featuredAreas = [
 
 /** Icons of the "Why choose the firm" reasons, in the order of dict.home.why. */
 const whyIcons = [Landmark, Scale, Award, Languages];
+
+/** Rankings and networks named under the opening photo, as they appear in lib/recognitions. */
+const heroRecognitions = ["Chambers Global", "IFLR1000", "TAGLaw", "TRACE", "Miranda Alliance"];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -54,61 +56,59 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
-      {/* Opening section: the team photograph and a short statement introducing the firm. */}
-      <section className="@container relative isolate overflow-hidden bg-charcoal text-white">
-        {/* From 1280px: a blurred copy of the photo reaches back behind the text and fades out
-            towards the left, so the picture seems to start near the text without anyone in the
-            photo being covered or dimmed. */}
-        <div aria-hidden className="absolute inset-0 -z-10 hidden xl:block">
-          <Image src="/images/team-v2.jpg" alt="" fill sizes="60vw" quality={70} className="scale-110 object-cover blur-2xl" />
-          <div className="absolute inset-0 bg-gradient-to-r from-charcoal from-15% via-charcoal/80 via-45% to-charcoal/35" />
-        </div>
-        <div className="shell grid items-center gap-10 pt-14 xl:grid-cols-12 xl:gap-0 xl:pt-0">
-          <div className="xl:col-span-5 xl:py-20 xl:pr-6">
-            <p className="eyebrow hero-fade">{t.eyebrow}</p>
-            {/* French needs a slightly smaller size to sit as well beside the photo. */}
-            <h1
-              className={`display mt-6 ${
-                locale === "fr" ? "text-[clamp(2.125rem,1.3rem+2.2vw,3.125rem)]" : "text-[clamp(2.375rem,1.5rem+2.8vw,3.875rem)]"
-              }`}
-            >
-              {t.heroLines.map((line, i) => (
-                <span key={line} className="hero-line">
-                  {line}
-                  {/* Keeps the words apart for search engines and screen readers; invisible on screen. */}
-                  {i < t.heroLines.length - 1 && " "}
-                </span>
-              ))}
-            </h1>
-            <p className="hero-fade mt-6 max-w-xl text-[1.0625rem] leading-relaxed text-white/80">{t.heroLede}</p>
-            <div className="hero-fade mt-9 flex flex-wrap gap-3">
-              <Link href={href(locale, "contact")} className="btn btn-gold">
-                {dict.common.consult}
-                <ArrowRight aria-hidden className="h-4 w-4" />
-              </Link>
-              <a href={telHref(phones[0])} className="btn btn-outline-light">
-                <Phone aria-hidden className="h-4 w-4 text-gold" />
-                {phones[0]}
-              </a>
-            </div>
+      {/* Opening section: the team photograph on a smooth dark slate studio backdrop, with the statement
+          over its lower part (where the team's faces are not), then the firm's rankings and networks. */}
+      <section className="@container relative isolate overflow-hidden bg-studio bg-[radial-gradient(ellipse_at_50%_30%,var(--color-studio-light),var(--color-studio)_70%)] text-white">
+        <div className="relative mx-auto max-w-[104rem]">
+          {/* On phones the photo is cropped to the group, so the faces stay large. From 768px the whole
+              photo shows, with its empty backdrop on either side of the group; its side edges, which
+              are only backdrop, fade into the matching background of the section. Below 1280px the
+              text follows the photo; from 1280px it sits over its lower half, under the faces. */}
+          <div className="hero-photo relative aspect-[2400/1340] md:aspect-[3280/1536] md:[mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+            <Image
+              src="/images/team-studio-wide.jpg"
+              alt={t.heroCaption}
+              fill
+              priority
+              sizes="(min-width: 1664px) 1664px, (min-width: 768px) 100vw, 120vw"
+              quality={90}
+              className="object-cover"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-t from-studio to-transparent to-20% xl:via-studio/85 xl:via-30% xl:to-55%"
+            />
           </div>
 
-          {/* The whole group photo, at its own proportions, so no one is cut off. It runs to the
-              edge of the section (the bleed margins match .shell's padding; cqw leaves out the
-              scrollbar, which 100vw would not), and only a thin strip of its edge fades: on top below
-              1280px (the wall above the heads), on the left from 1280px. */}
-          <div className="hero-fade -mx-4 sm:-mx-8 xl:col-span-7 xl:ml-0 xl:-mr-[calc(max(0px,(100cqw-80rem)/2)+2.5rem)]">
-            <div className="relative aspect-[2400/1510] [mask-image:linear-gradient(to_bottom,transparent,black_6%)] xl:[mask-image:linear-gradient(to_right,transparent,black_3%)]">
-              <Image
-                src="/images/team-v2.jpg"
-                alt={t.heroCaption}
-                fill
-                priority
-                sizes="(min-width: 1280px) 60vw, 100vw"
-                quality={90}
-                className="object-cover"
-              />
-            </div>
+          {/* Two large words either side of a gold rule that runs almost the full width of the
+              screen (the first set to the left, the second to the right), then the firm's statement in
+              smaller capitals, centred. */}
+          <div className="relative -mt-4 pb-12 text-center xl:absolute xl:inset-x-0 xl:bottom-0 xl:mt-0 xl:pb-12">
+            <p className="hero-line relative mx-auto w-fit font-display text-[clamp(1.75rem,8cqw,3.5rem)] md:text-[clamp(3rem,6.2cqw,6rem)] font-light uppercase leading-none tracking-[0.02em]">
+              <span className="block pr-[3.3em] text-left">{t.heroWords[0]} </span>
+              <span className="mt-[0.3em] block pl-[4.6em] text-right">{t.heroWords[1]}</span>
+              <span aria-hidden className="absolute left-1/2 top-1/2 h-px w-[calc(100cqw-1.25rem)] -translate-x-1/2 bg-gold" />
+            </p>
+            <h1 className="hero-fade shell mt-[clamp(1.25rem,2.6cqw,2.25rem)] xl:mt-[clamp(2.5rem,3.6cqw,3.5rem)] font-display text-[clamp(0.9375rem,1.6cqw,1.5rem)] font-normal uppercase leading-snug tracking-[0.08em] text-white/90">
+              {/* "Business law" in gold, the rest in white. */}
+              <span className="text-gold">{t.heroLines[0]}</span> {t.heroLines.slice(1).join(" ")}
+            </h1>
+          </div>
+        </div>
+
+        {/* The rankings and networks, by name, under the photo. */}
+        <div className="relative border-t border-white/10">
+          <div className="shell flex flex-wrap items-center justify-center gap-x-8 gap-y-3 py-6 text-center">
+            <span className="eyebrow">{t.recognitionEyebrow}</span>
+            <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 font-display text-[1.125rem] tracking-wide text-white/85">
+              {heroRecognitions.map((name) => (
+                <li key={name}>{name}</li>
+              ))}
+            </ul>
+            <Link href={`${href(locale, "firm")}#recognition`} className="inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-gold hover:text-white">
+              {t.recognitionLink}
+              <ArrowRight aria-hidden className="h-3.5 w-3.5" />
+            </Link>
           </div>
         </div>
       </section>
