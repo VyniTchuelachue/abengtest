@@ -55,7 +55,7 @@ export default async function HomePage({ params }: Props) {
     <>
       {/* Opening section: the team photograph on a smooth dark slate studio backdrop, with the statement
           over its lower part (where the team's faces are not), then the firm's awards. */}
-      <section className="@container relative isolate overflow-hidden bg-studio bg-[radial-gradient(ellipse_at_50%_30%,var(--color-studio-light),var(--color-studio)_70%)] text-white">
+      <section className="@container relative isolate overflow-hidden bg-studio bg-[linear-gradient(to_top,var(--color-studio),transparent_35%),radial-gradient(ellipse_at_50%_30%,var(--color-studio-light),var(--color-studio)_70%)] text-white">
         <div className="relative mx-auto max-w-[104rem]">
           {/* On phones the photo is cropped to the group, so the faces stay large. From 768px the whole
               photo shows, with its empty backdrop on either side of the group; its side edges, which
@@ -100,17 +100,17 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Why choose the firm: whom it assists, then the reasons, without repeating the team photo. */}
-      <section className="py-24 md:py-32">
+      {/* Why choose the firm: whom it assists, then the reasons, on the backdrop of the opening section. */}
+      <section className="bg-studio pb-24 pt-14 text-white md:pb-32 md:pt-20">
         <div className="shell grid gap-14 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-5">
-            <SectionHeading eyebrow={t.whyEyebrow} title={t.whyHeading} lede={t.introLede} />
+            <SectionHeading title={t.whyHeading} lede={t.introLede} dark />
             <div className="mt-10 flex flex-wrap gap-3">
               <Link href={href(locale, "firm")} className="btn btn-gold">
                 {t.introLink}
                 <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
-              <Link href={href(locale, "contact")} className="btn btn-quiet">
+              <Link href={href(locale, "contact")} className="btn btn-outline-light">
                 {dict.nav.contact}
               </Link>
             </div>
@@ -119,12 +119,12 @@ export default async function HomePage({ params }: Props) {
             {t.why.map((w, i) => {
               const Icon = whyIcons[i];
               return (
-                <li key={w.title} className="card p-7">
+                <li key={w.title} className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-7">
                   <span className="icon-tile">
                     <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
                   </span>
-                  <h3 className="mt-5 font-display text-[1.25rem] font-semibold leading-snug">{w.title}</h3>
-                  <p className="mt-2 text-ink-soft">{w.body}</p>
+                  <h3 className="mt-5 font-display text-[1.25rem] font-semibold leading-snug text-white">{w.title}</h3>
+                  <p className="mt-2 text-white/70">{w.body}</p>
                 </li>
               );
             })}

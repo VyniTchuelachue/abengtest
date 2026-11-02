@@ -83,7 +83,7 @@ const en = {
     recognitionEyebrow: "Recognition & networks",
     recognitionLink: "Recognition and networks in detail",
     whyEyebrow: "Why choose the firm",
-    whyHeading: "Local depth, international standards",
+    whyHeading: "Cameroon business law firm with international standards",
     why: [
       { title: "Since 1998 in Douala", body: "More than twenty-five years advising companies, banks and investors in Cameroon's economic capital." },
       { title: "OHADA and CEMAC law", body: "Transactions, regulatory matters and disputes handled under the OHADA Uniform Acts, CEMAC rules and Cameroonian law." },
@@ -338,7 +338,7 @@ const fr: Dictionary = {
     recognitionEyebrow: "Distinctions et réseaux",
     recognitionLink: "Distinctions et réseaux en détail",
     whyEyebrow: "Pourquoi choisir le cabinet",
-    whyHeading: "Un ancrage local, des standards internationaux",
+    whyHeading: "Cabinet d'affaires camerounais aux standards internationaux",
     why: [
       { title: "Depuis 1998 à Douala", body: "Plus de vingt-cinq ans au service des entreprises, banques et investisseurs dans la capitale économique du Cameroun." },
       { title: "Droit OHADA et CEMAC", body: "Opérations, questions réglementaires et contentieux traités selon les Actes uniformes OHADA, la réglementation CEMAC et le droit camerounais." },
