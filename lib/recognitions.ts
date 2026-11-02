@@ -139,8 +139,11 @@ const entries: Entry[] = [
   },
 ];
 
-/** One photo, ready for the page: `label` names the item and its year, e.g. "Chambers Global 2024". */
-export type RecognitionPhoto = { src: string; label: string; recipient?: string; year?: string };
+/**
+ * One photo, ready for the page: `label` names the item and its year, e.g. "Chambers Global 2024".
+ * `cutout` is the same award cut out of its background, for the home page's opening section.
+ */
+export type RecognitionPhoto = { src: string; cutout: string; label: string; recipient?: string; year?: string };
 
 export type Recognition = {
   id: string;
@@ -168,6 +171,7 @@ export function getRecognitions(locale: Locale, kind?: RecognitionKind): Recogni
         detail: e.detail?.[locale],
         photos: (e.photos ?? []).map((p) => ({
           src: `/images/recognitions/${p.file}.jpg`,
+          cutout: `/images/recognitions/cutouts/${p.file}.webp`,
           label: `${e.name[locale]}${p.year ? ` ${p.year}` : ""}`,
           recipient,
           year: p.year,

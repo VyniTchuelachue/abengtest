@@ -6,7 +6,7 @@ import { ArrowRight, Award, Landmark, Languages, Scale } from "lucide-react";
 import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/blocks";
 import { PracticePhotoCard } from "@/components/site/PracticePhotoCard";
 import { MemberCard } from "@/components/site/Portrait";
-import { RecognitionTabs } from "@/components/site/RecognitionPhotos";
+import { RecognitionStrip, RecognitionTabs } from "@/components/site/RecognitionPhotos";
 import { getArticles, getPracticeAreas, getTeam, isLawyerGroup } from "@/lib/data";
 import { practicePhoto } from "@/lib/photos";
 import { getRecognitions, recognitionKinds } from "@/lib/recognitions";
@@ -27,9 +27,6 @@ const featuredAreas = [
 
 /** Icons of the "Why choose the firm" reasons, in the order of dict.home.why. */
 const whyIcons = [Landmark, Scale, Award, Languages];
-
-/** Rankings and networks named under the opening photo, as they appear in lib/recognitions. */
-const heroRecognitions = ["Chambers Global", "IFLR1000", "TAGLaw", "TRACE", "Miranda Alliance"];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -57,13 +54,14 @@ export default async function HomePage({ params }: Props) {
   return (
     <>
       {/* Opening section: the team photograph on a smooth dark slate studio backdrop, with the statement
-          over its lower part (where the team's faces are not), then the firm's rankings and networks. */}
+          over its lower part (where the team's faces are not), then the firm's awards. */}
       <section className="@container relative isolate overflow-hidden bg-studio bg-[radial-gradient(ellipse_at_50%_30%,var(--color-studio-light),var(--color-studio)_70%)] text-white">
         <div className="relative mx-auto max-w-[104rem]">
           {/* On phones the photo is cropped to the group, so the faces stay large. From 768px the whole
               photo shows, with its empty backdrop on either side of the group; its side edges, which
               are only backdrop, fade into the matching background of the section. Below 1280px the
-              text follows the photo; from 1280px it sits over its lower half, under the faces. */}
+              text follows the photo; from 1280px it sits over its lower half, under the faces, with
+              the photo lifted a little into the empty backdrop above the heads. */}
           <div className="hero-photo relative aspect-[2400/1340] md:aspect-[3280/1536] md:[mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
             <Image
               src="/images/team-studio-wide.jpg"
@@ -72,7 +70,7 @@ export default async function HomePage({ params }: Props) {
               priority
               sizes="(min-width: 1664px) 1664px, (min-width: 768px) 100vw, 120vw"
               quality={90}
-              className="object-cover"
+              className="object-cover xl:-translate-y-[5%]"
             />
             <div
               aria-hidden
@@ -89,27 +87,16 @@ export default async function HomePage({ params }: Props) {
               <span className="mt-[0.3em] block pl-[4.6em] text-right">{t.heroWords[1]}</span>
               <span aria-hidden className="absolute left-1/2 top-1/2 h-px w-[calc(100cqw-1.25rem)] -translate-x-1/2 bg-gold" />
             </p>
-            <h1 className="hero-fade shell mt-[clamp(1.25rem,2.6cqw,2.25rem)] xl:mt-[clamp(2.5rem,3.6cqw,3.5rem)] font-display text-[clamp(0.9375rem,1.6cqw,1.5rem)] font-normal uppercase leading-snug tracking-[0.08em] text-white/90">
+            <h1 className="hero-fade shell mt-[clamp(1.25rem,2.6cqw,2.25rem)] xl:mt-[clamp(2rem,2.8cqw,2.75rem)] font-display text-[clamp(0.9375rem,1.6cqw,1.5rem)] font-normal uppercase leading-snug tracking-[0.08em] text-white/90">
               {/* "Business law" in gold, the rest in white. */}
               <span className="text-gold">{t.heroLines[0]}</span> {t.heroLines.slice(1).join(" ")}
             </h1>
           </div>
         </div>
 
-        {/* The rankings and networks, by name, under the photo. */}
-        <div className="relative border-t border-white/10">
-          <div className="shell flex flex-wrap items-center justify-center gap-x-8 gap-y-3 py-6 text-center">
-            <span className="eyebrow">{t.recognitionEyebrow}</span>
-            <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 font-display text-[1.125rem] tracking-wide text-white/85">
-              {heroRecognitions.map((name) => (
-                <li key={name}>{name}</li>
-              ))}
-            </ul>
-            <Link href={`${href(locale, "firm")}#recognition`} className="inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-gold hover:text-white">
-              {t.recognitionLink}
-              <ArrowRight aria-hidden className="h-3.5 w-3.5" />
-            </Link>
-          </div>
+        {/* The firm's awards and certificates, standing in a row that scrolls sideways. */}
+        <div className="shell relative -mt-6 pb-10">
+          <RecognitionStrip photos={getRecognitions(locale).flatMap((r) => r.photos)} label={t.recognitionEyebrow} labels={dict.common.gallery} />
         </div>
       </section>
 

@@ -77,6 +77,49 @@ function PhotoButton({ photo, label, onOpen, sizes, className }: { photo: Recogn
   );
 }
 
+/**
+ * Home page opening section: the awards cut out of their backgrounds, standing on one line in a
+ * well-spaced row that scrolls sideways, five at a time from 768px (three and a bit on phones,
+ * where it is swiped). Each opens the viewer.
+ */
+export function RecognitionStrip({ photos, label, labels }: { photos: RecognitionPhoto[]; label: string; labels: Labels }) {
+  const row = useRef<HTMLUListElement>(null);
+  const [edges, setEdges] = useState({ start: true, end: false });
+  const { open, viewer } = usePhotoViewer(photos, labels);
+
+  const onScroll = () => {
+    const el = row.current;
+    if (el) setEdges({ start: el.scrollLeft <= 1, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 1 });
+  };
+  const move = (direction: number) => {
+    const el = row.current;
+    const item = el?.firstElementChild;
+    if (el && item) el.scrollBy({ left: direction * (item.clientWidth + parseFloat(getComputedStyle(el).columnGap)), behavior: "smooth" });
+  };
+  const arrow = "hidden h-10 w-10 flex-none items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-gold hover:text-ink disabled:pointer-events-none disabled:opacity-30 md:flex";
+
+  return (
+    <div role="group" aria-label={label} className="flex items-center justify-center gap-4 lg:gap-6">
+      <button type="button" onClick={() => move(-1)} disabled={edges.start} aria-label={labels.previous} className={arrow}>
+        <ChevronLeft aria-hidden className="h-5 w-5" />
+      </button>
+      <ul ref={row} onScroll={onScroll} className="flex min-w-0 max-w-[62rem] flex-1 snap-x snap-mandatory items-end gap-[var(--gap)] overflow-x-auto pb-3 [--gap:1.25rem] [scrollbar-width:none] md:[--gap:2.5rem] lg:[--gap:4rem] [&::-webkit-scrollbar]:hidden">
+        {photos.map((p, i) => (
+          <li key={p.src} className="w-[24%] flex-none snap-start md:w-[calc((100%-4*var(--gap))/5)]">
+            <button type="button" onClick={() => open(i)} aria-label={`${labels.enlarge}: ${p.label}`} className="group relative block aspect-square w-full">
+              <Image src={p.cutout} alt="" fill sizes="(min-width: 768px) 10rem, 30vw" className="object-contain object-bottom drop-shadow-[0_8px_12px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:scale-105" />
+            </button>
+          </li>
+        ))}
+      </ul>
+      <button type="button" onClick={() => move(1)} disabled={edges.end} aria-label={labels.next} className={arrow}>
+        <ChevronRight aria-hidden className="h-5 w-5" />
+      </button>
+      {viewer}
+    </div>
+  );
+}
+
 type Group = { kind: RecognitionKind; title: string; items: Recognition[] };
 
 /**
