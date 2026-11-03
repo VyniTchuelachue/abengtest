@@ -53,7 +53,7 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
-      {/* Opening section: the team photograph on a smooth dark slate studio backdrop, with the statement
+      {/* Opening section: the team photograph on the dark slate of the section, with the statement
           over its lower part (where the team's faces are not), then the firm's awards. */}
       <section className="@container relative isolate overflow-hidden bg-studio bg-[linear-gradient(to_top,var(--color-studio),transparent_35%),radial-gradient(ellipse_at_50%_30%,var(--color-studio-light),var(--color-studio)_70%)] text-white">
         <div className="relative mx-auto max-w-[104rem]">
@@ -62,15 +62,15 @@ export default async function HomePage({ params }: Props) {
               are only backdrop, fade into the matching background of the section. Below 1280px the
               text follows the photo; from 1280px it sits over its lower half, under the faces, with
               the photo lifted a little into the empty backdrop above the heads. */}
-          <div className="hero-photo relative aspect-[2400/1340] md:aspect-[3280/1536] md:[mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+          <div className="hero-photo relative aspect-video md:aspect-[3052/1440] md:[mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
             <Image
-              src="/images/team-studio-wide.jpg"
+              src="/images/team-photo-wide.jpg"
               alt={t.heroCaption}
               fill
               priority
               sizes="(min-width: 1664px) 1664px, (min-width: 768px) 100vw, 120vw"
               quality={90}
-              className="object-cover xl:-translate-y-[5%]"
+              className="object-cover xl:-translate-y-[3%]"
             />
             <div
               aria-hidden
@@ -101,7 +101,7 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {/* Why choose the firm: whom it assists, then the reasons, on the backdrop of the opening section. */}
-      <section className="bg-studio pb-24 pt-14 text-white md:pb-32 md:pt-20">
+      <section className="relative -mt-px bg-studio pb-24 pt-14 text-white md:pb-32 md:pt-20">
         <div className="shell grid gap-14 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-5">
             <SectionHeading title={t.whyHeading} lede={t.introLede} dark />

@@ -13,14 +13,12 @@ fs.mkdirSync(out, { recursive: true });
 
 const jpeg = { quality: 84, mozjpeg: true };
 
-// Team photograph (the photographer's edit already removes the neighbouring
-// firm's door plate). Kept at 2400px wide: it is shown full-bleed.
-await sharp(path.join(assets, "Team picture.jpg"))
+// Team photograph, at its full 2560px width.
+await sharp(path.join(assets, "New team photo.png"))
   .rotate()
-  .resize({ width: 2400, withoutEnlargement: true })
-  .jpeg(jpeg)
-  .toFile(path.join(out, "team-v2.jpg"));
-console.log("team-v2.jpg");
+  .jpeg({ quality: 88, mozjpeg: true })
+  .toFile(path.join(out, "team-photo.jpg"));
+console.log("team-photo.jpg");
 
 // Managing Partner in his office (environmental portrait).
 await sharp(path.join(assets, "Barrister Abeng.jpg"))

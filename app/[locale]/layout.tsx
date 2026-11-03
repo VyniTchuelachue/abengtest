@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       siteName: dict.meta.siteName,
       locale: locale === "fr" ? "fr_CM" : "en_GB",
       alternateLocale: locale === "fr" ? "en_GB" : "fr_CM",
-      images: [{ url: "/images/team-v2.jpg", width: 2400, height: 1510, alt: dict.home.heroCaption }],
+      images: [{ url: "/images/team-photo.jpg", width: 2560, height: 1440, alt: dict.home.heroCaption }],
     },
     twitter: { card: "summary_large_image" },
     formatDetection: { telephone: false },

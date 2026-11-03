@@ -43,8 +43,8 @@ export default async function FirmPage({ params }: Props) {
         <div className="shell grid items-center gap-14 lg:grid-cols-12">
           <div className="lg:col-span-7">
             {/* The whole group photo, at its own proportions, so no one is cut off. */}
-            <div className="relative aspect-[2400/1510] overflow-hidden rounded-[2rem]">
-              <Image src="/images/team-v2.jpg" alt={dict.home.heroCaption} fill priority quality={80} sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
+            <div className="relative aspect-video overflow-hidden rounded-[2rem]">
+              <Image src="/images/team-photo.jpg" alt={dict.home.heroCaption} fill priority quality={80} sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
             </div>
             <div className="mt-5 inline-flex items-center gap-3 rounded-2xl bg-white px-5 py-4 shadow-xl">
               <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gold">
