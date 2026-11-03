@@ -13,7 +13,7 @@ fs.mkdirSync(out, { recursive: true });
 
 const jpeg = { quality: 84, mozjpeg: true };
 
-// The team photographs (team-photo-dark*.jpg) are not made here: they are "New team photo.png" with
+// The team photographs (team-photo-slate*.jpg) are not made here: they are "New team photo.png" with
 // its wall and carpet replaced by hand, so running this script must not touch them.
 
 // Managing Partner in his office (environmental portrait).

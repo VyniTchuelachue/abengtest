@@ -64,7 +64,7 @@ export default async function HomePage({ params }: Props) {
               the photo lifted a little into the empty backdrop above the heads. */}
           <div className="hero-photo relative aspect-video md:aspect-[3052/1440] md:[mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
             <Image
-              src="/images/team-photo-dark-wide.jpg"
+              src="/images/team-photo-slate-wide.jpg"
               alt={t.heroCaption}
               fill
               priority
