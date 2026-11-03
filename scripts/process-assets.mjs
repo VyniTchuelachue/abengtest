@@ -13,12 +13,8 @@ fs.mkdirSync(out, { recursive: true });
 
 const jpeg = { quality: 84, mozjpeg: true };
 
-// Team photograph, at its full 2560px width.
-await sharp(path.join(assets, "New team photo.png"))
-  .rotate()
-  .jpeg({ quality: 88, mozjpeg: true })
-  .toFile(path.join(out, "team-photo.jpg"));
-console.log("team-photo.jpg");
+// The team photographs (team-photo-dark*.jpg) are not made here: they are "New team photo.png" with
+// its wall and carpet replaced by hand, so running this script must not touch them.
 
 // Managing Partner in his office (environmental portrait).
 await sharp(path.join(assets, "Barrister Abeng.jpg"))

@@ -9,7 +9,7 @@ export function AuthShell({ title, intro, children }: { title: string; intro?: s
   return (
     <main className="grid min-h-dvh bg-stone lg:grid-cols-2">
       <div className="relative isolate hidden overflow-hidden bg-charcoal text-white lg:flex lg:flex-col lg:justify-between lg:p-14">
-        <Image src="/images/team-photo.jpg" alt="" fill priority sizes="50vw" quality={70} className="-z-10 object-cover opacity-25" style={{ objectPosition: "40% 20%" }} />
+        <Image src="/images/team-photo-dark.jpg" alt="" fill priority sizes="50vw" quality={70} className="-z-10 object-cover opacity-25" style={{ objectPosition: "40% 20%" }} />
         <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-charcoal via-charcoal/80 to-charcoal/40" />
         <div className="flex items-center gap-3">
           <Image src="/images/crest.png" alt="" width={52} height={52} className="h-13 w-13" />

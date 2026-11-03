@@ -36,7 +36,7 @@ export function legalServiceSchema(locale: Locale, areas: PracticeArea[]) {
     description: dict.meta.defaultDescription,
     url: `${siteUrl}${href(locale)}`,
     logo: `${siteUrl}/images/crest.png`,
-    image: `${siteUrl}/images/team-photo.jpg`,
+    image: `${siteUrl}/images/team-photo-dark.jpg`,
     foundingDate: "1998",
     founder: { "@type": "Person", "@id": personId(partnerSlug), name: "Roland Abeng" },
     telephone: phones[0],
