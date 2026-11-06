@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { defaultLocale, isLocale, localizedSegments } from "./lib/routes";
+import { browserLocale, defaultLocale, isLocale, languageCookie, localizedSegments, switchLocalePath, type Locale } from "./lib/routes";
 
 const frenchSegments = new Set(localizedSegments.map((s) => s.fr));
 const PUBLIC_ADMIN_PATHS = ["/admin/connexion", "/admin/mot-de-passe-oublie", "/admin/auth/callback"];
@@ -14,13 +14,35 @@ export async function proxy(request: NextRequest) {
 
   // Public site: every page lives under /en or /fr.
   const first = pathname.split("/")[1];
-  if (isLocale(first)) return NextResponse.next();
+  const chosen = request.cookies.get(languageCookie)?.value;
+  if (isLocale(first)) {
+    // Someone arriving from outside the site (a search result, a shared link, a bookmark, the address bar) on a page
+    // in the other language gets the same page in their language: the one they picked with the switch, otherwise their
+    // browser's, so their phone does not machine-translate it. Links followed inside the site are left alone.
+    const wanted = isLocale(chosen) ? chosen : browserLocale(request.headers.get("accept-language"));
+    if (wanted && wanted !== first && isArrival(request)) return redirectTo(request, switchLocalePath(pathname, wanted));
+    return NextResponse.next();
+  }
 
-  // A French page name without its prefix (/equipe, /cabinet…) is a French page; otherwise follow the browser.
-  const preferred =
-    frenchSegments.has(first) || request.headers.get("accept-language")?.toLowerCase().startsWith("fr") ? "fr" : defaultLocale;
+  // A French page name without its prefix (/equipe, /cabinet…) is a French page; otherwise the visitor's choice, then
+  // their browser's language.
+  const preferred: Locale = frenchSegments.has(first)
+    ? "fr"
+    : isLocale(chosen)
+      ? chosen
+      : (browserLocale(request.headers.get("accept-language")) ?? defaultLocale);
+  return redirectTo(request, `/${preferred}${pathname === "/" ? "" : pathname}`);
+}
+
+/** A page opened from outside the site, not a link followed or a request made from one of its pages. */
+function isArrival(request: NextRequest) {
+  const site = request.headers.get("sec-fetch-site");
+  return request.method === "GET" && request.headers.get("sec-fetch-dest") === "document" && (site === "none" || site === "cross-site");
+}
+
+function redirectTo(request: NextRequest, pathname: string) {
   const url = request.nextUrl.clone();
-  url.pathname = `/${preferred}${pathname === "/" ? "" : pathname}`;
+  url.pathname = pathname;
   return NextResponse.redirect(url);
 }
 

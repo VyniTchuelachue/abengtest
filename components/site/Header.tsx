@@ -5,8 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { CalendarCheck, Mail, MapPin, Menu, Phone, X } from "lucide-react";
-import { href, switchLocalePath, type Locale, type RouteKey } from "@/lib/routes";
+import { href, languageCookie, switchLocalePath, type Locale, type RouteKey } from "@/lib/routes";
 import type { Dictionary } from "@/lib/dictionaries";
+
+/** Keeps the language picked with the switch for a year (read by proxy.ts). */
+function rememberLanguage(locale: Locale) {
+  document.cookie = `${languageCookie}=${locale}; path=/; max-age=31536000; samesite=lax`;
+}
 
 type Props = { locale: Locale; nav: Dictionary["nav"]; phones: string[]; email: string; consult: string; addressShort: string };
 
@@ -68,6 +73,7 @@ export function Header({ locale, nav, phones, email, consult, addressShort }: Pr
           </div>
           <Link
             href={switchLocalePath(pathname, other)}
+            onClick={() => rememberLanguage(other)}
             hrefLang={other}
             lang={other}
             aria-label={nav.switchAria}
@@ -156,7 +162,7 @@ export function Header({ locale, nav, phones, email, consult, addressShort }: Pr
                 {email}
               </a>
             </div>
-            <Link href={switchLocalePath(pathname, other)} hrefLang={other} lang={other} className="rounded-full border border-white/30 px-4 py-2 font-display font-semibold text-white">
+            <Link href={switchLocalePath(pathname, other)} onClick={() => rememberLanguage(other)} hrefLang={other} lang={other} className="rounded-full border border-white/30 px-4 py-2 font-display font-semibold text-white">
               {nav.switchLabel}
             </Link>
           </div>

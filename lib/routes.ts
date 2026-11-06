@@ -1,6 +1,22 @@
 export const locales = ["en", "fr"] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "en";
+/** Set by the language switch, so a visitor's own choice wins over their browser's language. */
+export const languageCookie = "lang";
+
+/** The visitor's language from the browser's Accept-Language list (by preference, not just its first entry), if it names one of ours. */
+export function browserLocale(acceptLanguage: string | null): Locale | null {
+  const ranked = (acceptLanguage ?? "")
+    .split(",")
+    .map((part, i) => {
+      const [tag, ...params] = part.trim().toLowerCase().split(";");
+      const q = Number(params.find((p) => p.trim().startsWith("q="))?.trim().slice(2) ?? 1);
+      return { lang: tag.split("-")[0], q: Number.isFinite(q) ? q : 0, i };
+    })
+    .filter((e) => e.q > 0)
+    .sort((a, b) => b.q - a.q || a.i - b.i);
+  return (ranked.find((e) => (locales as readonly string[]).includes(e.lang))?.lang as Locale | undefined) ?? null;
+}
 
 export function isLocale(value: string | undefined): value is Locale {
   return value === "en" || value === "fr";
