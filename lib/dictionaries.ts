@@ -515,7 +515,10 @@ export function getDictionary(locale: Locale): Dictionary {
   return dictionaries[locale];
 }
 
-export const phones = ["+237 233420208"];
-export const firmEmail = "contact@theabenglawfirm.com";
+export type SiteContact = { phones: string[]; emails: string[] };
+/** Shown only if the details set in the dashboard cannot be read. */
+export const defaultContact: SiteContact = { phones: ["+237 233420208"], emails: ["contact@theabenglawfirm.com"] };
+/** The careers texts name the firm's address: this puts the current one in its place. */
+export const withFirmEmail = (text: string, email: string) => text.replaceAll(defaultContact.emails[0], email);
 export const officeCoordinates = { lat: 4.0290645, lng: 9.7019888 };
 export const chambersProfileUrl = "https://chambers.com/law-firm/the-abeng-law-firm-global-2:22621119";

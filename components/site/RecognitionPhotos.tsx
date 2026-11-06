@@ -107,7 +107,7 @@ export function RecognitionStrip({ photos, label, labels }: { photos: Recognitio
         {photos.map((p, i) => (
           <li key={p.src} className="w-[24%] flex-none snap-start md:w-[calc((100%-4*var(--gap))/5)]">
             <button type="button" onClick={() => open(i)} aria-label={`${labels.enlarge}: ${p.label}`} className="group relative block aspect-square w-full">
-              <Image src={p.cutout} alt="" fill sizes="(min-width: 768px) 10rem, 30vw" className="object-contain object-bottom drop-shadow-[0_8px_12px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:scale-105" />
+              <Image src={p.cutout ?? p.src} alt="" fill sizes="(min-width: 768px) 10rem, 30vw" className="object-contain object-bottom drop-shadow-[0_8px_12px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:scale-105" />
             </button>
           </li>
         ))}

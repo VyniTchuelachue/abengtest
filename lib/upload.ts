@@ -14,18 +14,20 @@ export function uploadErrorText(t: (text: string, vars?: Record<string, string>)
   return message.startsWith(prefix) ? t("Envoi impossible : {detail}", { detail: message.slice(prefix.length) }) : t(message);
 }
 
+export type UploadFolder = "team" | "articles" | "articles/inline" | "practice" | "recognitions";
+
 /**
  * Downscales a photo in the browser (keeps uploads light on slow connections),
  * then stores it in the public "media" bucket. Returns the storage path.
  */
-export async function uploadImage(file: File, folder: "team" | "articles" | "articles/inline", maxEdge = 2400): Promise<string> {
+export async function uploadImage(file: File, folder: UploadFolder, maxEdge = 2400, keepTransparency = false): Promise<string> {
   if (!ACCEPTED.includes(file.type)) throw new Error("Format non pris en charge. Utilisez une image JPG, PNG ou WebP.");
   if (file.size > MAX_BYTES) throw new Error("Image trop lourde (15 Mo maximum).");
 
-  const blob = await downscale(file, maxEdge);
-  const path = `${folder}/${crypto.randomUUID()}.jpg`;
+  const blob = await downscale(file, maxEdge, keepTransparency);
+  const path = `${folder}/${crypto.randomUUID()}.${keepTransparency ? "webp" : "jpg"}`;
   const { error } = await browserClient().storage.from("media").upload(path, blob, {
-    contentType: "image/jpeg",
+    contentType: blob.type,
     cacheControl: "31536000",
     upsert: false,
   });
@@ -33,7 +35,7 @@ export async function uploadImage(file: File, folder: "team" | "articles" | "art
   return path;
 }
 
-async function downscale(file: File, maxEdge: number): Promise<Blob> {
+async function downscale(file: File, maxEdge: number, keepTransparency: boolean): Promise<Blob> {
   const bitmap = await createImageBitmap(file);
   const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height));
   const width = Math.round(bitmap.width * scale);
@@ -43,12 +45,14 @@ async function downscale(file: File, maxEdge: number): Promise<Blob> {
   canvas.height = height;
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Votre navigateur ne permet pas de préparer l'image.");
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, width, height);
+  if (!keepTransparency) {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, width, height);
+  }
   ctx.drawImage(bitmap, 0, 0, width, height);
   bitmap.close();
   return new Promise((resolve, reject) =>
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Conversion de l'image impossible."))), "image/jpeg", 0.88),
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Conversion de l'image impossible."))), keepTransparency ? "image/webp" : "image/jpeg", 0.88),
   );
 }
 

@@ -6,9 +6,9 @@ import { ArrowRight, Building, Globe2, Lock, Scale, TrendingUp } from "lucide-re
 import { ContactBand, PageIntro, SectionHeading } from "@/components/site/blocks";
 import { PhotoRevealBox } from "@/components/site/PhotoReveal";
 import { RecognitionList } from "@/components/site/RecognitionPhotos";
-import { getTeam } from "@/lib/data";
+import { getRecognitions, getTeam } from "@/lib/data";
 import { approachPhotos } from "@/lib/photos";
-import { getRecognitions, recognitionKinds } from "@/lib/recognitions";
+import { recognitionKinds } from "@/lib/recognitions";
 import { chambersProfileUrl, getDictionary } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
@@ -32,7 +32,8 @@ export default async function FirmPage({ params }: Props) {
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
   const t = dict.firmPage;
-  const partner = (await getTeam(locale)).find((m) => m.group === "partner");
+  const [team, recognitions] = await Promise.all([getTeam(locale), getRecognitions(locale)]);
+  const partner = team.find((m) => m.group === "partner");
 
   return (
     <>
@@ -107,7 +108,7 @@ export default async function FirmPage({ params }: Props) {
           <div className="mt-10">
             <RecognitionList
               labels={dict.common.gallery}
-              groups={recognitionKinds.map((kind) => ({ kind, title: t.recognitionKinds[kind], items: getRecognitions(locale, kind) }))}
+              groups={recognitionKinds.map((kind) => ({ kind, title: t.recognitionKinds[kind], items: recognitions.filter((r) => r.kind === kind) }))}
             />
           </div>
         </div>

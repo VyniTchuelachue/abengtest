@@ -18,9 +18,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
     { href: "/admin/actualites", label: t("Actualités") },
     { href: "/admin/equipe", label: t("Équipe") },
     { href: "/admin/expertises", label: t("Expertises") },
+    { href: "/admin/distinctions", label: t("Distinctions") },
     { href: "/admin/messages", label: t("Messages"), badge: unread ?? 0 },
     { href: "/admin/categories", label: t("Catégories") },
-    ...(staff.role === "admin" ? [{ href: "/admin/utilisateurs", label: t("Utilisateurs") }] : []),
+    ...(staff.role === "admin"
+      ? [
+          { href: "/admin/coordonnees", label: t("Coordonnées") },
+          { href: "/admin/utilisateurs", label: t("Utilisateurs") },
+        ]
+      : []),
     { href: "/admin/compte", label: t("Mon compte") },
   ];
   const name = staff.full_name || email;

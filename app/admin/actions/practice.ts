@@ -5,7 +5,7 @@ import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin, requireStaff, type ActionResult } from "@/lib/auth";
-import { slugify } from "@/lib/format";
+import { mediaPathPattern, slugify } from "@/lib/format";
 import { refreshPublic } from "@/lib/revalidate";
 
 const lines = z
@@ -33,6 +33,12 @@ const schema = z.object({
   body_en: text(20000),
   scope_fr: lines,
   scope_en: lines,
+  image_path: z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => v || null)
+    .refine((v) => !v || mediaPathPattern.test(v), "Image non valide. Envoyez-la de nouveau."),
 });
 
 export type PracticeActionResult = ActionResult & { savedAt?: number };

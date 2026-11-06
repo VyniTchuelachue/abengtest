@@ -53,11 +53,37 @@ type MessageRow = {
   subject: string | null;
 };
 
+type RecognitionRow = {
+  created_at: string;
+  detail_en: string;
+  detail_fr: string;
+  id: string;
+  kind: string;
+  name_en: string;
+  name_fr: string;
+  photos: Json;
+  published: boolean;
+  recipient: string;
+  sort_order: number;
+  updated_at: string;
+  updated_by: string | null;
+  year: string;
+};
+
+type SiteContactRow = {
+  emails: string[];
+  id: boolean;
+  phones: string[];
+  updated_at: string;
+  updated_by: string | null;
+};
+
 type PracticeAreaRow = {
   body_en: string;
   body_fr: string;
   created_at: string;
   group_key: Enums["practice_group"];
+  image_path: string | null;
   id: string;
   published: boolean;
   scope_en: string[];
@@ -147,6 +173,8 @@ export type Database = {
       >;
       contact_messages: Table<MessageRow, "email" | "message" | "name">;
       practice_areas: Table<PracticeAreaRow, "slug" | "slug_fr" | "title_en" | "title_fr">;
+      recognitions: Table<RecognitionRow, "kind" | "name_en" | "name_fr">;
+      site_contact: Table<SiteContactRow, "emails" | "phones">;
       staff: Table<StaffRow, "email" | "user_id">;
       team_member_practice_areas: Table<
         MemberPracticeAreaRow,

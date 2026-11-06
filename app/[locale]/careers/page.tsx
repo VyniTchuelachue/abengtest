@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { Mail } from "lucide-react";
 import { PageIntro } from "@/components/site/blocks";
 import { ContactForm } from "@/components/site/ContactForm";
-import { firmEmail, getDictionary } from "@/lib/dictionaries";
+import { getSiteContact } from "@/lib/data";
+import { getDictionary, withFirmEmail } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -12,9 +13,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
   const dict = getDictionary(locale);
+  const { emails } = await getSiteContact();
   return {
     title: dict.careersPage.metaTitle,
-    description: dict.careersPage.metaDescription,
+    description: withFirmEmail(dict.careersPage.metaDescription, emails[0]),
     alternates: alternatesFor({ en: href("en", "careers"), fr: href("fr", "careers") }, locale),
   };
 }
@@ -26,10 +28,12 @@ export default async function CareersPage({ params }: Props) {
   const t = dict.careersPage;
   // "Careers" / "Recrutement" in the contact subjects, so applications are easy to spot in the dashboard.
   const subject = dict.contactPage.subjects[2];
+  const { emails } = await getSiteContact();
+  const firmEmail = emails[0];
 
   return (
     <>
-      <PageIntro title={t.title} lede={t.lede} crumbs={[{ label: dict.nav.homeLabel, href: href(locale) }, { label: t.title }]} />
+      <PageIntro title={t.title} lede={withFirmEmail(t.lede, firmEmail)} crumbs={[{ label: dict.nav.homeLabel, href: href(locale) }, { label: t.title }]} />
 
       <section className="py-20 md:py-28">
         <div className="shell grid gap-12 lg:grid-cols-12">

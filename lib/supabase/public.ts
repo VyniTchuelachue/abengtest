@@ -2,7 +2,7 @@ import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "../database.types";
 
-export type CacheTag = "team" | "practice" | "articles" | "categories";
+export type CacheTag = "team" | "practice" | "articles" | "categories" | "recognitions" | "contact";
 
 /** Seconds before cached public content is refreshed even without an edit. */
 const REVALIDATE = 3600;

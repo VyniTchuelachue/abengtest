@@ -1,4 +1,5 @@
-// Downloads and prepares the hover photos of the firm page's "How we work" boxes.
+// Downloads and prepares the stock hover photos of the firm page's "How we work" boxes (the first two;
+// the other two, 3-v2 and 4-v2, are generated images of Douala and the Wouri bridge).
 // (The practice-area photos are generated images: see scripts/process-practice-photos.mjs.)
 // Usage: node scripts/fetch-stock-photos.mjs
 // All photos are from Unsplash under the Unsplash License (free for commercial use,
@@ -12,8 +13,6 @@ const photos = [
   // Firm page, "How we work": public/images/approach/<n>.jpg in the order of the boxes
   ["approach/1", "1589829545856-d10d557cf95f"], // Lady Justice
   ["approach/2", "1610652492500-ded49ceeb378"], // man in a dark suit
-  ["approach/3", "1744907895363-d351aa6019ef"], // aerial view of Lagos business district
-  ["approach/4", "1648023200201-8fcede127835"], // Lekki-Ikoyi bridge at night
 ];
 
 const root = path.resolve("public/images");

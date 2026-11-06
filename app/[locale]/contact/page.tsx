@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { ExternalLink, Mail, MapPin, Phone, Mailbox } from "lucide-react";
 import { PageIntro } from "@/components/site/blocks";
 import { ContactForm } from "@/components/site/ContactForm";
-import { firmEmail, getDictionary, officeCoordinates, phones } from "@/lib/dictionaries";
+import { getSiteContact } from "@/lib/data";
+import { getDictionary, officeCoordinates } from "@/lib/dictionaries";
 import { telHref } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
@@ -25,6 +26,7 @@ export default async function ContactPage({ params }: Props) {
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
   const t = dict.contactPage;
+  const { phones, emails } = await getSiteContact();
   const { lat, lng } = officeCoordinates;
   const mapsLink = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
   const embed = `https://www.google.com/maps?q=${lat},${lng}&z=16&hl=${locale}&output=embed`;
@@ -60,9 +62,13 @@ export default async function ContactPage({ params }: Props) {
       icon: Mail,
       title: locale === "fr" ? "E-mail" : "Email",
       body: (
-        <a href={`mailto:${firmEmail}`} className="break-all transition-colors hover:text-gold-dark">
-          {firmEmail}
-        </a>
+        <span className="flex flex-col">
+          {emails.map((e) => (
+            <a key={e} href={`mailto:${e}`} className="w-fit break-all transition-colors hover:text-gold-dark">
+              {e}
+            </a>
+          ))}
+        </span>
       ),
     },
     { icon: Mailbox, title: locale === "fr" ? "Courrier" : "Mail", body: <span>{dict.address.poBox}, Douala</span> },

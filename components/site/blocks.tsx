@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarDays, ChevronRight, Phone } from "lucide-react";
 import { href, type Locale } from "@/lib/routes";
-import { phones, type Dictionary } from "@/lib/dictionaries";
+import { getSiteContact } from "@/lib/data";
+import type { Dictionary } from "@/lib/dictionaries";
 import { formatDate, telHref } from "@/lib/format";
 import type { Article } from "@/lib/data";
 
@@ -89,7 +90,8 @@ export function SectionHeading({
   );
 }
 
-export function ContactBand({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export async function ContactBand({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+  const { phones } = await getSiteContact();
   return (
     <section className="bg-stone py-16 md:py-24">
       <div className="shell">

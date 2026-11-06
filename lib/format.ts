@@ -18,6 +18,9 @@ export function initials(name: string): string {
     .join("");
 }
 
+/** An uploaded file's path in storage, or a file shipped with the site ("/images/…"). */
+export const mediaPathPattern = /^(\/images\/[\w./-]+|[\w-]+(\/[\w-]+)*\.[a-z0-9]+)$/i;
+
 export function slugify(input: string): string {
   return input
     .normalize("NFD")

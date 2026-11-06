@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import { acceptedImageTypes, publicMediaUrl, uploadErrorText, uploadImage } from "@/lib/upload";
+import { acceptedImageTypes, publicMediaUrl, uploadErrorText, uploadImage, type UploadFolder } from "@/lib/upload";
 import { Spinner } from "./client";
 import { useT } from "./i18n";
 import { hintClass } from "./ui";
@@ -9,16 +9,20 @@ import { hintClass } from "./ui";
 type Props = {
   name: string;
   label: string;
-  folder: "team" | "articles";
+  folder: Exclude<UploadFolder, "articles/inline">;
   initialPath: string | null;
   hint?: string;
   aspect?: "portrait" | "landscape";
+  /** "contain" shows the whole image, for awards and certificates. */
+  fit?: "cover" | "contain";
+  /** Keeps a transparent background (saved as WebP instead of JPEG). */
+  transparent?: boolean;
   objectPosition?: string;
   onChange?: (path: string) => void;
 };
 
 /** Upload with preview. The storage path travels with the form in a hidden input. */
-export function ImageField({ name, label, folder, initialPath, hint, aspect = "landscape", objectPosition, onChange }: Props) {
+export function ImageField({ name, label, folder, initialPath, hint, aspect = "landscape", fit = "cover", transparent = false, objectPosition, onChange }: Props) {
   const t = useT();
   const [path, setPath] = useState(initialPath ?? "");
   const [busy, setBusy] = useState(false);
@@ -32,7 +36,7 @@ export function ImageField({ name, label, folder, initialPath, hint, aspect = "l
     setBusy(true);
     setError(null);
     try {
-      const uploaded = await uploadImage(file, folder, folder === "team" ? 1800 : 2400);
+      const uploaded = await uploadImage(file, folder, folder === "team" ? 1800 : 2400, transparent);
       setPath(uploaded);
       onChange?.(uploaded);
     } catch (e) {
@@ -71,7 +75,7 @@ export function ImageField({ name, label, folder, initialPath, hint, aspect = "l
       >
         {path ? (
           // eslint-disable-next-line @next/next/no-img-element -- dashboard preview of a freshly uploaded file
-          <img src={publicMediaUrl(path)} alt="" className="h-full w-full object-cover" style={{ objectPosition }} />
+          <img src={publicMediaUrl(path)} alt="" className={`h-full w-full ${fit === "contain" ? "object-contain" : "object-cover"}`} style={{ objectPosition }} />
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center text-[0.875rem] text-slate">
             <span>{t("Glissez une image ici")}</span>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { LanguageSwitch, useT } from "./i18n";
-import { Briefcase, FolderOpen, LayoutDashboard, Mail, Menu, Newspaper, Shield, UserRound, Users, X, type LucideIcon } from "lucide-react";
+import { Award, Briefcase, FolderOpen, LayoutDashboard, Mail, Menu, Newspaper, Phone, Shield, UserRound, Users, X, type LucideIcon } from "lucide-react";
 
 type Item = { href: string; label: string; badge?: number };
 
@@ -14,6 +14,8 @@ const icons: Record<string, LucideIcon> = {
   "/admin/actualites": Newspaper,
   "/admin/equipe": Users,
   "/admin/expertises": Briefcase,
+  "/admin/distinctions": Award,
+  "/admin/coordonnees": Phone,
   "/admin/messages": Mail,
   "/admin/categories": FolderOpen,
   "/admin/utilisateurs": Shield,

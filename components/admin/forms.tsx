@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useRef } from "react";
+import { saveSiteContact } from "@/app/admin/actions/contact";
 import { changePassword } from "@/app/admin/actions/session";
 import { inviteStaff, saveCategory } from "@/app/admin/actions/misc";
 import type { ActionResult } from "@/lib/auth";
@@ -39,6 +40,34 @@ export function CategoryForm({ category }: { category?: { id: string; name_fr: s
       </label>
       <ActionButton pending={pending} busy={pending} pendingLabel={t("Enregistrement…")} className={category ? "btn btn-quiet" : "btn btn-gold"}>
         {category ? t("Enregistrer") : t("Ajouter")}
+      </ActionButton>
+    </form>
+  );
+}
+
+export function SiteContactForm({ phones, emails }: { phones: string[]; emails: string[] }) {
+  const { form, state, pending, onSubmit } = useDashboardForm(saveSiteContact, false);
+  const t = useT();
+  const err = state.fieldErrors ?? {};
+  return (
+    <form ref={form} onSubmit={onSubmit} className="space-y-5">
+      <Flash key={state.message} message={state.message} tone={state.ok ? "success" : "error"} />
+      <label className={labelClass}>
+        {t("Numéros de téléphone")}
+        <textarea name="phones" rows={4} defaultValue={phones.join("\n")} aria-invalid={err.phones ? true : undefined} className={inputClass} />
+        <span className={hintClass}>{t("Un numéro par ligne. Le premier est le numéro principal, affiché dans l'en-tête et les boutons d'appel.")}</span>
+        {err.phones && <span className="mt-1.5 block text-[0.875rem] font-normal text-danger">{err.phones}</span>}
+      </label>
+      <label className={labelClass}>
+        {t("Adresses email")}
+        <textarea name="emails" rows={4} defaultValue={emails.join("\n")} aria-invalid={err.emails ? true : undefined} className={inputClass} />
+        <span className={hintClass}>
+          {t("Une adresse par ligne. La première est l'adresse principale. Les messages du formulaire de contact continuent d'arriver sur la boîte configurée pour le site, quelle que soit l'adresse affichée ici.")}
+        </span>
+        {err.emails && <span className="mt-1.5 block text-[0.875rem] font-normal text-danger">{err.emails}</span>}
+      </label>
+      <ActionButton pending={pending} busy={pending} pendingLabel={t("Enregistrement…")}>
+        {t("Enregistrer les coordonnées")}
       </ActionButton>
     </form>
   );

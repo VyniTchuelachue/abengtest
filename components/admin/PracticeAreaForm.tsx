@@ -7,6 +7,7 @@ import { slugify } from "@/lib/format";
 import { href } from "@/lib/routes";
 import { ActionButton, Flash, useKeepValuesSubmit, useUnsavedChanges } from "./client";
 import { useT } from "./i18n";
+import { ImageField } from "./ImageField";
 import { hintClass, inputClass, labelClass, panelClass } from "./ui";
 
 export type PracticeAreaFormValues = {
@@ -22,6 +23,7 @@ export type PracticeAreaFormValues = {
   body_en: string;
   scope_fr: string[];
   scope_en: string[];
+  image_path: string | null;
 };
 
 type Lang = "fr" | "en";
@@ -138,6 +140,17 @@ export function PracticeAreaForm({ values, flash }: { values: PracticeAreaFormVa
             </div>
           )}
           {dirty && <p className="text-[0.8125rem] text-warning">{t("Modifications non enregistrées.")}</p>}
+        </div>
+        <div className={`${panelClass} p-5`}>
+          <ImageField
+            name="image_path"
+            label={t("Photo de la carte")}
+            folder="practice"
+            initialPath={values.image_path}
+            hint={t("Apparaît derrière la carte de cette expertise au survol. Sans photo, la carte reste unie.")}
+            onChange={() => setDirty(true)}
+          />
+          {errors.image_path && <p className="mt-2 text-[0.875rem] text-danger">{errors.image_path}</p>}
         </div>
       </aside>
     </form>

@@ -1,5 +1,5 @@
-import { chambersProfileUrl, firmEmail, getDictionary, officeCoordinates, phones } from "./dictionaries";
-import { getRecognitions } from "./recognitions";
+import { chambersProfileUrl, getDictionary, officeCoordinates, type SiteContact } from "./dictionaries";
+import type { Recognition } from "./recognitions";
 import { href, siteUrl, type Locale } from "./routes";
 import type { Article, Member, PracticeArea } from "./data";
 
@@ -9,9 +9,9 @@ const websiteId = `${siteUrl}/#website`;
 const personId = (slug: string) => `${siteUrl}${href("en", "team", slug)}#person`;
 const partnerSlug = "abeng-roland";
 
-/** Rankings and awards held by the firm or a person, one line each (see lib/recognitions.ts). */
-const awardLines = (holder: "firm" | "abeng-roland", locale: Locale) =>
-  getRecognitions(locale)
+/** Rankings and awards held by the firm or a person, one line each. */
+const awardLines = (holder: "firm" | "abeng-roland", recognitions: Recognition[]) =>
+  recognitions
     .filter((r) => (r.kind === "ranking" || r.kind === "award") && r.recipientKey === holder)
     .map((r) => `${r.name}${r.year ? ` ${r.year}` : ""}${r.detail ? `: ${r.detail}` : ""}`);
 
@@ -26,7 +26,7 @@ export function websiteSchema() {
   };
 }
 
-export function legalServiceSchema(locale: Locale, areas: PracticeArea[]) {
+export function legalServiceSchema(locale: Locale, areas: PracticeArea[], contact: SiteContact, recognitions: Recognition[]) {
   const dict = getDictionary(locale);
   return {
     "@type": "LegalService",
@@ -39,13 +39,13 @@ export function legalServiceSchema(locale: Locale, areas: PracticeArea[]) {
     image: `${siteUrl}/images/team-photo-slate.jpg`,
     foundingDate: "1998",
     founder: { "@type": "Person", "@id": personId(partnerSlug), name: "Roland Abeng" },
-    telephone: phones[0],
-    email: firmEmail,
+    telephone: contact.phones[0],
+    email: contact.emails[0],
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
-      telephone: phones[0],
-      email: firmEmail,
+      telephone: contact.phones[0],
+      email: contact.emails[0],
       availableLanguage: ["English", "French"],
       areaServed: "CM",
     },
@@ -66,17 +66,17 @@ export function legalServiceSchema(locale: Locale, areas: PracticeArea[]) {
     geo: { "@type": "GeoCoordinates", latitude: officeCoordinates.lat, longitude: officeCoordinates.lng },
     hasMap: `https://www.google.com/maps/search/?api=1&query=${officeCoordinates.lat},${officeCoordinates.lng}`,
     sameAs: [chambersProfileUrl],
-    award: awardLines("firm", locale),
-    memberOf: getRecognitions(locale, "membership").map((r) => ({ "@type": "Organization", name: r.name })),
+    award: awardLines("firm", recognitions),
+    memberOf: recognitions.filter((r) => r.kind === "membership").map((r) => ({ "@type": "Organization", name: r.name })),
   };
 }
 
 /** Site-wide graph: the website and the firm it belongs to. */
-export function siteSchema(locale: Locale, areas: PracticeArea[]) {
-  return { "@context": "https://schema.org", "@graph": [websiteSchema(), legalServiceSchema(locale, areas)] };
+export function siteSchema(locale: Locale, areas: PracticeArea[], contact: SiteContact, recognitions: Recognition[]) {
+  return { "@context": "https://schema.org", "@graph": [websiteSchema(), legalServiceSchema(locale, areas, contact, recognitions)] };
 }
 
-export function personSchema(member: Member, locale: Locale) {
+export function personSchema(member: Member, locale: Locale, recognitions: Recognition[]) {
   const knowsAbout = member.focusAreas;
   return {
     "@context": "https://schema.org",
@@ -94,7 +94,7 @@ export function personSchema(member: Member, locale: Locale) {
     hasCredential: member.qualifications.length
       ? member.qualifications.map((q) => ({ "@type": "EducationalOccupationalCredential", name: q }))
       : undefined,
-    award: member.slug === partnerSlug ? awardLines("abeng-roland", locale) : undefined,
+    award: member.slug === partnerSlug ? awardLines("abeng-roland", recognitions) : undefined,
     sameAs: member.linkedin ? [member.linkedin] : undefined,
   };
 }

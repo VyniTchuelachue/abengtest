@@ -5,7 +5,7 @@ import { ArrowRight, GraduationCap, Languages, SquareArrowOutUpRight, Mail, Scal
 import { Breadcrumb, ContactBand } from "@/components/site/blocks";
 import { JsonLd } from "@/components/site/JsonLd";
 import { Portrait } from "@/components/site/Portrait";
-import { getMember, getTeam } from "@/lib/data";
+import { getMember, getRecognitions, getTeam } from "@/lib/data";
 import { getDictionary } from "@/lib/dictionaries";
 import { summarize } from "@/lib/format";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
@@ -140,7 +140,7 @@ export default async function MemberPage({ params }: Props) {
       </article>
 
       <ContactBand locale={locale} dict={dict} />
-      <JsonLd data={personSchema(member, locale)} />
+      <JsonLd data={personSchema(member, locale, await getRecognitions(locale))} />
       <JsonLd
         data={breadcrumbSchema([
           { name: dict.nav.team, path: href(locale, "team") },

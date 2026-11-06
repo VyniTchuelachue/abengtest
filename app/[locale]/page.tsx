@@ -7,9 +7,8 @@ import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/bloc
 import { PracticePhotoCard } from "@/components/site/PracticePhotoCard";
 import { MemberCard } from "@/components/site/Portrait";
 import { RecognitionStrip, RecognitionTabs } from "@/components/site/RecognitionPhotos";
-import { getArticles, getPracticeAreas, getTeam, isLawyerGroup } from "@/lib/data";
-import { practicePhoto } from "@/lib/photos";
-import { getRecognitions, recognitionKinds } from "@/lib/recognitions";
+import { getArticles, getPracticeAreas, getRecognitions, getTeam, isLawyerGroup } from "@/lib/data";
+import { recognitionKinds } from "@/lib/recognitions";
 import { getDictionary } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
@@ -43,7 +42,7 @@ export default async function HomePage({ params }: Props) {
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
   const t = dict.home;
-  const [team, areas, articles] = await Promise.all([getTeam(locale), getPracticeAreas(locale), getArticles(locale, { limit: 3 })]);
+  const [team, areas, articles, recognitions] = await Promise.all([getTeam(locale), getPracticeAreas(locale), getArticles(locale, { limit: 3 }), getRecognitions(locale)]);
 
   const lawyers = team.filter((m) => isLawyerGroup(m.group) && (m.group === "partner" || m.featured));
   const bySlug = (slug: string) => areas.find((a) => a.slugs.en === slug);
@@ -59,9 +58,11 @@ export default async function HomePage({ params }: Props) {
         <div className="relative mx-auto max-w-[104rem]">
           {/* On phones the photo is cropped to the group, so the faces stay large. From 768px the whole
               photo shows, with its empty backdrop on either side of the group; its side edges, which
-              are only backdrop, fade into the matching background of the section. Below 1280px the
-              text follows the photo; from 1280px it sits over its lower half, under the faces, with
-              the photo lifted a little into the empty backdrop above the heads. */}
+              are only backdrop, fade into the matching background of the section. The two large words
+              sit over the photo's lower half, just under the seated faces, at every width: below 1280px
+              by pulling the text up a share of the width (the photo's height is a share of it too),
+              from 1280px by anchoring it to the photo's bottom, with the photo lifted a little into the
+              empty backdrop above the heads. */}
           <div className="hero-photo relative aspect-video md:aspect-[3052/1440] md:[mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
             <Image
               src="/images/team-photo-slate-wide.jpg"
@@ -74,14 +75,14 @@ export default async function HomePage({ params }: Props) {
             />
             <div
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-t from-studio to-transparent to-20% xl:via-studio/85 xl:via-30% xl:to-55%"
+              className="absolute inset-0 bg-gradient-to-t from-studio via-studio/85 via-30% to-transparent to-55%"
             />
           </div>
 
           {/* Two large words either side of a gold rule that runs almost the full width of the
               screen (the first set to the left, the second to the right), then the firm's statement in
               smaller capitals, centred. */}
-          <div className="relative -mt-4 pb-12 text-center xl:absolute xl:inset-x-0 xl:bottom-0 xl:mt-0 xl:pb-12">
+          <div className="relative -mt-[27.5cqw] pb-12 text-center md:-mt-[22.8cqw] xl:absolute xl:inset-x-0 xl:bottom-0 xl:mt-0 xl:pb-12">
             <p className="hero-line relative mx-auto w-fit font-display text-[clamp(1.75rem,8cqw,3.5rem)] md:text-[clamp(3rem,6.2cqw,6rem)] font-light uppercase leading-none tracking-[0.02em]">
               <span className="block pr-[3.3em] text-left">{t.heroWords[0]} </span>
               <span className="mt-[0.3em] block pl-[4.6em] text-right">{t.heroWords[1]}</span>
@@ -96,7 +97,7 @@ export default async function HomePage({ params }: Props) {
 
         {/* The firm's awards and certificates, standing in a row that scrolls sideways. */}
         <div className="shell relative -mt-6 pb-10">
-          <RecognitionStrip photos={getRecognitions(locale).flatMap((r) => r.photos)} label={t.recognitionEyebrow} labels={dict.common.gallery} />
+          <RecognitionStrip photos={recognitions.flatMap((r) => r.photos)} label={t.recognitionEyebrow} labels={dict.common.gallery} />
         </div>
       </section>
 
@@ -147,7 +148,7 @@ export default async function HomePage({ params }: Props) {
                     slug={slug}
                     title={a.title}
                     summary={a.summary}
-                    image={practicePhoto(slug)}
+                    image={a.image}
                     moreLabel={dict.common.learnMore}
                   />
                 </li>
@@ -199,7 +200,7 @@ export default async function HomePage({ params }: Props) {
           <div className="mt-10">
             <RecognitionTabs
               labels={dict.common.gallery}
-              groups={recognitionKinds.map((kind) => ({ kind, title: dict.firmPage.recognitionKinds[kind], items: getRecognitions(locale, kind) }))}
+              groups={recognitionKinds.map((kind) => ({ kind, title: dict.firmPage.recognitionKinds[kind], items: recognitions.filter((r) => r.kind === kind) }))}
             />
           </div>
           <p className="mt-8 text-center">

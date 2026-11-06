@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
 import { href, type Locale } from "@/lib/routes";
-import { firmEmail, phones, type Dictionary } from "@/lib/dictionaries";
+import type { Dictionary, SiteContact } from "@/lib/dictionaries";
 import { telHref } from "@/lib/format";
 
-export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export function Footer({ locale, dict, contact }: { locale: Locale; dict: Dictionary; contact: SiteContact }) {
   const year = new Date().getFullYear();
   const links = (["firm", "practice", "team", "insights", "careers", "contact"] as const).map((key) => ({ key, label: dict.nav[key] }));
 
@@ -55,7 +55,7 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
                 <span className="block">{dict.address.poBox}</span>
               </address>
             </li>
-            {phones.map((p) => (
+            {contact.phones.map((p) => (
               <li key={p} className="flex gap-3">
                 <Phone aria-hidden className="mt-0.5 h-5 w-5 flex-none text-gold" />
                 <a href={telHref(p)} className="transition-colors hover:text-white">
@@ -63,12 +63,14 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
                 </a>
               </li>
             ))}
-            <li className="flex gap-3">
-              <Mail aria-hidden className="mt-0.5 h-5 w-5 flex-none text-gold" />
-              <a href={`mailto:${firmEmail}`} className="break-all transition-colors hover:text-white">
-                {firmEmail}
-              </a>
-            </li>
+            {contact.emails.map((e) => (
+              <li key={e} className="flex gap-3">
+                <Mail aria-hidden className="mt-0.5 h-5 w-5 flex-none text-gold" />
+                <a href={`mailto:${e}`} className="break-all transition-colors hover:text-white">
+                  {e}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </div>

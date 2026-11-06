@@ -2,6 +2,8 @@ import "server-only";
 import { cache } from "react";
 import { mediaUrl, publicClient } from "./supabase/public";
 import type { ArticleRecord, CategoryRecord, PracticeAreaRecord, TeamGroup, TeamMemberRecord } from "./database.types";
+import { defaultContact, type SiteContact } from "./dictionaries";
+import type { Recognition, RecognitionKind } from "./recognitions";
 import type { Locale } from "./routes";
 
 // ---------------------------------------------------------------------------
@@ -96,6 +98,8 @@ export type PracticeArea = {
   /** Full description, one string per paragraph. */
   body: string[];
   scope: string[];
+  /** Photo behind the card; areas without one stay plain. */
+  image?: string;
 };
 
 function toArea(row: PracticeAreaRecord, locale: Locale): PracticeArea {
@@ -109,6 +113,7 @@ function toArea(row: PracticeAreaRecord, locale: Locale): PracticeArea {
     summary: locale === "en" ? row.summary_en : row.summary_fr,
     body: body.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean),
     scope: locale === "en" ? row.scope_en : row.scope_fr,
+    image: mediaUrl(row.image_path) ?? undefined,
   };
 }
 
@@ -133,6 +138,59 @@ export async function getPracticeArea(slug: string, locale: Locale): Promise<Pra
   const row = (await fetchAreaRows()).find((r) => r.slug === slug || r.slug_fr === slug);
   return row ? toArea(row, locale) : null;
 }
+
+// ---------------------------------------------------------------------------
+// Rankings, awards, memberships and contributions
+// ---------------------------------------------------------------------------
+const fetchRecognitionRows = cache(async () => {
+  const { data, error } = await publicClient(["recognitions"])
+    .from("recognitions")
+    .select("*")
+    .eq("published", true)
+    .order("sort_order")
+    .order("name_en");
+  if (error) throw new Error(`Recognitions could not be loaded: ${error.message}`);
+  return data ?? [];
+});
+
+const recipientKeys: Record<string, Recognition["recipientKey"]> = { "The Abeng Law Firm": "firm", "Roland Abeng": "abeng-roland" };
+
+/** Published items in the order set in the dashboard. */
+export async function getRecognitions(locale: Locale, kind?: RecognitionKind): Promise<Recognition[]> {
+  return (await fetchRecognitionRows())
+    .filter((row) => !kind || row.kind === kind)
+    .map((row) => {
+      const name = locale === "en" ? row.name_en : row.name_fr;
+      const recipient = row.recipient || undefined;
+      const photos = row.photos as { path: string; cutout?: string | null; year?: string }[];
+      return {
+        id: row.id,
+        kind: row.kind as RecognitionKind,
+        name,
+        recipient,
+        recipientKey: recipientKeys[row.recipient],
+        year: row.year || undefined,
+        detail: (locale === "en" ? row.detail_en : row.detail_fr) || undefined,
+        photos: photos.map((p) => ({
+          src: mediaUrl(p.path) as string,
+          cutout: mediaUrl(p.cutout),
+          label: `${name}${p.year ? ` ${p.year}` : ""}`,
+          recipient,
+          year: p.year || undefined,
+        })),
+      };
+    });
+}
+
+// ---------------------------------------------------------------------------
+// Contact details
+// ---------------------------------------------------------------------------
+/** The firm's public phone numbers and email addresses; the first of each is the main one. */
+export const getSiteContact = cache(async (): Promise<SiteContact> => {
+  const { data, error } = await publicClient(["contact"]).from("site_contact").select("phones, emails").maybeSingle();
+  if (error) console.error("contact details could not be loaded", error.message);
+  return data?.phones.length && data.emails.length ? { phones: data.phones, emails: data.emails } : defaultContact;
+});
 
 // ---------------------------------------------------------------------------
 // Articles

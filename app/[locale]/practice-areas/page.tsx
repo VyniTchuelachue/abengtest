@@ -4,7 +4,6 @@ import { ContactBand, PageIntro, SectionHeading } from "@/components/site/blocks
 import { SectorIcon } from "@/components/site/icons";
 import { PracticePhotoCard } from "@/components/site/PracticePhotoCard";
 import { getPracticeAreas } from "@/lib/data";
-import { practicePhoto } from "@/lib/photos";
 import { getDictionary } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
 
@@ -48,7 +47,7 @@ export default async function PracticeAreasPage({ params }: Props) {
                   slug={a.slugs.en}
                   title={a.title}
                   summary={a.summary}
-                  image={practicePhoto(a.slugs.en)}
+                  image={a.image}
                   moreLabel={dict.common.learnMore}
                   tone="light"
                   headingLevel="h2"

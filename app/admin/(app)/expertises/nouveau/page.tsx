@@ -32,6 +32,7 @@ export default async function NewPracticeAreaPage() {
           body_en: "",
           scope_fr: [],
           scope_en: [],
+          image_path: null,
         }}
       />
     </>
