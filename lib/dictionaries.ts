@@ -338,7 +338,7 @@ const fr: Dictionary = {
     recognitionEyebrow: "Distinctions et réseaux",
     recognitionLink: "Distinctions et réseaux en détail",
     whyEyebrow: "Pourquoi choisir le cabinet",
-    whyHeading: "Avocats primés au Cameroun, avec des standards internationaux",
+    whyHeading: "Avocats d'affaires primés au Cameroun, avec des standards internationaux",
     why: [
       { title: "Depuis 1998 à Douala", body: "Plus de vingt-cinq ans au service des entreprises, banques et investisseurs dans la capitale économique du Cameroun." },
       { title: "Droit OHADA et CEMAC", body: "Opérations, questions réglementaires et contentieux traités selon les Actes uniformes OHADA, la réglementation CEMAC et le droit camerounais." },
