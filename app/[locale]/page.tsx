@@ -95,13 +95,9 @@ export default async function HomePage({ params }: Props) {
           </div>
         </div>
 
-        {/* The firm's introduction and the invitation to contact it, under the photograph. */}
+        {/* The firm's introduction, under the photograph. */}
         <div className="shell relative pb-16 text-center md:pb-20 xl:pt-10">
           <p className="mx-auto max-w-3xl text-[1.0625rem] leading-relaxed text-white/80 md:text-[1.125rem]">{t.heroLede}</p>
-          <Link href={href(locale, "contact")} className="btn btn-gold mt-8">
-            {dict.common.consult}
-            <ArrowRight aria-hidden className="h-4 w-4" />
-          </Link>
         </div>
       </section>
 
