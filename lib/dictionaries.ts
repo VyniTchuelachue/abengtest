@@ -183,7 +183,7 @@ const en = {
       "Manufacturing",
       "International trade and foreign investment",
     ],
-    scopeTitle: "What we advise on",
+    scopeTitle: "How we can assist",
   },
   teamPage: {
     metaTitle: "Our team",
@@ -348,7 +348,7 @@ const fr: Dictionary = {
     callUs: "Appeler le cabinet",
     sectorsLabel: "Secteurs d’activité",
     firmEyebrow: "Le cabinet",
-    practiceEyebrow: "Nos expertises",
+    practiceEyebrow: "Domaines d’intervention",
     practiceHeading: "Une sélection de nos domaines d’intervention",
     practiceLede:
       "Le droit des affaires occupe une place centrale dans notre pratique. Nous conseillons et représentons les entreprises, les institutions financières, les investisseurs et les particuliers dans de nombreux domaines du droit au Cameroun et dans l’espace OHADA.",
@@ -450,7 +450,7 @@ const fr: Dictionary = {
       "Industrie",
       "Commerce international et investissement étranger",
     ],
-    scopeTitle: "Nos domaines d'intervention",
+    scopeTitle: "Nos interventions",
   },
   teamPage: {
     metaTitle: "Notre équipe",
