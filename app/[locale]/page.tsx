@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/blocks";
 import { PracticePhotoCard } from "@/components/site/PracticePhotoCard";
 import { MemberCard } from "@/components/site/Portrait";
-import { RecognitionStrip, RecognitionTabs } from "@/components/site/RecognitionPhotos";
+import { RecognitionTabs } from "@/components/site/RecognitionPhotos";
 import { getArticles, getPracticeAreas, getRecognitions, getTeam, isLawyerGroup } from "@/lib/data";
 import { recognitionKinds } from "@/lib/recognitions";
 import { getDictionary } from "@/lib/dictionaries";
@@ -50,7 +50,8 @@ export default async function HomePage({ params }: Props) {
   return (
     <>
       {/* Opening section: the team photograph on the dark slate of the section, with the statement
-          over its lower part (where the team's faces are not), then the firm's awards. */}
+          over its lower part (where the team's faces are not), then the firm's introduction and a
+          button to contact it. Awards are shown in the recognition section only, as the firm asked. */}
       <section className="@container relative isolate overflow-hidden bg-studio bg-[linear-gradient(to_top,var(--color-studio),transparent_35%),radial-gradient(ellipse_at_50%_30%,var(--color-studio-light),var(--color-studio)_70%)] text-white">
         <div className="relative mx-auto max-w-[104rem]">
           {/* On phones the photo is cropped to the group, so the faces stay large. From 768px the whole
@@ -86,15 +87,21 @@ export default async function HomePage({ params }: Props) {
               <span aria-hidden className="absolute left-1/2 top-1/2 h-px w-[calc(100cqw-1.25rem)] -translate-x-1/2 bg-gold" />
             </p>
             <h1 className="hero-fade shell mt-[clamp(1.25rem,2.6cqw,2.25rem)] xl:mt-[clamp(2rem,2.8cqw,2.75rem)] font-display text-[clamp(0.9375rem,1.6cqw,1.5rem)] font-normal uppercase leading-snug tracking-[0.08em] text-white/90">
-              {/* "Business law" in gold, the rest in white. */}
-              <span className="text-gold">{t.heroLines[0]}</span> {t.heroLines.slice(1).join(" ")}
+              {/* The key word in gold, the rest in white. */}
+              {t.heroLine[0] && <>{t.heroLine[0]} </>}
+              <span className="text-gold">{t.heroLine[1]}</span>
+              {t.heroLine[2] && <> {t.heroLine[2]}</>}
             </h1>
           </div>
         </div>
 
-        {/* The firm's awards and certificates, standing in a row that scrolls sideways. */}
-        <div className="shell relative -mt-6 pb-10">
-          <RecognitionStrip photos={recognitions.flatMap((r) => r.photos)} label={t.recognitionEyebrow} labels={dict.common.gallery} />
+        {/* The firm's introduction and the invitation to contact it, under the photograph. */}
+        <div className="shell relative pb-16 text-center md:pb-20 xl:pt-10">
+          <p className="mx-auto max-w-3xl text-[1.0625rem] leading-relaxed text-white/80 md:text-[1.125rem]">{t.heroLede}</p>
+          <Link href={href(locale, "contact")} className="btn btn-gold mt-8">
+            {dict.common.consult}
+            <ArrowRight aria-hidden className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 

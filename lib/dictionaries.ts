@@ -52,11 +52,12 @@ const en = {
   },
   home: {
     metaTitle: "The Abeng Law Firm | A full-service law firm",
-    heroLines: ["Business law", "for Cameroon and", "Central Africa."],
+    /** The line under the two large words: [before, in gold, after]. */
+    heroLine: ["A", "full-service", "law firm"],
     /** The two large words of the opening section. Interim wording, for the firm to approve. */
     heroWords: ["Experience", "Matters"],
     heroLede:
-      "Since 1998, a Douala firm advising companies, financial institutions and investors on transactions, regulation and disputes under OHADA and Cameroonian law.",
+      "The Abeng Law Firm advises and represents businesses, institutions and individuals across a broad range of legal matters, with particular expertise in business and OHADA law. Based in Douala and working in English and French, we combine sound legal analysis with an understanding of each client’s priorities to protect their interests and help them make informed decisions.",
     heroCaption: "The firm's lawyers and staff at the Bonapriso office, Douala.",
     introTitle: "A Douala practice with an international outlook",
     introLede:
@@ -101,7 +102,7 @@ const en = {
       contribution: "Acknowledgments of contributions",
     },
     recognitionLink: "Professional recognition and networks",
-    whyHeading: "Award-Winning Cameroon business law firm with international standards",
+    whyHeading: "Established in Cameroon, engaged internationally",
     teamEyebrow: "Our team",
     newsEyebrow: "Latest publications",
     contactEyebrow: "Contact",
@@ -329,10 +330,10 @@ const fr: Dictionary = {
   },
   home: {
     metaTitle: "The Abeng Law Firm | Un cabinet d’avocats pluridisciplinaire",
-    heroLines: ["Le droit des affaires", "au Cameroun et en", "Afrique centrale."],
+    heroLine: ["Un cabinet d’avocats", "pluridisciplinaire", ""],
     heroWords: ["L'expérience", "compte"],
     heroLede:
-      "Depuis 1998, un cabinet de Douala qui conseille entreprises, institutions financières et investisseurs en matière de transactions, de réglementation et de contentieux, en droit OHADA et camerounais.",
+      "The Abeng Law Firm conseille et représente les entreprises, les institutions et les particuliers dans de nombreux domaines du droit, avec une solide expertise en droit des affaires et en droit OHADA. Établis à Douala, nous intervenons en français et en anglais, en associant rigueur juridique et compréhension des priorités de chaque client pour défendre ses intérêts et éclairer ses décisions.",
     heroCaption: "Les avocats et collaborateurs du cabinet au bureau de Bonapriso, à Douala.",
     introTitle: "Un cabinet de Douala ouvert sur l'international",
     introLede:
@@ -375,7 +376,7 @@ const fr: Dictionary = {
       contribution: "Contributions reconnues",
     },
     recognitionLink: "Reconnaissance et réseaux professionnels",
-    whyHeading: "Avocats d'affaires primés au Cameroun, avec des standards internationaux",
+    whyHeading: "Un ancrage camerounais, une ouverture internationale",
     teamEyebrow: "Notre équipe",
     newsEyebrow: "Dernières publications",
     contactEyebrow: "Contact",
