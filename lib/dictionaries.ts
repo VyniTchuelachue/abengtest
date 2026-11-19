@@ -192,6 +192,7 @@ const en = {
     title: "Our team",
     lede: "Our team combines legal expertise with the organisational skills that effective client service requires. Lawyers, paralegals and administrative staff work together to prepare matters thoroughly, coordinate each stage and maintain clear communication with clients.",
     focus: "Areas of focus",
+    responsibilities: "Principal responsibilities",
     qualifications: "Qualifications",
     bar: "Bar admission",
     languages: "Languages",
@@ -227,6 +228,8 @@ const en = {
     previous: "Newer",
     next: "Older",
     related: "More from the firm",
+    notice: "Our publications provide general information and do not replace advice on a specific matter. Please contact the Firm if you require assistance.",
+    backToAll: "All publications and news",
   },
   contactPage: {
     metaTitle: "Contact",
@@ -459,6 +462,7 @@ const fr: Dictionary = {
     title: "Notre équipe",
     lede: "Notre équipe associe des compétences juridiques et organisationnelles au service des clients. Avocats, juristes et personnel administratif travaillent ensemble pour préparer les dossiers avec rigueur, en coordonner les différentes étapes et assurer des échanges clairs avec les clients.",
     focus: "Domaines d'intervention",
+    responsibilities: "Principales responsabilités",
     qualifications: "Formation",
     bar: "Barreau",
     languages: "Langues",
@@ -494,6 +498,8 @@ const fr: Dictionary = {
     previous: "Plus récents",
     next: "Plus anciens",
     related: "À lire également",
+    notice: "Nos publications fournissent des informations générales et ne remplacent pas un conseil adapté à une situation particulière. Contactez le cabinet si vous souhaitez être accompagné.",
+    backToAll: "Toutes les publications et actualités",
   },
   contactPage: {
     metaTitle: "Contact",

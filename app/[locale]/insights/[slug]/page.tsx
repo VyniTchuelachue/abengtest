@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   languages["x-default"] = languages.en ?? languages[article.lang];
   return {
     // Headlines that already name the firm skip the "| The Abeng Law Firm" suffix.
-    title: /abeng law firm/i.test(article.title) ? { absolute: article.title } : article.title,
+    title: article.seoTitle || (/abeng law firm/i.test(article.title) ? { absolute: article.title } : article.title),
     description: article.excerpt ? summarize(article.excerpt) : undefined,
     alternates: { canonical: `${siteUrl}${href(article.lang, "insights", slug)}`, languages },
     openGraph: {

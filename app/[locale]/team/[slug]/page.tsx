@@ -23,9 +23,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isLocale(locale)) return {};
   const member = await getMember(slug, locale);
   if (!member) return {};
-  const description = summarize(member.bio[0] ?? member.title);
+  const description = member.metaDescription || summarize(member.bio[0] ?? member.title);
   return {
-    title: `${member.name}, ${member.title}`,
+    title: `${member.name} | ${member.title}`,
     description,
     alternates: alternatesFor({ en: href("en", "team", slug), fr: href("fr", "team", slug) }, locale),
     openGraph: {
@@ -60,7 +60,7 @@ export default async function MemberPage({ params }: Props) {
   );
 
   const details: { label: string; icon: LucideIcon; content: React.ReactNode }[] = [];
-  if (member.focusAreas.length) details.push({ label: t.focus, icon: Target, content: list(member.focusAreas) });
+  if (member.focusAreas.length) details.push({ label: member.group === "administration" ? t.responsibilities : t.focus, icon: Target, content: list(member.focusAreas) });
   if (member.qualifications.length) details.push({ label: t.qualifications, icon: GraduationCap, content: list(member.qualifications) });
   if (member.barAdmission) details.push({ label: t.bar, icon: Scale, content: <p>{member.barAdmission}</p> });
   if (member.languages.length) details.push({ label: t.languages, icon: Languages, content: <p>{member.languages.join(", ")}</p> });

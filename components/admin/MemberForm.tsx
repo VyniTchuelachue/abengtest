@@ -25,6 +25,8 @@ export type MemberFormValues = {
   title_en: string;
   bio_fr: string;
   bio_en: string;
+  meta_description_fr?: string;
+  meta_description_en?: string;
   focus_areas_fr: string[];
   focus_areas_en: string[];
   qualifications_fr: string[];
@@ -149,6 +151,11 @@ export function MemberForm({ values, flash }: { values: MemberFormValues; flash?
                 {t("Biographie ({lang})", { lang: langNames[l] })}
                 <textarea name={`bio_${l}`} defaultValue={values[`bio_${l}`]} rows={12} className={`${inputClass} text-[1rem] leading-relaxed`} />
                 <span className={hintClass}>{t("Laissez une ligne vide entre deux paragraphes.")}</span>
+              </label>
+              <label className={labelClass}>
+                {t("Description pour les moteurs de recherche ({lang})", { lang: langNames[l] })}
+                <textarea name={`meta_description_${l}`} defaultValue={(l === "fr" ? values.meta_description_fr : values.meta_description_en) ?? ""} maxLength={300} rows={2} className={inputClass} />
+                <span className={hintClass}>{t("Une phrase affichée sous le nom dans les résultats de Google. Vide : le début de la biographie.")}</span>
               </label>
               <div className="grid gap-5 sm:grid-cols-2">
                 <label className={labelClass}>

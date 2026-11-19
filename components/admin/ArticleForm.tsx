@@ -22,6 +22,8 @@ export type ArticleFormValues = {
   cover_alt_en: string | null;
   title_fr: string | null;
   title_en: string | null;
+  seo_title_fr?: string | null;
+  seo_title_en?: string | null;
   excerpt_fr: string | null;
   excerpt_en: string | null;
   body_fr: string | null;
@@ -122,6 +124,11 @@ export function ArticleForm({
                 className={`${inputClass} font-serif text-[1.375rem]`}
               />
               {errors[`title_${l}`] && <span className="mt-1.5 block text-[0.875rem] font-normal text-danger">{errors[`title_${l}`]}</span>}
+            </label>
+            <label className={labelClass}>
+              {t("Titre pour les moteurs de recherche (facultatif)")}
+              <input name={`seo_title_${l}`} defaultValue={(l === "fr" ? values.seo_title_fr : values.seo_title_en) ?? ""} maxLength={200} className={inputClass} />
+              <span className={hintClass}>{t("Affiché dans les résultats de Google, suivi de « | The Abeng Law Firm ». Vide : le titre de l'article.")}</span>
             </label>
             <label className={labelClass}>
               {t("Chapô (résumé affiché dans les listes)")}

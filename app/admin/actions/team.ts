@@ -48,6 +48,8 @@ const schema = z.object({
   title_en: text(160),
   bio_fr: text(12000),
   bio_en: text(12000),
+  meta_description_fr: text(300),
+  meta_description_en: text(300),
   focus_areas_fr: lines,
   focus_areas_en: lines,
   qualifications_fr: lines,

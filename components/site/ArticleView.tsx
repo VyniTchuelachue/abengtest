@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, UserRound } from "lucide-react";
+import { ArrowLeft, CalendarDays, UserRound } from "lucide-react";
 import type { Article } from "@/lib/data";
 import type { Dictionary } from "@/lib/dictionaries";
 import { formatDate } from "@/lib/format";
@@ -29,11 +29,16 @@ export function ArticleView({ article, locale, dict, crumbs = true }: { article:
               <CalendarDays aria-hidden className="h-4 w-4 text-gold" />
               <time dateTime={article.publishedAt}>{formatDate(article.publishedAt, locale)}</time>
             </span>
-            {article.author && (
+            {article.author ? (
               <Link href={href(locale, "team", article.author.slug)} className="inline-flex items-center gap-2 transition-colors hover:text-gold">
                 <UserRound aria-hidden className="h-4 w-4 text-gold" />
                 {article.author.name}
               </Link>
+            ) : (
+              <span className="inline-flex items-center gap-2">
+                <UserRound aria-hidden className="h-4 w-4 text-gold" />
+                {dict.meta.siteName}
+              </span>
             )}
           </div>
           <h1 className="display mt-6 max-w-4xl text-[clamp(2.25rem,1.6rem+2.8vw,4rem)]">{article.title}</h1>
@@ -65,7 +70,18 @@ export function ArticleView({ article, locale, dict, crumbs = true }: { article:
       )}
 
       <div className="shell grid py-16 md:grid-cols-12 md:py-20">
-        <div className="prose-legal md:col-span-8 md:col-start-3" dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(article.body) }} />
+        <div className="md:col-span-8 md:col-start-3">
+          <div className="prose-legal" dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(article.body) }} />
+          <p className="mt-12 border-t border-rule pt-6 text-[0.9375rem] text-slate" lang={locale}>
+            {dict.insightsPage.notice}
+          </p>
+          {crumbs && (
+            <Link href={href(locale, "insights")} className="btn btn-quiet mt-8" lang={locale}>
+              <ArrowLeft aria-hidden className="h-4 w-4" />
+              {dict.insightsPage.backToAll}
+            </Link>
+          )}
+        </div>
       </div>
     </article>
   );

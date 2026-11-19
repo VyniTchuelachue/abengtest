@@ -24,6 +24,8 @@ type ArticleRow = {
   excerpt_fr: string | null;
   id: string;
   published_at: string | null;
+  seo_title_en: string | null;
+  seo_title_fr: string | null;
   slug: string;
   status: Enums["article_status"];
   title_en: string | null;
@@ -128,6 +130,8 @@ type TeamMemberRow = {
   languages_en: string[];
   languages_fr: string[];
   linkedin_url: string | null;
+  meta_description_en: string;
+  meta_description_fr: string;
   photo_path: string | null;
   photo_position: string;
   qualifications_en: string[];

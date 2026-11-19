@@ -16,6 +16,8 @@ export type Member = {
   group: TeamGroup;
   title: string;
   bio: string[];
+  /** Description for search results, set by the firm; empty when not set. */
+  metaDescription: string;
   focusAreas: string[];
   qualifications: string[];
   barAdmission: string | null;
@@ -51,6 +53,7 @@ function toMember(row: TeamMemberRecord, locale: Locale): Member {
     group: row.group_key,
     title: (l("title") as string) || (row[`title_${other}` as keyof TeamMemberRecord] as string),
     bio: bio.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean),
+    metaDescription: ((l("meta_description") as string | undefined) ?? "").trim(),
     focusAreas: l("focus_areas") as string[],
     qualifications: l("qualifications") as string[],
     barAdmission: l("bar_admission") as string | null,
@@ -208,6 +211,8 @@ export type Article = {
   translated: boolean;
   availableIn: Locale[];
   title: string;
+  /** Title for search results when it differs from the headline; empty otherwise. */
+  seoTitle: string;
   excerpt: string;
   body: string;
   cover: string | null;
@@ -238,6 +243,7 @@ function toArticle(row: ArticleRow, locale: Locale): Article {
     translated: lang === locale,
     availableIn: [...availableIn],
     title: pick("title"),
+    seoTitle: ((row[`seo_title_${lang}` as keyof ArticleRecord] as string | null | undefined) ?? "").trim(),
     excerpt: pick("excerpt"),
     body: pick("body"),
     cover: mediaUrl(row.cover_path),
