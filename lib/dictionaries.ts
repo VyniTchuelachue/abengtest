@@ -199,7 +199,7 @@ const en = {
     email: "Email",
     linkedin: "LinkedIn profile",
     joinTitle: "Join the firm",
-    joinBody: "We welcome applications from candidates interested in contributing to our legal or administrative teams in Douala",
+    joinBody: "We welcome applications from candidates interested in contributing to our legal or administrative teams in Douala.",
     joinCta: "Careers at the firm",
   },
   careersPage: {
@@ -237,7 +237,7 @@ const en = {
     openMap: "Open in Google Maps",
     formTitle: "Send a message",
     disclaimer:
-      "Please briefly describe your enquiry. Do not send confidential documents or sensitive personal information through this form. Sending a message does not mean the Firm has accepted instructions. For an urgent matter or a deadline, please telephone us..",
+      "Please briefly describe your enquiry. Do not send confidential documents or sensitive personal information through this form. Sending a message does not mean the Firm has accepted instructions. For an urgent matter or a deadline, please telephone us.",
     name: "Full name",
     email: "Email address",
     phone: "Telephone (optional)",
@@ -390,7 +390,7 @@ const fr: Dictionary = {
       "Cabinet bilingue et pluridisciplinaire fondé à Douala en 1998, avec une solide expertise en droit des affaires et en droit OHADA.",
     title: "Le cabinet",
     lede:
-      "The Abeng Law Firm est un cabinet d’avocats bilingue et pluridisciplinaire établi à Douala, au Cameroun, avec une solide expertise en droit des affaires et en droit OHADA. Nous conseillons et représentons une clientèle camerounaise et internationale, composée d’entreprises, d’institutions et de particuliers, en tenant compte des enjeux propres à chaque dossier",
+      "The Abeng Law Firm est un cabinet d’avocats bilingue et pluridisciplinaire établi à Douala, au Cameroun, avec une solide expertise en droit des affaires et en droit OHADA. Nous conseillons et représentons une clientèle camerounaise et internationale, composée d’entreprises, d’institutions et de particuliers, en tenant compte des enjeux propres à chaque dossier.",
     historyTitle: "Établi à Douala depuis 1998",
     history: [
       "Fondé par Roland Abeng en 1998, le cabinet a développé une pratique qui répond aux besoins juridiques des organisations et des particuliers. Nos interventions couvrent le droit des affaires, les matières civiles et pénales, le droit public et administratif, ainsi que d’autres domaines intéressant nos clients.",
@@ -497,7 +497,7 @@ const fr: Dictionary = {
   },
   contactPage: {
     metaTitle: "Contact",
-    metaDescription: "Contactez The Abeng Law Firm à Douala, au Cameroun, pour vos besoins juridiques, par téléphone, courriel ou formulaire de contact",
+    metaDescription: "Contactez The Abeng Law Firm à Douala, au Cameroun, pour vos besoins juridiques, par téléphone, courriel ou formulaire de contact.",
     title: "Contact",
     lede: "Pour nous exposer votre demande ou obtenir des renseignements sur le cabinet, contactez notre bureau de Bonapriso, à Douala, aux coordonnées ci-dessous.",
     mapTitle: "Plan d'accès",
