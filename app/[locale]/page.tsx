@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Award, Landmark, Languages, Scale } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { ArticleCard, ContactBand, SectionHeading } from "@/components/site/blocks";
 import { PracticePhotoCard } from "@/components/site/PracticePhotoCard";
 import { MemberCard } from "@/components/site/Portrait";
@@ -23,9 +23,6 @@ const featuredAreas = [
   "litigation-arbitration",
   "tax-customs-exchange",
 ];
-
-/** Icons of the "Why choose the firm" reasons, in the order of dict.home.why. */
-const whyIcons = [Landmark, Scale, Award, Languages];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -101,53 +98,39 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Why choose the firm: whom it assists, then the reasons, on the backdrop of the opening section. */}
+      {/* The firm in brief, with its two links, on the backdrop of the opening section. */}
       <section className="relative -mt-px bg-studio pb-24 pt-14 text-white md:pb-32 md:pt-20">
-        <div className="shell grid gap-14 lg:grid-cols-12 lg:gap-12">
-          <div className="lg:col-span-5">
-            <SectionHeading title={t.whyHeading} lede={t.introLede} dark />
-            <div className="mt-10 flex flex-wrap gap-3">
-              <Link href={href(locale, "firm")} className="btn btn-gold">
-                {t.introLink}
-                <ArrowRight aria-hidden className="h-4 w-4" />
-              </Link>
-              <Link href={href(locale, "contact")} className="btn btn-outline-light">
-                {dict.nav.contact}
-              </Link>
-            </div>
+        <div className="shell">
+          <SectionHeading title={t.whyHeading} lede={t.introLede} align="center" dark />
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <Link href={href(locale, "firm")} className="btn btn-gold">
+              {t.introLink}
+              <ArrowRight aria-hidden className="h-4 w-4" />
+            </Link>
+            <Link href={href(locale, "contact")} className="btn btn-outline-light">
+              {dict.common.consult}
+            </Link>
           </div>
-          <ul className="grid gap-5 sm:grid-cols-2 lg:col-span-7">
-            {t.why.map((w, i) => {
-              const Icon = whyIcons[i];
-              return (
-                <li key={w.title} className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-7">
-                  <span className="icon-tile">
-                    <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
-                  </span>
-                  <h3 className="mt-5 font-display text-[1.25rem] font-semibold leading-snug text-white">{w.title}</h3>
-                  <p className="mt-2 text-white/70">{w.body}</p>
-                </li>
-              );
-            })}
-          </ul>
         </div>
       </section>
 
       {/* Practice areas */}
       <section className="bg-charcoal py-24 text-white md:py-32">
         <div className="shell">
-          <SectionHeading eyebrow={t.practiceEyebrow} title={t.practiceHeading} align="center" dark />
+          <SectionHeading title={t.practiceHeading} lede={t.practiceLede} align="center" dark />
           <ul className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {featuredAreas.map((slug) => {
               const a = bySlug(slug);
               if (!a) return null;
+              // The home page cards have their own wording, set by the firm.
+              const card = t.practiceCards[slug];
               return (
                 <li key={slug}>
                   <PracticePhotoCard
                     href={href(locale, "practice", a.slug)}
                     slug={slug}
-                    title={a.title}
-                    summary={a.summary}
+                    title={card?.title ?? a.title}
+                    summary={card?.summary ?? a.summary}
                     image={a.image}
                     moreLabel={dict.common.learnMore}
                   />
@@ -167,7 +150,7 @@ export default async function HomePage({ params }: Props) {
       {/* Team */}
       <section className="py-24 md:py-32">
         <div className="shell">
-          <SectionHeading eyebrow={t.teamEyebrow} title={t.lawyersTitle} lede={t.lawyersLede} />
+          <SectionHeading title={t.lawyersTitle} lede={t.lawyersLede} />
           <ul className="mt-14 grid grid-cols-1 gap-6 xs:grid-cols-2 lg:grid-cols-3">
             {lawyers.slice(0, 6).map((m) => (
               <li key={m.id}>
@@ -200,7 +183,7 @@ export default async function HomePage({ params }: Props) {
           <div className="mt-10">
             <RecognitionTabs
               labels={dict.common.gallery}
-              groups={recognitionKinds.map((kind) => ({ kind, title: dict.firmPage.recognitionKinds[kind], items: recognitions.filter((r) => r.kind === kind) }))}
+              groups={recognitionKinds.map((kind) => ({ kind, title: t.recognitionTabs[kind], items: recognitions.filter((r) => r.kind === kind) }))}
             />
           </div>
           <p className="mt-8 text-center">

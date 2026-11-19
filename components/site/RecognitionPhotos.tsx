@@ -11,11 +11,14 @@ type Labels = { enlarge: string; close: string; previous: string; next: string }
 function usePhotoViewer(photos: RecognitionPhoto[], labels: Labels) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [index, setIndex] = useState(0);
-  const current = photos[index];
+  // The viewer's content is rendered only while it is open, so its caption is not part of the page text.
+  const [isOpen, setIsOpen] = useState(false);
+  const current = isOpen ? photos[index] : undefined;
   const step = (delta: number) => setIndex((i) => (i + delta + photos.length) % photos.length);
 
   const open = (i: number) => {
     setIndex(i);
+    setIsOpen(true);
     dialog.current?.showModal();
   };
 
@@ -23,6 +26,7 @@ function usePhotoViewer(photos: RecognitionPhoto[], labels: Labels) {
     <dialog
       ref={dialog}
       aria-label={current?.label}
+      onClose={() => setIsOpen(false)}
       onClick={(e) => e.target === dialog.current && dialog.current?.close()}
       onKeyDown={(e) => {
         if (e.key === "ArrowRight") step(1);
@@ -180,7 +184,7 @@ export function RecognitionTabs({ groups, labels }: { groups: Group[]; labels: L
               ? r.photos.map((p) => (
                   <li key={p.src} className="w-[calc(50%-0.5rem)] sm:w-48 lg:w-52">
                     <PhotoButton photo={p} label={labels.enlarge} onOpen={() => open(photos.indexOf(p))} sizes="(min-width: 640px) 13rem, 45vw" className="aspect-[4/5] w-full rounded-xl" />
-                    <p className="mt-2 text-center text-[0.8125rem] font-medium leading-snug text-ink">{p.label}</p>
+                    <p className="mt-2 text-center text-[0.8125rem] font-medium leading-snug text-ink">{p.caption ?? p.label}</p>
                     {r.recipient && <p className="text-center text-[0.75rem] text-slate">{r.recipient}</p>}
                   </li>
                 ))
@@ -205,12 +209,33 @@ export function RecognitionTabs({ groups, labels }: { groups: Group[]; labels: L
 
 const kindIcons: Record<RecognitionKind, LucideIcon> = { ranking: BarChart3, award: Award, membership: Network, contribution: HandHeart };
 
-type Tile = { key: string; r: Recognition; photo?: RecognitionPhoto; year?: string; detail?: string };
+/** A description as written in the dashboard: line breaks kept, web addresses made into links. */
+function DetailText({ text }: { text: string }) {
+  const parts = text.split(/(https?:\/\/[^\s]+)/g);
+  return (
+    <>
+      {parts.map((part, i) => {
+        if (i % 2 === 0) return part;
+        // A full stop that ends the sentence is not part of the address.
+        const url = part.replace(/[.,;:]+$/, "");
+        return (
+          <span key={i}>
+            <a href={url} target="_blank" rel="noopener noreferrer" className="break-all text-gold-dark underline underline-offset-2 hover:text-ink">
+              {url}
+            </a>
+            {part.slice(url.length)}
+          </span>
+        );
+      })}
+    </>
+  );
+}
 
 /**
  * Recognition by kind (firm page): one section per kind (rankings, awards,
- * memberships, contributions), each with its own grid of photos. Items without
- * a photo (e.g. a network membership) appear as text cards in the same grid.
+ * memberships, contributions), each with its own grid of cards, one per item:
+ * its first photo (the viewer shows them all), its name, the line under it and
+ * its description. Items without a photo (e.g. a network membership) show an icon.
  */
 export function RecognitionList({ groups, labels }: { groups: { kind: RecognitionKind; title: string; items: Recognition[] }[]; labels: Labels }) {
   const photos = groups.flatMap((g) => g.items.flatMap((r) => r.photos));
@@ -221,19 +246,6 @@ export function RecognitionList({ groups, labels }: { groups: { kind: Recognitio
       <div className="space-y-14">
         {groups.map(({ kind, title, items }) => {
           const Icon = kindIcons[kind];
-          // One tile per photo, captioned with that photo's year. The item's description goes under its
-          // first photo, led by the item's own year when the photo is from another edition.
-          const tiles = items.flatMap((r): Tile[] =>
-            r.photos.length
-              ? r.photos.map((p, i) => ({
-                  key: p.src,
-                  r,
-                  photo: p,
-                  year: p.year ?? r.year,
-                  detail: i === 0 && r.detail ? (r.year && p.year && p.year !== r.year ? `${r.year} : ${r.detail}` : r.detail) : undefined,
-                }))
-              : [{ key: r.id, r, photo: undefined, year: r.year, detail: r.detail }],
-          );
           return (
             <section key={kind} aria-labelledby={`rk-${kind}`}>
               <h3 id={`rk-${kind}`} className="flex items-center gap-4 border-b border-rule pb-4 font-display text-[1.375rem] font-semibold text-ink">
@@ -243,8 +255,10 @@ export function RecognitionList({ groups, labels }: { groups: { kind: Recognitio
                 {title}
               </h3>
               <ul className="mt-6 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
-                {tiles.map(({ key, r, photo, year, detail }) => (
-                  <li key={key} className="card flex flex-col overflow-hidden">
+                {items.map((r) => {
+                  const photo = r.photos[0];
+                  return (
+                  <li key={r.id} className="card flex flex-col overflow-hidden">
                     {photo ? (
                       <PhotoButton photo={photo} label={labels.enlarge} onOpen={() => open(photos.indexOf(photo))} sizes="(min-width: 1024px) 22vw, 45vw" className="aspect-[4/5] w-full" />
                     ) : (
@@ -256,11 +270,16 @@ export function RecognitionList({ groups, labels }: { groups: { kind: Recognitio
                     )}
                     <div className="flex-1 p-4 sm:p-5">
                       <p className="font-display text-[0.9375rem] font-semibold leading-snug text-ink">{r.name}</p>
-                      {(r.recipient || year) && <p className="mt-0.5 text-[0.8125rem] text-slate">{[r.recipient, year].filter(Boolean).join(" · ")}</p>}
-                      {detail && <p className="mt-2 text-[0.8125rem] leading-relaxed text-ink-soft sm:text-[0.875rem]">{detail}</p>}
+                      {r.subtitle && <p className="mt-0.5 text-[0.8125rem] text-slate">{r.subtitle}</p>}
+                      {r.detail && (
+                        <p className="mt-2 whitespace-pre-line text-[0.8125rem] leading-relaxed text-ink-soft sm:text-[0.875rem]">
+                          <DetailText text={r.detail} />
+                        </p>
+                      )}
                     </div>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             </section>
           );

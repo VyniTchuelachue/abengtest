@@ -11,7 +11,15 @@ export const recognitionKinds: RecognitionKind[] = ["ranking", "award", "members
  * `cutout` is the same award without its background, for the home page's opening section; photos
  * without one show as they are.
  */
-export type RecognitionPhoto = { src: string; cutout: string | null; label: string; recipient?: string; year?: string };
+export type RecognitionPhoto = {
+  src: string;
+  cutout: string | null;
+  label: string;
+  /** Text under the photo in the home page tabs, when set in the dashboard; otherwise `label`. */
+  caption?: string;
+  recipient?: string;
+  year?: string;
+};
 
 export type Recognition = {
   id: string;
@@ -21,6 +29,8 @@ export type Recognition = {
   /** Set when the recipient is the firm or its managing partner, for the search-engine data. */
   recipientKey?: "firm" | "abeng-roland";
   year?: string;
+  /** Line under the name on the Firm page (e.g. "Rule of Law Index"); falls back to the recipient, then the year. */
+  subtitle?: string;
   detail?: string;
   photos: RecognitionPhoto[];
 };

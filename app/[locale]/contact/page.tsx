@@ -60,7 +60,7 @@ export default async function ContactPage({ params }: Props) {
     },
     {
       icon: Mail,
-      title: locale === "fr" ? "E-mail" : "Email",
+      title: locale === "fr" ? "Courriel" : "Email",
       body: (
         <span className="flex flex-col">
           {emails.map((e) => (
@@ -76,7 +76,7 @@ export default async function ContactPage({ params }: Props) {
 
   return (
     <>
-      <PageIntro title={t.title} lede={t.lede} eyebrow={dict.home.contactEyebrow} crumbs={[{ label: dict.nav.homeLabel, href: href(locale) }, { label: t.title }]} />
+      <PageIntro title={t.title} lede={t.lede} crumbs={[{ label: dict.nav.homeLabel, href: href(locale) }, { label: t.title }]} />
 
       <section className="relative z-10 -mt-10">
         <ul className="shell grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -97,8 +97,7 @@ export default async function ContactPage({ params }: Props) {
       <section className="py-20 md:py-24">
         <div className="shell grid gap-10 lg:grid-cols-12">
           <div className="card p-6 sm:p-10 lg:col-span-7">
-            <p className="eyebrow">{dict.home.contactEyebrow}</p>
-            <h2 className="heading mt-5 text-[clamp(1.75rem,1.4rem+1.4vw,2.5rem)]">{t.formTitle}</h2>
+            <h2 className="heading text-[clamp(1.75rem,1.4rem+1.4vw,2.5rem)]">{t.formTitle}</h2>
             <div className="mt-8">
               <ContactForm locale={locale} t={t} />
             </div>

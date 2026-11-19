@@ -65,6 +65,8 @@ type RecognitionRow = {
   published: boolean;
   recipient: string;
   sort_order: number;
+  subtitle_en: string;
+  subtitle_fr: string;
   updated_at: string;
   updated_by: string | null;
   year: string;

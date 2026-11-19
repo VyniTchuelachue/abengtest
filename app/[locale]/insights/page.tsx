@@ -41,7 +41,6 @@ export default async function InsightsPage({ params, searchParams }: Props) {
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const current = Math.min(pageCount, Math.max(1, Number(page) || 1));
   const items = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
-  const used = new Set(all.map((a) => a.category?.slug));
 
   const linkFor = (opts: { category?: string; page?: number }) => {
     const q = new URLSearchParams();
@@ -53,12 +52,12 @@ export default async function InsightsPage({ params, searchParams }: Props) {
 
   return (
     <>
-      <PageIntro title={t.title} lede={t.lede} eyebrow={dict.home.newsEyebrow} crumbs={[{ label: dict.nav.homeLabel, href: href(locale) }, { label: t.title }]} />
+      <PageIntro title={t.title} lede={t.lede} crumbs={[{ label: dict.nav.homeLabel, href: href(locale) }, { label: t.title }]} />
 
       <section className="bg-stone py-16 md:py-20">
         <div className="shell">
           <nav aria-label={t.filterLabel} className="flex flex-wrap gap-2">
-            {[{ slug: undefined as string | undefined, name: t.all }, ...categories.filter((c) => used.has(c.slug))].map((c) => {
+            {[{ slug: undefined as string | undefined, name: t.all }, ...categories].map((c) => {
               const isActive = (c.slug ?? null) === (active?.slug ?? null);
               return (
                 <Link

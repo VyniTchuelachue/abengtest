@@ -162,7 +162,8 @@ export async function getRecognitions(locale: Locale, kind?: RecognitionKind): P
     .map((row) => {
       const name = locale === "en" ? row.name_en : row.name_fr;
       const recipient = row.recipient || undefined;
-      const photos = row.photos as { path: string; cutout?: string | null; year?: string }[];
+      const photos = row.photos as { path: string; cutout?: string | null; year?: string; caption_en?: string; caption_fr?: string }[];
+      const subtitle = (locale === "en" ? row.subtitle_en : row.subtitle_fr) ?? "";
       return {
         id: row.id,
         kind: row.kind as RecognitionKind,
@@ -170,11 +171,13 @@ export async function getRecognitions(locale: Locale, kind?: RecognitionKind): P
         recipient,
         recipientKey: recipientKeys[row.recipient],
         year: row.year || undefined,
+        subtitle: subtitle || recipient || row.year || undefined,
         detail: (locale === "en" ? row.detail_en : row.detail_fr) || undefined,
         photos: photos.map((p) => ({
           src: mediaUrl(p.path) as string,
           cutout: mediaUrl(p.cutout),
           label: `${name}${p.year ? ` ${p.year}` : ""}`,
+          caption: (locale === "en" ? p.caption_en : p.caption_fr) || undefined,
           recipient,
           year: p.year || undefined,
         })),

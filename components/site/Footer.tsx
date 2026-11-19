@@ -17,7 +17,7 @@ export function Footer({ locale, dict, contact }: { locale: Locale; dict: Dictio
             <Image src="/images/crest.png" alt="" width={60} height={60} className="h-14 w-14" />
             <div>
               <p className="font-display text-xl font-semibold text-white">The Abeng Law Firm</p>
-              <p className="text-[0.75rem] font-medium uppercase tracking-[0.2em] text-gold">{locale === "fr" ? "Avocats d'affaires" : "Business lawyers"}</p>
+              <p className="text-[0.75rem] font-medium uppercase tracking-[0.2em] text-gold">{dict.meta.brandLine}</p>
             </div>
           </div>
           <p className="mt-6 max-w-sm text-[0.9375rem] leading-relaxed">{dict.footer.tagline}</p>

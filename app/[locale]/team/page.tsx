@@ -35,16 +35,12 @@ export default async function TeamPage({ params }: Props) {
       <PageIntro
         title={dict.teamPage.title}
         lede={dict.teamPage.lede}
-        eyebrow={dict.home.teamEyebrow}
         crumbs={[{ label: dict.nav.homeLabel, href: href(locale) }, { label: dict.teamPage.title }]}
       />
 
-      <section aria-labelledby="our-team" className="py-20 md:py-24">
+      <section aria-label={dict.teamPage.title} className="py-20 md:py-24">
         <div className="shell">
-          <h2 id="our-team" className="heading text-[clamp(1.75rem,1.4rem+1.4vw,2.5rem)]">
-            {dict.teamPage.allTitle}
-          </h2>
-          <ul className="mt-10 grid grid-cols-1 gap-x-6 gap-y-10 xs:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-x-6 gap-y-10 xs:grid-cols-2 lg:grid-cols-3">
             {team.map((m) => (
               <li key={m.id}>
                 <Link href={href(locale, "team", m.slug)} className="group block">

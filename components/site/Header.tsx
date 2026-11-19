@@ -13,12 +13,12 @@ function rememberLanguage(locale: Locale) {
   document.cookie = `${languageCookie}=${locale}; path=/; max-age=31536000; samesite=lax`;
 }
 
-type Props = { locale: Locale; nav: Dictionary["nav"]; phones: string[]; email: string; consult: string; addressShort: string };
+type Props = { locale: Locale; nav: Dictionary["nav"]; phones: string[]; email: string; consult: string; brandLine: string; addressShort: string };
 
 const items: Exclude<RouteKey, "home">[] = ["firm", "practice", "team", "insights", "careers", "contact"];
 const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, "")}`;
 
-export function Header({ locale, nav, phones, email, consult, addressShort }: Props) {
+export function Header({ locale, nav, phones, email, consult, brandLine, addressShort }: Props) {
   const pathname = usePathname() ?? `/${locale}`;
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
@@ -93,25 +93,27 @@ export function Header({ locale, nav, phones, email, consult, addressShort }: Pr
             <Image src="/images/crest.png" alt="" width={48} height={48} priority className="h-11 w-11 xl:h-12 xl:w-12" />
             <span className="flex flex-col leading-none">
               <span className="font-display text-[1.0625rem] font-semibold tracking-tight text-white xl:text-[1.1875rem]">The Abeng Law Firm</span>
-              <span className="mt-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-gold">
-                {locale === "fr" ? "Avocats d'affaires" : "Business lawyers"}
+              <span className="mt-1.5 max-w-[13.5rem] whitespace-normal text-[0.6875rem] font-medium uppercase leading-snug tracking-[0.12em] text-gold">
+                {brandLine}
               </span>
             </span>
           </Link>
 
-          <nav aria-label={nav.primary} className="hidden items-center gap-0.5 lg:flex xl:gap-1">
+          {/* The full menu from 1280px; below, the menu button. Between 1280 and 1536px the Contact link is left
+              out: the gold button next to it leads to the same page. */}
+          <nav aria-label={nav.primary} className="hidden items-center gap-0.5 xl:flex">
             {items.map((key) => (
               <Link
                 key={key}
                 href={href(locale, key)}
                 aria-current={isActive(key) ? "page" : undefined}
-                className="relative whitespace-nowrap rounded-full px-2 py-2 font-display text-[0.875rem] font-medium text-white/80 xl:px-3.5 xl:text-[0.9375rem] transition-colors hover:text-white aria-[current=page]:text-gold"
+                className={`relative whitespace-nowrap rounded-full px-2 py-2 font-display text-[0.9375rem] font-medium text-white/80 transition-colors hover:text-white aria-[current=page]:text-gold 2xl:px-3.5 ${key === "contact" ? "hidden 2xl:block" : ""}`}
               >
                 {nav[key]}
               </Link>
             ))}
             <Link href={href(locale, "contact")} className="btn btn-gold ml-2 min-h-11 whitespace-nowrap px-4 py-2 xl:ml-4 xl:px-5">
-              <CalendarCheck aria-hidden className="hidden h-4 w-4 xl:block" />
+              <CalendarCheck aria-hidden className="hidden h-4 w-4 2xl:block" />
               {consult}
             </Link>
           </nav>
@@ -119,7 +121,7 @@ export function Header({ locale, nav, phones, email, consult, addressShort }: Pr
           <button
             ref={menuButton}
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-gold text-ink lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-gold text-ink xl:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? nav.close : nav.menu}
@@ -130,7 +132,7 @@ export function Header({ locale, nav, phones, email, consult, addressShort }: Pr
         </div>
       </div>
 
-      <div id="mobile-menu" hidden={!open} className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto md:top-[7rem] bg-charcoal lg:hidden">
+      <div id="mobile-menu" hidden={!open} className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto md:top-[7rem] bg-charcoal xl:hidden">
         <nav aria-label={nav.primary} className="shell flex min-h-full flex-col py-6">
           <ul className="flex flex-col">
             {items.map((key) => (

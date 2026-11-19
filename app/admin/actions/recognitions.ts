@@ -18,18 +18,27 @@ const schema = z.object({
   name_en: z.string().trim().min(2, "Indiquez le nom en anglais.").max(200),
   recipient: text(120),
   year: text(40),
+  subtitle_fr: text(200),
+  subtitle_en: text(200),
   detail_fr: text(1000),
   detail_en: text(1000),
   published: z.string().optional().transform((v) => v === "on"),
 });
 
-/** The form sends one set of three fields per photo, in order; rows without an image are dropped. */
+/** The form sends one set of fields per photo, in order; rows without an image are dropped. */
 function readPhotos(formData: FormData) {
-  const paths = formData.getAll("photo_path").map(String);
-  const cutouts = formData.getAll("photo_cutout").map(String);
-  const years = formData.getAll("photo_year").map(String);
+  const all = (name: string) => formData.getAll(name).map(String);
+  const [paths, cutouts, years, captionsFr, captionsEn] = ["photo_path", "photo_cutout", "photo_year", "photo_caption_fr", "photo_caption_en"].map(all);
+  const caption = (list: string[], i: number) => (list[i] ?? "").trim().slice(0, 300);
   const photos = paths
-    .map((path, i) => ({ path: path.trim(), cutout: (cutouts[i] ?? "").trim() || null, year: (years[i] ?? "").trim().slice(0, 40) }))
+    .map((path, i) => ({
+      path: path.trim(),
+      cutout: (cutouts[i] ?? "").trim() || null,
+      year: (years[i] ?? "").trim().slice(0, 40),
+      // Optional text under the photo in the home page tabs; omitted when empty.
+      ...(caption(captionsFr, i) ? { caption_fr: caption(captionsFr, i) } : {}),
+      ...(caption(captionsEn, i) ? { caption_en: caption(captionsEn, i) } : {}),
+    }))
     .filter((p) => p.path);
   const valid = photos.every((p) => mediaPathPattern.test(p.path) && (!p.cutout || mediaPathPattern.test(p.cutout)));
   return valid ? photos.slice(0, 20) : null;

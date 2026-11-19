@@ -58,7 +58,7 @@ export default async function FirmPage({ params }: Props) {
             </div>
           </div>
           <div className="lg:col-span-5">
-            <SectionHeading eyebrow={dict.home.firmEyebrow} title={t.historyTitle} />
+            <SectionHeading title={t.historyTitle} />
             {t.history.map((p, i) => (
               <p key={p} className={i === 0 ? "mt-6 text-[1.0625rem] text-ink" : "mt-4 text-ink-soft"}>
                 {p}
@@ -71,7 +71,7 @@ export default async function FirmPage({ params }: Props) {
       {/* Approach */}
       <section className="bg-charcoal py-20 text-white md:py-28">
         <div className="shell">
-          <SectionHeading eyebrow={dict.home.whyEyebrow} title={t.approachTitle} align="center" dark />
+          <SectionHeading title={t.approachTitle} align="center" dark />
           <ul className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {t.approach.map((a, i) => {
               const Icon = approachIcons[i] ?? Scale;
@@ -99,7 +99,7 @@ export default async function FirmPage({ params }: Props) {
       <section id="recognition" className="scroll-mt-28 py-20 md:py-28">
         <div className="shell">
           <div className="flex flex-wrap items-end justify-between gap-6">
-            <SectionHeading eyebrow={dict.home.recognitionEyebrow} title={t.recognitionTitle} />
+            <SectionHeading eyebrow={t.recognitionEyebrow} title={t.recognitionTitle} />
             <a href={chambersProfileUrl} target="_blank" rel="noopener noreferrer" className="btn btn-quiet">
               Chambers and Partners
               <ArrowRight aria-hidden className="h-4 w-4" />
@@ -125,8 +125,8 @@ export default async function FirmPage({ params }: Props) {
               <div className="flex flex-col p-8 md:col-span-8 md:p-12">
                 <p className="eyebrow self-start">{t.leadershipTitle}</p>
                 <h2 className="display mt-5 text-[clamp(2rem,1.5rem+2vw,3rem)] text-ink">{partner.name}</h2>
-                <p className="mt-2 font-medium text-gold-dark">{partner.title}</p>
-                <p className="mt-6 text-ink-soft">{partner.bio[1] ?? partner.bio[0]}</p>
+                <p className="mt-2 font-medium text-gold-dark">{t.leaderTitle}</p>
+                <p className="mt-6 text-ink-soft">{t.leaderBio}</p>
                 <span className="more mt-auto pt-8">
                   {dict.common.readProfile}
                   <ArrowRight aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-1" />

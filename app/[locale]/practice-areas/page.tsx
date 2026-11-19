@@ -32,7 +32,6 @@ export default async function PracticeAreasPage({ params }: Props) {
       <PageIntro
         title={t.title}
         lede={t.lede}
-        eyebrow={dict.home.practiceEyebrow}
         crumbs={[{ label: dict.nav.homeLabel, href: href(locale) }, { label: t.title }]}
       />
 

@@ -64,7 +64,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   return (
     <html lang={locale} className={`${display.variable} ${sans.variable}`}>
       <body className="flex min-h-dvh flex-col">
-        <Header locale={locale} nav={dict.nav} phones={contact.phones} email={contact.emails[0]} consult={dict.common.consult} addressShort={dict.address.short} />
+        <Header locale={locale} nav={dict.nav} phones={contact.phones} email={contact.emails[0]} consult={dict.common.consult} brandLine={dict.meta.brandLine} addressShort={dict.address.short} />
         <main id="main" className="flex-1">
           {children}
         </main>

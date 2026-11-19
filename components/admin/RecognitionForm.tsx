@@ -8,7 +8,7 @@ import { useT } from "./i18n";
 import { ImageField } from "./ImageField";
 import { hintClass, inputClass, labelClass, panelClass } from "./ui";
 
-export type RecognitionFormPhoto = { path: string; cutout?: string | null; year?: string };
+export type RecognitionFormPhoto = { path: string; cutout?: string | null; year?: string; caption_fr?: string; caption_en?: string };
 
 export type RecognitionFormValues = {
   id: string | null;
@@ -17,6 +17,8 @@ export type RecognitionFormValues = {
   name_en: string;
   recipient: string;
   year: string;
+  subtitle_fr?: string;
+  subtitle_en?: string;
   detail_fr: string;
   detail_en: string;
   published: boolean;
@@ -96,6 +98,17 @@ export function RecognitionForm({
               <span className={hintClass}>{t("Par exemple 2026 ou 2021/22.")}</span>
             </label>
           </div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <label className={labelClass}>
+              {t("Ligne sous le nom, en français (facultatif)")}
+              <input name="subtitle_fr" defaultValue={values.subtitle_fr ?? ""} className={inputClass} />
+            </label>
+            <label className={labelClass}>
+              {t("Ligne sous le nom, en anglais (facultatif)")}
+              <input name="subtitle_en" defaultValue={values.subtitle_en ?? ""} className={inputClass} />
+            </label>
+          </div>
+          <p className={`${hintClass} -mt-3`}>{t("Affichée sous le nom sur la page Le cabinet. Vide : le bénéficiaire s'affiche, ou l'année s'il n'y en a pas.")}</p>
           <label className={labelClass}>
             {t("Description en français")}
             <textarea name="detail_fr" defaultValue={values.detail_fr} rows={3} className={inputClass} />
@@ -137,6 +150,14 @@ export function RecognitionForm({
                 <label className={`${labelClass} min-w-40 flex-1`}>
                   {t("Année de cette image")}
                   <input name="photo_year" defaultValue={photo.year ?? ""} className={inputClass} />
+                </label>
+                <label className={`${labelClass} min-w-56 flex-[2]`}>
+                  {t("Légende en français (facultatif)")}
+                  <input name="photo_caption_fr" defaultValue={photo.caption_fr ?? ""} className={inputClass} />
+                </label>
+                <label className={`${labelClass} min-w-56 flex-[2]`}>
+                  {t("Légende en anglais (facultatif)")}
+                  <input name="photo_caption_en" defaultValue={photo.caption_en ?? ""} className={inputClass} />
                 </label>
                 <button
                   type="button"
