@@ -3,12 +3,13 @@
 import { headers } from "next/headers";
 import { z } from "zod";
 import { anonClient } from "@/lib/supabase/public";
-import { getDictionary } from "@/lib/dictionaries";
-import { isLocale, siteUrl } from "@/lib/routes";
+import { notifyByEmail } from "@/lib/notify";
+import { formTexts, privacyNoticeVersion } from "@/lib/privacy-content";
+import { isLocale } from "@/lib/routes";
 
 export type ContactState = {
   status: "idle" | "success" | "error";
-  fieldErrors?: Partial<Record<"name" | "email" | "message", true>>;
+  fieldErrors?: Partial<Record<"name" | "email" | "message" | "consent", true>>;
   values?: Record<string, string>;
 };
 
@@ -34,12 +35,15 @@ export async function sendMessage(_: ContactState, formData: FormData): Promise<
   }
 
   const parsed = schema.safeParse({ ...values, locale: String(formData.get("locale") ?? "en") });
-  if (!parsed.success) {
+  // Consent is required: the box is unticked by default and nothing is stored without it.
+  const consented = formData.get("consent") === "on";
+  if (!parsed.success || !consented) {
     const fieldErrors: ContactState["fieldErrors"] = {};
-    for (const issue of parsed.error.issues) {
+    for (const issue of parsed.success ? [] : parsed.error.issues) {
       const key = issue.path[0];
       if (key === "name" || key === "email" || key === "message") fieldErrors[key] = true;
     }
+    if (!consented) fieldErrors.consent = true;
     return { status: "error", fieldErrors, values };
   }
 
@@ -50,60 +54,17 @@ export async function sendMessage(_: ContactState, formData: FormData): Promise<
   recent.set(ip, [...hits, now]);
 
   const { name, email, phone, subject, message, locale } = parsed.data;
+  const lang = isLocale(locale) ? locale : "en";
+  // The consent record: when, for what (the wording shown) and under which version of the privacy notice.
+  const consent = { consent_at: new Date().toISOString(), consent_purpose: formTexts[lang].contactConsent, consent_notice_version: privacyNoticeVersion };
   const { error } = await anonClient()
     .from("contact_messages")
-    .insert({ name, email, phone: phone || null, subject: subject || null, message, locale: isLocale(locale) ? locale : "en" });
+    .insert({ name, email, phone: phone || null, subject: subject || null, message, locale: lang, kind: "enquiry", ...consent });
   if (error) {
     console.error("contact message insert failed", error.message);
     return { status: "error", values };
   }
 
-  await notifyByEmail({ name, email, phone, subject, message, locale });
+  await notifyByEmail({ name, email, phone, subject, message, locale, consentAt: consent.consent_at });
   return { status: "success" };
-}
-
-/** The firm's inbox; CONTACT_NOTIFY_EMAIL overrides it (e.g. for testing). */
-const firmInbox = "contact@theabenglawfirm.com";
-/** Subjects used by the careers form ("Careers" / "Recrutement"). */
-const applicationSubjects = new Set((["en", "fr"] as const).map((l) => getDictionary(l).contactPage.subjects[2]));
-
-/**
- * Emails each message to the firm through Resend once RESEND_API_KEY is set.
- * Messages are stored in the dashboard either way, so a failed email loses nothing.
- */
-async function notifyByEmail(m: { name: string; email: string; phone?: string; subject?: string; message: string; locale: string }) {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) return;
-  const isApplication = applicationSubjects.has(m.subject ?? "");
-  const lines = [
-    isApplication ? "Nouvelle candidature reçue depuis la page Recrutement du site." : "Nouveau message reçu depuis le formulaire de contact du site.",
-    "",
-    `Nom : ${m.name}`,
-    `Email : ${m.email}`,
-    m.phone ? `Téléphone : ${m.phone}` : null,
-    `Objet : ${m.subject || "Demande générale"}`,
-    `Langue : ${m.locale === "fr" ? "français" : "anglais"}`,
-    "",
-    m.message,
-    "",
-    "—",
-    `Répondez directement à cet email pour écrire à ${m.name}.`,
-    `Tous les messages : ${siteUrl}/admin/messages`,
-  ].filter((l) => l !== null);
-  try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from: process.env.CONTACT_FROM_EMAIL ?? "Site Abeng Law <onboarding@resend.dev>",
-        to: [process.env.CONTACT_NOTIFY_EMAIL || firmInbox],
-        reply_to: m.email,
-        subject: isApplication ? `Nouvelle candidature : ${m.name}` : `Nouveau message du site : ${m.subject || "Demande"} — ${m.name}`,
-        text: lines.join("\n"),
-      }),
-    });
-    if (!res.ok) console.error("contact notification rejected", res.status, await res.text());
-  } catch (err) {
-    console.error("contact notification failed", err);
-  }
 }

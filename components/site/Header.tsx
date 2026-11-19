@@ -15,7 +15,7 @@ function rememberLanguage(locale: Locale) {
 
 type Props = { locale: Locale; nav: Dictionary["nav"]; phones: string[]; email: string; consult: string; brandLine: string; addressShort: string };
 
-const items: Exclude<RouteKey, "home">[] = ["firm", "practice", "team", "insights", "careers", "contact"];
+const items = ["firm", "practice", "team", "insights", "careers", "contact"] as const satisfies readonly RouteKey[];
 const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, "")}`;
 
 export function Header({ locale, nav, phones, email, consult, brandLine, addressShort }: Props) {

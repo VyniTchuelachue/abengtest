@@ -4,6 +4,7 @@ import { DM_Sans, Heebo } from "next/font/google";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { JsonLd } from "@/components/site/JsonLd";
+import { PrivacyPreferencesDialog } from "@/components/site/PrivacyPreferences";
 import { getDictionary } from "@/lib/dictionaries";
 import { isLocale, locales, siteUrl } from "@/lib/routes";
 import { getPracticeAreas, getRecognitions, getSiteContact } from "@/lib/data";
@@ -69,6 +70,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
           {children}
         </main>
         <Footer locale={locale} dict={dict} contact={contact} />
+        <PrivacyPreferencesDialog locale={locale} />
         <JsonLd data={siteSchema(locale, areas, contact, recognitions)} />
       </body>
     </html>

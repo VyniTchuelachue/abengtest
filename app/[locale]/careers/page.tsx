@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Mail } from "lucide-react";
 import { PageIntro } from "@/components/site/blocks";
-import { ContactForm } from "@/components/site/ContactForm";
+import Link from "next/link";
+import { ApplicationForm } from "@/components/site/ApplicationForm";
+import { formTexts, privacyNotice } from "@/lib/privacy-content";
 import { getSiteContact } from "@/lib/data";
 import { getDictionary, withFirmEmail } from "@/lib/dictionaries";
 import { alternatesFor, href, isLocale } from "@/lib/routes";
@@ -26,8 +28,6 @@ export default async function CareersPage({ params }: Props) {
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
   const t = dict.careersPage;
-  // "Careers" / "Recrutement" in the contact subjects, so applications are easy to spot in the dashboard.
-  const subject = dict.contactPage.subjects[2];
   const { emails } = await getSiteContact();
   const firmEmail = emails[0];
 
@@ -46,11 +46,20 @@ export default async function CareersPage({ params }: Props) {
             <a href={`mailto:${firmEmail}?subject=${encodeURIComponent(t.emailSubject)}`} className="btn btn-gold mt-8">
               {t.emailCta}
             </a>
+            {/* The consent wording and the privacy link for applications sent by email, as the notice requires. */}
+            <p className="mt-6 text-[0.9375rem] leading-relaxed text-ink-soft">{withFirmEmail(formTexts[locale].emailApplication, firmEmail)}</p>
+            <p className="mt-3 text-[0.875rem] leading-relaxed text-slate">
+              {withFirmEmail(formTexts[locale].shortPrivacy, firmEmail)}{" "}
+              <Link href={href(locale, "privacy")} className="link font-medium text-ink">
+                {privacyNotice[locale].link}
+              </Link>
+            </p>
+            <p className="mt-3 text-[0.875rem] leading-relaxed text-slate">{formTexts[locale].under18}</p>
           </div>
           <div className="lg:col-span-7">
             <div className="card p-6 shadow-[0_30px_60px_-40px_rgb(0_0_0/0.45)] sm:p-10">
               <h2 className="heading mb-8 text-[clamp(1.5rem,1.3rem+0.8vw,2rem)]">{t.formTitle}</h2>
-              <ContactForm locale={locale} t={dict.contactPage} fixedSubject={subject} messageLabel={t.messageLabel} submitLabel={t.submit} notice={null} />
+              <ApplicationForm locale={locale} contact={dict.contactPage} careers={t} />
             </div>
           </div>
         </div>

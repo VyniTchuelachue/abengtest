@@ -18,11 +18,29 @@ export async function setMessageStatus(formData: FormData) {
   redirect(`/admin/messages${status === "archived" ? "" : `#m-${id}`}`);
 }
 
+/** Deletes the record and its CV from the website (the copy in the mailbox is deleted there). */
 export async function deleteMessage(formData: FormData) {
   const { supabase } = await requireStaff();
   const id = z.string().uuid().parse(formData.get("id"));
+  const { data } = await supabase.from("contact_messages").select("cv_path").eq("id", id).maybeSingle();
+  if (data?.cv_path) {
+    const { error } = await supabase.storage.from("applications").remove([data.cv_path]);
+    if (error) redirect(`/admin/messages?erreur=cv#m-${id}`);
+  }
   await supabase.from("contact_messages").delete().eq("id", id);
   redirect("/admin/messages?ok=supprime");
+}
+
+/**
+ * Records that an enquiry is closed (or an application decided): the six-month retention period runs from
+ * this date. Reopening clears it.
+ */
+export async function setMessageClosed(formData: FormData) {
+  const { supabase } = await requireStaff();
+  const id = z.string().uuid().parse(formData.get("id"));
+  const closed = formData.get("closed") === "1";
+  await supabase.from("contact_messages").update({ closed_at: closed ? new Date().toISOString() : null }).eq("id", id);
+  redirect(`/admin/messages#m-${id}`);
 }
 
 // Categories --------------------------------------------------------------------

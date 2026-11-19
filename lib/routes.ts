@@ -22,7 +22,7 @@ export function isLocale(value: string | undefined): value is Locale {
   return value === "en" || value === "fr";
 }
 
-export type RouteKey = "home" | "firm" | "practice" | "team" | "insights" | "careers" | "contact";
+export type RouteKey = "home" | "firm" | "practice" | "team" | "insights" | "careers" | "contact" | "privacy" | "websiteInfo";
 
 const segments: Record<Exclude<RouteKey, "home">, { en: string; fr: string }> = {
   firm: { en: "firm", fr: "cabinet" },
@@ -31,6 +31,8 @@ const segments: Record<Exclude<RouteKey, "home">, { en: string; fr: string }> = 
   insights: { en: "insights", fr: "actualites" },
   careers: { en: "careers", fr: "recrutement" },
   contact: { en: "contact", fr: "contact" },
+  privacy: { en: "privacy", fr: "confidentialite" },
+  websiteInfo: { en: "website-information", fr: "informations-site" },
 };
 
 /** Segments whose French URL differs from the route folder name. */

@@ -3,7 +3,9 @@
 import { useActionState, useEffect, useRef } from "react";
 import { sendMessage, type ContactState } from "@/app/[locale]/contact/actions";
 import type { Dictionary } from "@/lib/dictionaries";
+import { formTexts } from "@/lib/privacy-content";
 import type { Locale } from "@/lib/routes";
+import { ConsentBox } from "./ConsentBox";
 
 const field =
   "mt-2 block w-full rounded-xl border border-rule bg-stone/60 px-4 py-3 text-[1rem] text-ink transition-colors placeholder:text-slate/70 hover:border-slate focus:border-gold focus:bg-white focus:outline-none focus:ring-2 focus:ring-gold/30 aria-[invalid=true]:border-danger";
@@ -92,6 +94,7 @@ export function ContactForm({ locale, t, fixedSubject, messageLabel, submitLabel
         {err.message && <span id="err-message" className="mt-1.5 block text-[0.875rem] font-normal text-danger">{t.errors.message}</span>}
       </label>
       {notice && <p className="text-[0.8125rem] leading-relaxed text-slate">{notice}</p>}
+      <ConsentBox locale={locale} label={formTexts[locale].contactConsent} invalid={Boolean(err.consent)} />
       <button type="submit" disabled={pending} className="btn btn-gold disabled:opacity-60">
         {pending ? t.sending : (submitLabel ?? t.send)}
       </button>

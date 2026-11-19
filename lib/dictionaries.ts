@@ -212,7 +212,11 @@ const en = {
     emailCta: "Email your application",
     emailSubject: "Application",
     formTitle: "Send your application",
-    messageLabel: "Your message",
+    messageLabel: "Cover letter",
+    messageHint:
+      "Please enter your cover letter here, indicating the position or internship you are seeking and briefly outlining your relevant experience and reasons for joining the Firm. Attach your CV below.",
+    cvLabel: "Attach your CV",
+    cvHint: "Accepted formats: PDF or DOCX. Maximum file size: 5 MB.",
     submit: "Send application",
   },
   insightsPage: {
@@ -482,7 +486,11 @@ const fr: Dictionary = {
     emailCta: "Envoyer sa candidature par e-mail",
     emailSubject: "Candidature",
     formTitle: "Envoyer votre candidature",
-    messageLabel: "Votre message",
+    messageLabel: "Lettre de motivation",
+    messageHint:
+      "Veuillez saisir votre lettre de motivation dans ce champ, en précisant le poste ou le stage recherché et en présentant brièvement votre parcours ainsi que les raisons pour lesquelles vous souhaitez rejoindre le cabinet. Joignez votre CV ci-dessous.",
+    cvLabel: "Joindre votre CV",
+    cvHint: "Formats acceptés : PDF ou DOCX. Taille maximale du fichier : 5 Mo.",
     submit: "Envoyer ma candidature",
   },
   insightsPage: {

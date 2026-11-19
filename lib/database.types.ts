@@ -44,9 +44,17 @@ type CategoryRow = {
 };
 
 type MessageRow = {
+  closed_at: string | null;
+  consent_at: string | null;
+  consent_notice_version: string | null;
+  consent_purpose: string | null;
   created_at: string;
+  cv_name: string | null;
+  cv_path: string | null;
+  cv_size: number | null;
   email: string;
   id: string;
+  kind: "enquiry" | "application";
   locale: string;
   message: string;
   name: string;

@@ -4,6 +4,8 @@ import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
 import { href, type Locale } from "@/lib/routes";
 import type { Dictionary, SiteContact } from "@/lib/dictionaries";
 import { telHref } from "@/lib/format";
+import { privacyNotice, websiteInformation } from "@/lib/privacy-content";
+import { PrivacyPreferencesButton } from "./PrivacyPreferences";
 
 export function Footer({ locale, dict, contact }: { locale: Locale; dict: Dictionary; contact: SiteContact }) {
   const year = new Date().getFullYear();
@@ -75,10 +77,25 @@ export function Footer({ locale, dict, contact }: { locale: Locale; dict: Dictio
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="shell py-6 text-[0.8125rem]">
+        <div className="shell flex flex-col gap-3 py-6 text-[0.8125rem] md:flex-row md:items-center md:justify-between">
           <p>
             © {year} The Abeng Law Firm. {dict.footer.rights}
           </p>
+          <ul className="flex flex-wrap gap-x-6 gap-y-2">
+            <li>
+              <Link href={href(locale, "privacy")} className="transition-colors hover:text-white">
+                {privacyNotice[locale].link}
+              </Link>
+            </li>
+            <li>
+              <Link href={href(locale, "websiteInfo")} className="transition-colors hover:text-white">
+                {websiteInformation[locale].link}
+              </Link>
+            </li>
+            <li>
+              <PrivacyPreferencesButton locale={locale} className="transition-colors hover:text-white" />
+            </li>
+          </ul>
         </div>
       </div>
     </footer>

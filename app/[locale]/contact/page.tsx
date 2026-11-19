@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ExternalLink, Mail, MapPin, Phone, Mailbox } from "lucide-react";
 import { PageIntro } from "@/components/site/blocks";
 import { ContactForm } from "@/components/site/ContactForm";
+import { ConsentedMap } from "@/components/site/PrivacyPreferences";
 import { getSiteContact } from "@/lib/data";
 import { getDictionary, officeCoordinates } from "@/lib/dictionaries";
 import { telHref } from "@/lib/format";
@@ -104,7 +105,7 @@ export default async function ContactPage({ params }: Props) {
           </div>
           <div className="flex flex-col lg:col-span-5">
             <div className="relative min-h-[22rem] flex-1 overflow-hidden rounded-[1.5rem] bg-stone-deep">
-              <iframe title={t.mapTitle} src={embed} loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="absolute inset-0 h-full w-full border-0" />
+              <ConsentedMap locale={locale} src={embed} title={t.mapTitle} />
             </div>
             <a href={mapsLink} target="_blank" rel="noopener noreferrer" className="btn btn-quiet mt-4 self-start">
               <ExternalLink aria-hidden className="h-4 w-4" />
