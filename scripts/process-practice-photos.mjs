@@ -4,7 +4,8 @@
 // banking-finance.jpg). Output: public/images/practice/<slug>-<suffix>.jpg.
 // The current set (suffix v2) was generated with Google Flow (Nano Banana 2.1)
 // on 31 Oct 2026, from prompts describing Cameroonian settings and people;
-// none of the people shown is a real member of the firm or a real client.
+// none of the people shown is a real member of the firm or a real client. The four areas added on
+// 19 Nov 2026 (cybercrime, criminal law, insurance, legal due diligence) were made the same way that day.
 import sharp from "sharp";
 import path from "node:path";
 import fs from "node:fs";
